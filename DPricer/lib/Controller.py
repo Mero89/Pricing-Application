@@ -64,12 +64,6 @@ def table_portefeuille(uid):
     pf = [Portefeuille(el) for el in p_isins]
     return pf
 
-def function():
-    """
-    testing my GitHub
-    :return:
-    """
-    pass
 
 if __name__ == '__main__':
     ajouter_obligation(8888888, 'MERO Oblig', 22222, .045, '22/7/1989',\
