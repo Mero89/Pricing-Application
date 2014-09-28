@@ -20,12 +20,12 @@ class MyClass(QMainWindow, Ui_MDIApp):
         QMainWindow.__init__(self)
         self.ui = Ui_MDIApp()
         self.ui.setupUi(self)
-        log = MyDialog()
-        self.connect(log, QtCore.SIGNAL('accepted()'), self, QtCore.SLOT('stats()'))
-        log.exec_()
-        # self.user = User('uname', 'password')
-        # self.user.uid = 1
-        self.user = log.user
+        # log = MyDialog()
+        # self.connect(log, QtCore.SIGNAL('accepted()'), self, QtCore.SLOT('stats()'))
+        # log.exec_()
+        self.user = User('uname', 'password')
+        self.user.uid = 1
+        # self.user = log.user
         nom = 'FAKIR'
         prenom = 'Marouane'
         self.ui.labelUser.setText(nom + ' ' + prenom)
@@ -47,9 +47,9 @@ class MyClass(QMainWindow, Ui_MDIApp):
     def affiche(self):
         pf = Portfolios()
         self.ui.mdiArea.addSubWindow(pf)
-        # self.connect(pf.ui.tableWidgetPortefeuille, QtCore.SIGNAL('cellActivated(int,int)'),\
-        #              self, QtCore.SLOT('stats(int,int)'))
         self.connect(pf.ui.tableWidgetPortefeuille, QtCore.SIGNAL('itemSelectionChanged()'), self.stats)
+        # self.connect(pf.ui.pushButtonFermer, QtCore.SIGNAL('clicked()'), self.ui.mdiArea.closeActiveSubWindow)
+        pf.ui.pushButtonFermer.clicked()
         pf.User = self.user
         pf.show()
         pf.affichePortefeuille()

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/test/Portefeuilles.ui'
 #
-# Created: Fri Sep 26 15:10:13 2014
+# Created: Sun Sep 28 18:13:15 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_Portefeuilles(object):
     def setupUi(self, Portefeuilles):
         Portefeuilles.setObjectName(_fromUtf8("Portefeuilles"))
-        Portefeuilles.resize(1019, 582)
+        Portefeuilles.resize(722, 595)
         self.verticalLayout = QtGui.QVBoxLayout(Portefeuilles)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         spacerItem = QtGui.QSpacerItem(20, 12, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
@@ -39,9 +39,15 @@ class Ui_Portefeuilles(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
-        self.groupBox.setMinimumSize(QtCore.QSize(430, 0))
+        self.groupBox.setMinimumSize(QtCore.QSize(230, 0))
         self.groupBox.setMaximumSize(QtCore.QSize(530, 16777215))
         self.groupBox.setSizeIncrement(QtCore.QSize(1, 0))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(False)
+        font.setUnderline(False)
+        font.setWeight(50)
+        self.groupBox.setFont(font)
         self.groupBox.setFlat(True)
         self.groupBox.setCheckable(False)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
@@ -56,6 +62,9 @@ class Ui_Portefeuilles(object):
         self.tableWidgetPortefeuille.setSizePolicy(sizePolicy)
         self.tableWidgetPortefeuille.setMinimumSize(QtCore.QSize(400, 0))
         self.tableWidgetPortefeuille.setMaximumSize(QtCore.QSize(500, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.tableWidgetPortefeuille.setFont(font)
         self.tableWidgetPortefeuille.setMidLineWidth(0)
         self.tableWidgetPortefeuille.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked|QtGui.QAbstractItemView.EditKeyPressed|QtGui.QAbstractItemView.SelectedClicked)
         self.tableWidgetPortefeuille.setSelectionBehavior(QtGui.QAbstractItemView.SelectItems)
@@ -97,6 +106,7 @@ class Ui_Portefeuilles(object):
         self.tableWidgetPortefeuille.horizontalHeader().setVisible(True)
         self.tableWidgetPortefeuille.horizontalHeader().setStretchLastSection(True)
         self.tableWidgetPortefeuille.verticalHeader().setVisible(False)
+        self.tableWidgetPortefeuille.verticalHeader().setDefaultSectionSize(25)
         self.tableWidgetPortefeuille.verticalHeader().setSortIndicatorShown(True)
         self.tableWidgetPortefeuille.verticalHeader().setStretchLastSection(False)
         self.verticalLayout_2.addWidget(self.tableWidgetPortefeuille)
@@ -112,14 +122,23 @@ class Ui_Portefeuilles(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox_2.sizePolicy().hasHeightForWidth())
         self.groupBox_2.setSizePolicy(sizePolicy)
-        self.groupBox_2.setMinimumSize(QtCore.QSize(530, 0))
+        self.groupBox_2.setMinimumSize(QtCore.QSize(230, 0))
         self.groupBox_2.setMaximumSize(QtCore.QSize(600, 16777215))
         self.groupBox_2.setSizeIncrement(QtCore.QSize(2, 0))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(False)
+        font.setUnderline(False)
+        font.setWeight(50)
+        self.groupBox_2.setFont(font)
         self.groupBox_2.setFlat(True)
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.groupBox_2)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.tableWidgetActifs = QtGui.QTableWidget(self.groupBox_2)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.tableWidgetActifs.setFont(font)
         self.tableWidgetActifs.setMidLineWidth(0)
         self.tableWidgetActifs.setDragDropOverwriteMode(False)
         self.tableWidgetActifs.setDefaultDropAction(QtCore.Qt.CopyAction)
@@ -193,7 +212,6 @@ class Ui_Portefeuilles(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(Portefeuilles)
-        QtCore.QObject.connect(self.pushButtonFermer, QtCore.SIGNAL(_fromUtf8("clicked()")), Portefeuilles.close)
         QtCore.QMetaObject.connectSlotsByName(Portefeuilles)
 
     def retranslateUi(self, Portefeuilles):

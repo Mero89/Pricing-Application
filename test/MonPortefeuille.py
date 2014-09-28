@@ -17,10 +17,9 @@ class Portfolios(QWidget, Ui_Portefeuilles):
         self.ui.setupUi(self)
         self.User = None
         self.ui.tableWidgetPortefeuille.setAlternatingRowColors(True)
-        # self.disconnect(self.ui.pushButtonFermer, QtCore.SIGNAL('clicked()'), self.ui, QtCore.SLOT('close()'))
+        # self.connect(self.ui.pushButtonFermer, QtCore.SIGNAL('clicked()'), self.close)
 
 
-        
     @QtCore.pyqtSlot()
     def affichePortefeuille(self):
         self.connect(self.ui.tableWidgetPortefeuille, QtCore.SIGNAL('itemSelectionChanged()'),\

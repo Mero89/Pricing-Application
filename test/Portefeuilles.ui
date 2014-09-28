@@ -412,22 +412,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>pushButtonFermer</sender>
-   <signal>clicked()</signal>
-   <receiver>Portefeuilles</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>973</x>
-     <y>551</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>366</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
