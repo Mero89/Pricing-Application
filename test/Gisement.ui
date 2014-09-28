@@ -30,7 +30,7 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>600</width>
+       <width>16777</width>
        <height>16777215</height>
       </size>
      </property>
@@ -382,7 +382,7 @@
         <item>
          <widget class="QToolButton" name="toolButtonEdit">
           <property name="text">
-           <string>E</string>
+           <string>modif</string>
           </property>
          </widget>
         </item>

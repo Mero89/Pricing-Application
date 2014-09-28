@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/test/Echeancier.ui'
 #
-# Created: Mon Sep  1 18:06:34 2014
+# Created: Sun Sep 28 22:58:06 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
