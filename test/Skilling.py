@@ -76,6 +76,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_W:
             self.filenew()
+        # Comment to commit
 
 
 if __name__ == '__main__':
