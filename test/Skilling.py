@@ -37,7 +37,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
     def open_portefeuille_dialog(self):
         pfdial = PortefeuilleDialog()
         # self.ui.mdiArea.addSubWindow(pfdial)
-        pfdial.show()
+        pfdial.exec_()
 
     @QtCore.pyqtSlot()
     def affiche(self):

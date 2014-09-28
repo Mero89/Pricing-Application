@@ -104,6 +104,7 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
         self.ui.pushButtonAjouter_2.clicked.connect(self.Ajouter_clicked)
         self.ui.pushButtonSupprimer_2.clicked.connect(self.Supprimer_clicked)
 
+
     @QtCore.pyqtSlot()
     def save_portefeuille(self):
         num = self.ui.tableWidget.rowCount()
