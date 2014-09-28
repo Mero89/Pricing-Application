@@ -1,0 +1,213 @@
+# coding=utf-8
+__author__ = 'F.Marouane'
+
+from decimal import *
+import xlrd
+import os
+from DPricer.data.AppModel import AppModel, CourbeMd, ObligationMd
+import datetime as dt
+
+
+def read_excel(path_to_file):
+    """
+    retourne une liste de lignes contenues dans le fichier BAM d'excel
+    :param path_to_file:
+    :return:
+    """
+    if os.path.exists(path_to_file) and os.path.isfile(path_to_file):
+        try:
+            wbook = xlrd.open_workbook(path_to_file)
+            sheet = wbook.sheet_by_index(0)
+            f_row = 4  # n-1, index starts from 0
+            num_rows = sheet.nrows - f_row
+            a = list()
+            for i in range(num_rows - 1):
+                a.append([str(r) for r in sheet.row_values(i + 4)])
+            for el in a:
+                el[2] = Decimal(el[2][:-1].replace(',', '.')) / 100
+            # retourne une liste de rows
+            # row => (date_valeur, transactions, taux_pondere, date_echeance)
+            return a
+        except IOError:
+            print 'le fichier est introuvable'
+
+
+def get_date_courbe(path_to_file):
+    try:
+        wbook = xlrd.open_workbook(path_to_file)
+    except IOError:
+        print 'Erreur fichier introuvable'
+        return None
+    sheet = wbook.sheet_by_index(0)
+    cel = sheet.cell(1, 0).value
+    date_courbe = dt.datetime.strptime(cel.split(':')[1], '%d/%m/%Y')
+    if date_courbe.weekday() == 4:
+        delta = dt.timedelta(days=3)
+    else:
+        delta = dt.timedelta(days=1)
+    # retourne la date figurant dans le fichier +1 jour
+    return date_courbe + delta
+
+
+def list_excel_files(path_to_folder):
+    """
+    retourne une liste de fichiers excels sous forme de liste.
+    :param path_to_folder:
+    :return: list():
+    """
+    pf = path_to_folder
+    liste_dir = os.listdir(pf)
+    liste_excel = list()
+    for elm in liste_dir:
+        ext = os.path.splitext(elm)[1]
+        if ext == '.xls' or ext == '.xlsx':
+            liste_excel.append(elm)
+    return liste_excel
+
+
+def is_exists(_date):
+    md = AppModel()
+    session = md.get_session()
+    existe = session.query(CourbeMd).filter_by(date_req=_date).first()
+    return existe
+
+
+def commit_excel(excel_path, _date=None):
+    """
+    Enregistre la courbe de taux BAM dans la base de données
+    :param excel_path: chemin vers le fichier
+    :param _date: date de la courbe
+    :return:
+    """
+    if _date is None:
+        _date = get_date_courbe(excel_path)
+    elif type(_date) is str:
+        _date = dt.datetime.strptime(_date, '%d/%m/%Y')
+    rows = read_excel(excel_path)
+    md = AppModel()
+    session = md.get_session()
+    existe = is_exists(_date)
+    if existe is None:
+        if rows != list():
+            for rw in rows:
+                courbe = CourbeMd()
+                courbe.date_req = _date
+                courbe.date_echeance = rw[0]
+                courbe.transactions = rw[1]
+                courbe.taux_pondere = rw[2]
+                courbe.date_valeur = rw[3]
+                session.add(courbe)
+            try:
+                session.commit()
+            except ValueError:
+                return False
+
+
+def import_obligation(excel_path):
+    """
+    Importe le portefeuille depuis le fichier Excel vers la base de données
+    :param excel_path: chemin du fichier Excel
+    :return:
+    """
+    if os.path.exists(excel_path):
+        # parcoure le fichier Excel
+        try:
+            xlrd.open_workbook(excel_path)
+        except IOError:
+            pass
+        wbook = xlrd.open_workbook(excel_path, encoding_override='utf-8')
+        sheet = wbook.sheet_by_name('Portfolio')
+        start_row = 1
+        a = list()
+        for i in range(start_row, sheet.nrows - 1):
+            a.append(sheet.row_values(i))
+        for row in a:
+            if row[2] != '' and row[3] != '' and row[4] != '':
+                d_em = xlrd.xldate_as_tuple(int(row[2]), wbook.datemode)
+                d_js = xlrd.xldate_as_tuple(int(row[3]), wbook.datemode)
+                d_ech = xlrd.xldate_as_tuple(int(row[4]), wbook.datemode)
+                row[2] = dt.date(year=d_em[0], month=d_em[1], day=d_em[2])
+                row[3] = dt.date(year=d_js[0], month=d_js[1], day=d_js[2])
+                row[4] = dt.date(year=d_ech[0], month=d_ech[1], day=d_ech[2])
+            if type(row[1]) is not type(str) and row[1] != '':
+                row[1] = str(int(row[1]))
+            if row[7] is None or row[7] == '':
+                row[7] = 0
+
+        # enregistre Les données
+        md = AppModel()
+        session = md.get_session()
+        for rw in a:
+            """
+        nom, isin, d_emission, d_jouissance,
+         0    1         2          3
+        maturite, tx_facial, nominal, spread,  type
+           4         5           6       7       8
+        """
+            if rw[1] != '' and rw[0] != '':
+                oblig = ObligationMd()
+                oblig.nom = rw[0]
+                oblig.isin = rw[1]
+                oblig.date_emission = rw[2]
+                oblig.date_jouissance = rw[3]
+                oblig.maturite = rw[4]
+                oblig.taux_facial = rw[5]
+                oblig.nominal = rw[6]
+                oblig.spread = rw[7]
+                oblig.type = rw[8]
+                session.add(oblig)
+                try:
+                    session.commit()
+                except Exception:
+                    session.rollback()
+
+
+def test_read_excel():
+    file_path = '/Users/mar/Desktop/pylab/repo/OperationMarSecon.xls'
+    a = read_excel(file_path)
+    print a
+
+
+def print_list(mylist):
+    for el in mylist:
+        print el
+
+
+def test_import_obligation():
+    file_path = '/Users/mar/Dropbox/DTM/Projets/Societe Generale/Bond_Pricing_Tool.xls'
+    workbook = xlrd.open_workbook(file_path, encoding_override='utf-8')
+    # sheet = workbook.sheet_by_index(2)
+    sheet = workbook.sheet_by_name('Portfolio')
+
+    a = list()
+    for i in range(1, sheet.nrows - 1):
+        # a.append([r for r in sheet.row_values(i)])
+        a.append(sheet.row_values(i))
+    for row in a:
+        if row[2] != '' and row[3] != '' and row[5] != '':
+            d_em = xlrd.xldate_as_tuple(int(row[2]), workbook.datemode)
+            d_js = xlrd.xldate_as_tuple(int(row[3]), workbook.datemode)
+            d_ech = xlrd.xldate_as_tuple(int(row[5]), workbook.datemode)
+            row[2] = dt.date(year=d_em[0], month=d_em[1], day=d_em[2])
+            row[3] = dt.date(year=d_js[0], month=d_js[1], day=d_js[2])
+            row[5] = dt.date(year=d_ech[0], month=d_ech[1], day=d_ech[2])
+        if type(row[1]) is not type(str) and row[1] != '':
+            row[1] = str(int(row[1]))
+    print_list(a)
+
+
+def main():
+    repo = '/Users/mar/PycharmProjects/DPricer/DPricer/data/repository'
+    xcl_files = list_excel_files(repo)
+    for xcl in xcl_files:
+        full_path = os.path.join(repo, xcl)
+        commit_excel(full_path)
+
+
+def test():
+    dd = get_date_courbe('/Users/mar/PycharmProjects/DPricer/DPricer/data/repository/TauxBAM-18-8-2014.xls')
+    print dd
+
+
+if __name__ == '__main__':
+    test()

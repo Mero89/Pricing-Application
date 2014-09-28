@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MDIApp</class>
+ <widget class="QMainWindow" name="MDIApp">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>673</width>
+    <height>492</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="labelUser">
+        <property name="font">
+         <font>
+          <family>Garamond</family>
+          <pointsize>14</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::WinPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="lineWidth">
+         <number>0</number>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelDates">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QMdiArea" name="mdiArea">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="viewMode">
+       <enum>QMdiArea::TabbedView</enum>
+      </property>
+      <property name="documentMode">
+       <bool>false</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <property name="tabsMovable">
+       <bool>true</bool>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>673</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>25</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>35</height>
+    </size>
+   </property>
+   <property name="defaultUp">
+    <bool>false</bool>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>false</bool>
+   </property>
+   <widget class="QMenu" name="menuPortefeuille">
+    <property name="title">
+     <string>Portefeuille</string>
+    </property>
+    <addaction name="actionMonPortefeuille"/>
+    <addaction name="actionAjoutPortefeuille"/>
+   </widget>
+   <widget class="QMenu" name="menuParametres">
+    <property name="title">
+     <string>Paramètres</string>
+    </property>
+    <addaction name="actionProfilUtilisateur"/>
+    <addaction name="separator"/>
+    <addaction name="actionGeneral"/>
+   </widget>
+   <widget class="QMenu" name="menuOutils">
+    <property name="title">
+     <string>Outils</string>
+    </property>
+    <addaction name="actionCalculette"/>
+   </widget>
+   <widget class="QMenu" name="menuBDD">
+    <property name="title">
+     <string>BDD</string>
+    </property>
+    <widget class="QMenu" name="menuImporter">
+     <property name="title">
+      <string>Importer</string>
+     </property>
+     <addaction name="actionCSV_3"/>
+     <addaction name="actionCSV_4"/>
+     <addaction name="separator"/>
+     <addaction name="actionG_n_rer_fichier_d_import"/>
+    </widget>
+    <addaction name="actionAjoutObligation"/>
+    <addaction name="separator"/>
+    <addaction name="actionGisement"/>
+    <addaction name="separator"/>
+    <addaction name="menuImporter"/>
+   </widget>
+   <widget class="QMenu" name="menuCourbe">
+    <property name="title">
+     <string>Courbe Taux</string>
+    </property>
+    <widget class="QMenu" name="menuImporterCourbe">
+     <property name="title">
+      <string>Importer</string>
+     </property>
+     <addaction name="actionExcelCourbe"/>
+     <addaction name="separator"/>
+     <addaction name="actionCSVCourbe"/>
+    </widget>
+    <addaction name="actionMettreAJour"/>
+    <addaction name="menuImporterCourbe"/>
+    <addaction name="separator"/>
+    <addaction name="actionVisualiser"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>About</string>
+    </property>
+   </widget>
+   <addaction name="menuPortefeuille"/>
+   <addaction name="menuBDD"/>
+   <addaction name="menuCourbe"/>
+   <addaction name="menuOutils"/>
+   <addaction name="menuParametres"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionNW">
+   <property name="text">
+    <string>Ouvrir écheancier</string>
+   </property>
+  </action>
+  <action name="actionAffiche">
+   <property name="text">
+    <string>affiche</string>
+   </property>
+  </action>
+  <action name="actionNouvelle_Fenetre">
+   <property name="text">
+    <string>Nouvelle Fenetre</string>
+   </property>
+  </action>
+  <action name="actionCalculette">
+   <property name="text">
+    <string>Calculette</string>
+   </property>
+  </action>
+  <action name="actionProfilUtilisateur">
+   <property name="text">
+    <string>Profil Utilisateur</string>
+   </property>
+  </action>
+  <action name="actionMon_Portefeuille">
+   <property name="text">
+    <string>Mes Portefeuilles</string>
+   </property>
+  </action>
+  <action name="actionCSV">
+   <property name="text">
+    <string>CSV</string>
+   </property>
+  </action>
+  <action name="actionExcel">
+   <property name="text">
+    <string>Excel</string>
+   </property>
+  </action>
+  <action name="actionCSV_2">
+   <property name="text">
+    <string>CSV</string>
+   </property>
+  </action>
+  <action name="actionExcel_2">
+   <property name="text">
+    <string>Excel</string>
+   </property>
+  </action>
+  <action name="actionG_n_rer_Template_Excel">
+   <property name="text">
+    <string>Générer Template Excel</string>
+   </property>
+  </action>
+  <action name="actionMettreAJour">
+   <property name="text">
+    <string>&amp;Mettre à jour</string>
+   </property>
+  </action>
+  <action name="actionCSVCourbe">
+   <property name="text">
+    <string>CSV</string>
+   </property>
+  </action>
+  <action name="actionExcelCourbe">
+   <property name="text">
+    <string>Excel</string>
+   </property>
+  </action>
+  <action name="actionGisement">
+   <property name="text">
+    <string>Gisement</string>
+   </property>
+  </action>
+  <action name="actionAjoutObligation">
+   <property name="text">
+    <string>Ajouter actif</string>
+   </property>
+  </action>
+  <action name="actionMonPortefeuille">
+   <property name="text">
+    <string>Mes Portefeuilles</string>
+   </property>
+  </action>
+  <action name="actionAjoutPortefeuille">
+   <property name="text">
+    <string>Nouveau Portefeuille</string>
+   </property>
+  </action>
+  <action name="actionCSV_3">
+   <property name="text">
+    <string>Excel</string>
+   </property>
+  </action>
+  <action name="actionCSV_4">
+   <property name="text">
+    <string>CSV</string>
+   </property>
+  </action>
+  <action name="actionAlertes">
+   <property name="text">
+    <string>Alertes</string>
+   </property>
+  </action>
+  <action name="actionAutre">
+   <property name="text">
+    <string>Autres</string>
+   </property>
+  </action>
+  <action name="actionG_n_rer_fichier_d_import">
+   <property name="text">
+    <string>Générer fichier d'import</string>
+   </property>
+  </action>
+  <action name="actionVisualiser">
+   <property name="text">
+    <string>&amp;Visualiser</string>
+   </property>
+  </action>
+  <action name="actionGeneral">
+   <property name="text">
+    <string>General</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

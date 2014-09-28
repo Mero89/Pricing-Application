@@ -1,0 +1,7 @@
+psycopg2
+PyQt4
+scipy
+numpy
+matplotlib
+sqlalchemy
+xlrd
