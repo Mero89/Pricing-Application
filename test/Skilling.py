@@ -9,9 +9,8 @@ from PyQt4 import QtCore
 from MDI import Ui_MDIApp
 from EcheancierDialog import EcheancierDialog
 from LoginDialog import MyDialog
-from MonPortefeuille import Portfolios
+from MonPortefeuille import Portfolios, PortefeuilleDialog
 from DPricer.lib.User import User
-from AddPortefeuilleDialog import PortefeuilleDialog
 
 
 class MyClass(QMainWindow, Ui_MDIApp):
@@ -21,7 +20,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui = Ui_MDIApp()
         self.ui.setupUi(self)
         # log = MyDialog()
-        # self.connect(log, QtCore.SIGNAL('accepted()'), self, QtCore.SLOT('stats()'))
+        # log.accepted.connect(self.stats)
         # log.exec_()
         self.user = User('uname', 'password')
         self.user.uid = 1
@@ -31,25 +30,21 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.labelUser.setText(nom + ' ' + prenom)
         cur_day = QtCore.QDate().currentDate().toString()
         self.ui.labelDates.setText(cur_day)
-        ##
-        self.launched = QtCore.pyqtSignal(int)
-        ##
-        self.connect(self.ui.actionMonPortefeuille, QtCore.SIGNAL('triggered()'), self, QtCore.SLOT('affiche()'))
-        self.connect(self.ui.actionAjoutPortefeuille, QtCore.SIGNAL('triggered()'), self.open_portefeuille_dialog)
+        self.ui.actionMonPortefeuille.triggered.connect(self.affiche)
+        self.ui.actionAjoutPortefeuille.triggered.connect(self.open_portefeuille_dialog)
 
     @QtCore.pyqtSlot()
     def open_portefeuille_dialog(self):
         pfdial = PortefeuilleDialog()
-        self.ui.mdiArea.addSubWindow(pfdial)
+        # self.ui.mdiArea.addSubWindow(pfdial)
         pfdial.show()
 
     @QtCore.pyqtSlot()
     def affiche(self):
         pf = Portfolios()
         self.ui.mdiArea.addSubWindow(pf)
-        self.connect(pf.ui.tableWidgetPortefeuille, QtCore.SIGNAL('itemSelectionChanged()'), self.stats)
-        # self.connect(pf.ui.pushButtonFermer, QtCore.SIGNAL('clicked()'), self.ui.mdiArea.closeActiveSubWindow)
-        pf.ui.pushButtonFermer.clicked()
+        pf.ui.tableWidgetPortefeuille.itemSelectionChanged.connect(self.stats)
+        pf.ui.pushButtonFermer.clicked.connect(self.ui.mdiArea.closeActiveSubWindow)
         pf.User = self.user
         pf.show()
         pf.affichePortefeuille()
@@ -81,6 +76,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_W:
             self.filenew()
+
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

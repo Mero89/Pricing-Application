@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/test/Portefeuilles.ui'
 #
-# Created: Sun Sep 28 18:13:15 2014
+# Created: Sun Sep 28 19:06:12 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,7 +67,7 @@ class Ui_Portefeuilles(object):
         self.tableWidgetPortefeuille.setFont(font)
         self.tableWidgetPortefeuille.setMidLineWidth(0)
         self.tableWidgetPortefeuille.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked|QtGui.QAbstractItemView.EditKeyPressed|QtGui.QAbstractItemView.SelectedClicked)
-        self.tableWidgetPortefeuille.setSelectionBehavior(QtGui.QAbstractItemView.SelectItems)
+        self.tableWidgetPortefeuille.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tableWidgetPortefeuille.setShowGrid(False)
         self.tableWidgetPortefeuille.setGridStyle(QtCore.Qt.SolidLine)
         self.tableWidgetPortefeuille.setRowCount(0)
@@ -106,7 +106,8 @@ class Ui_Portefeuilles(object):
         self.tableWidgetPortefeuille.horizontalHeader().setVisible(True)
         self.tableWidgetPortefeuille.horizontalHeader().setStretchLastSection(True)
         self.tableWidgetPortefeuille.verticalHeader().setVisible(False)
-        self.tableWidgetPortefeuille.verticalHeader().setDefaultSectionSize(25)
+        self.tableWidgetPortefeuille.verticalHeader().setDefaultSectionSize(22)
+        self.tableWidgetPortefeuille.verticalHeader().setMinimumSectionSize(16)
         self.tableWidgetPortefeuille.verticalHeader().setSortIndicatorShown(True)
         self.tableWidgetPortefeuille.verticalHeader().setStretchLastSection(False)
         self.verticalLayout_2.addWidget(self.tableWidgetPortefeuille)
@@ -194,6 +195,7 @@ class Ui_Portefeuilles(object):
         self.tableWidgetActifs.horizontalHeader().setVisible(True)
         self.tableWidgetActifs.horizontalHeader().setStretchLastSection(True)
         self.tableWidgetActifs.verticalHeader().setVisible(False)
+        self.tableWidgetActifs.verticalHeader().setDefaultSectionSize(22)
         self.tableWidgetActifs.verticalHeader().setSortIndicatorShown(True)
         self.tableWidgetActifs.verticalHeader().setStretchLastSection(False)
         self.verticalLayout_3.addWidget(self.tableWidgetActifs)
@@ -203,9 +205,6 @@ class Ui_Portefeuilles(object):
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
-        self.pushButton = QtGui.QPushButton(Portefeuilles)
-        self.pushButton.setObjectName(_fromUtf8("pushButton"))
-        self.horizontalLayout_2.addWidget(self.pushButton)
         self.pushButtonFermer = QtGui.QPushButton(Portefeuilles)
         self.pushButtonFermer.setObjectName(_fromUtf8("pushButtonFermer"))
         self.horizontalLayout_2.addWidget(self.pushButtonFermer)
@@ -242,6 +241,5 @@ class Ui_Portefeuilles(object):
         item.setText(_translate("Portefeuilles", "Sensibilité", None))
         item = self.tableWidgetActifs.horizontalHeaderItem(6)
         item.setText(_translate("Portefeuilles", "Duration", None))
-        self.pushButton.setText(_translate("Portefeuilles", "PushButton", None))
         self.pushButtonFermer.setText(_translate("Portefeuilles", "Fermer", None))
 

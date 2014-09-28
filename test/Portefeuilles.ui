@@ -111,7 +111,7 @@
            <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
           </property>
           <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectItems</enum>
+           <enum>QAbstractItemView::SelectRows</enum>
           </property>
           <property name="showGrid">
            <bool>false</bool>
@@ -132,7 +132,10 @@
            <bool>false</bool>
           </attribute>
           <attribute name="verticalHeaderDefaultSectionSize">
-           <number>25</number>
+           <number>22</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>16</number>
           </attribute>
           <attribute name="verticalHeaderShowSortIndicator" stdset="0">
            <bool>true</bool>
@@ -202,6 +205,12 @@
      </item>
      <item>
       <widget class="Line" name="line">
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -258,6 +267,9 @@
           <property name="midLineWidth">
            <number>0</number>
           </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+          </property>
           <property name="dragDropOverwriteMode">
            <bool>false</bool>
           </property>
@@ -287,6 +299,9 @@
           </attribute>
           <attribute name="verticalHeaderVisible">
            <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderDefaultSectionSize">
+           <number>22</number>
           </attribute>
           <attribute name="verticalHeaderShowSortIndicator" stdset="0">
            <bool>true</bool>
@@ -392,13 +407,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonFermer">
