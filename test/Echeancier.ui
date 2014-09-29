@@ -6,16 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>369</width>
-    <height>249</height>
+    <width>382</width>
+    <height>250</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
     <widget class="QTableWidget" name="tableWidget">
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
      <column>
       <property name="text">
        <string>Date Coupon</string>
@@ -28,31 +31,8 @@
      </column>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="1">
-    <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="sizeConstraint">
       <enum>QLayout::SetFixedSize</enum>
      </property>
@@ -70,8 +50,17 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
-        <string>Ajouter</string>
+        <string>+</string>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -89,12 +78,54 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
-        <string>Supprimer</string>
+        <string>-</string>
        </property>
       </widget>
      </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -129,22 +160,6 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>248</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButtonSupprimer</sender>
-   <signal>clicked()</signal>
-   <receiver>tableWidget</receiver>
-   <slot>clearSelection()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>280</x>
-     <y>112</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>200</x>
-     <y>74</y>
     </hint>
    </hints>
   </connection>

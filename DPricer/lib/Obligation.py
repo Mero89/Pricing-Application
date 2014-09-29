@@ -37,6 +37,7 @@ class Obligation(object):
         self.maturite_initiale = (self.date_echeance - self.date_emission).days
         # Maturite residuelle
         self.mat_residuelle = (self.date_echeance - self.date_evaluation).days
+        self.tx_actuariel = 0
         if tx_act is None and self.mat_residuelle > 0:
             self.courbe = Courbe(self.date_evaluation)
             self.tx_actuariel = self.courbe.taux_lineaire(self.mat_residuelle)
@@ -160,11 +161,14 @@ class Obligation(object):
 
     def sensibilite(self):
         real_price = self.prix()
-        self.tx_actuariel += .01
-        new_price = self.prix()
-        self.tx_actuariel -= .01
-        r = abs(new_price - real_price) / real_price
-        return round(r * 100, 4)
+        if self.tx_actuariel is not None and self.tx_actuariel != 0:
+            self.tx_actuariel += .01
+            new_price = self.prix()
+            self.tx_actuariel -= .01
+            r = abs(new_price - real_price) / real_price
+            return round(r * 100, 4)
+        else:
+            return 0
 
     def duration(self):
         # Duration se calcule depuis la sensibilité => Duration =Sensi*(1+Tr)

@@ -21,7 +21,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QTableWidget" name="tableWidget">
           <property name="alternatingRowColors">
@@ -40,7 +40,7 @@
            <bool>true</bool>
           </attribute>
           <attribute name="verticalHeaderVisible">
-           <bool>false</bool>
+           <bool>true</bool>
           </attribute>
           <attribute name="verticalHeaderDefaultSectionSize">
            <number>22</number>
@@ -70,7 +70,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="sizeConstraint">
            <enum>QLayout::SetFixedSize</enum>
           </property>
@@ -82,14 +82,26 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>90</width>
+              <width>80</width>
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
-             <string>Ajouter</string>
+             <string>+</string>
             </property>
            </widget>
           </item>
@@ -107,10 +119,29 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
-             <string>Supprimer</string>
+             <string>-</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>

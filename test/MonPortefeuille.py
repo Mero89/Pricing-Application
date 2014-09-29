@@ -19,8 +19,6 @@ class Portfolios(QWidget, Ui_Portefeuilles):
         self.ui.setupUi(self)
         self.User = None
         self.ui.tableWidgetPortefeuille.setAlternatingRowColors(True)
-        # self.connect(self.ui.pushButtonFermer, QtCore.SIGNAL('clicked()'), self.close)
-
 
     @QtCore.pyqtSlot()
     def affichePortefeuille(self):
@@ -99,11 +97,9 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
         self.ui = Ui_AddPFDialog()
         self.ui.setupUi(self)
         self.setWindowTitle('Ajout de Portefeuilles')
-        # self.connect(self, QtCore.SIGNAL('accepted()'), self.save_portefeuille)
         self.accepted.connect(self.save_portefeuille)
-        self.ui.pushButtonAjouter_2.clicked.connect(self.Ajouter_clicked)
-        self.ui.pushButtonSupprimer_2.clicked.connect(self.Supprimer_clicked)
-
+        self.ui.pushButtonAjouter.clicked.connect(self.Ajouter_clicked)
+        self.ui.pushButtonSupprimer.clicked.connect(self.Supprimer_clicked)
 
     @QtCore.pyqtSlot()
     def save_portefeuille(self):

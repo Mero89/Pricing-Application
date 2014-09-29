@@ -173,7 +173,6 @@ class Courbe(CourbeMd):
         return dico
 
     def zero_coupon(self):
-        tf = .05
         zc1 = self.taux_lineaire(365)
         liste_zc = [zc1]
         annee = self.date_de_transaction.year

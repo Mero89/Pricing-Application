@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Gisement d'Actifs</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -71,12 +71,27 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit">
+         <widget class="QLineEdit" name="lineEditValeur">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="placeholderText">
+           <string>Entrer valeur à rechercher</string>
           </property>
          </widget>
         </item>
@@ -97,6 +112,13 @@
          </spacer>
         </item>
         <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="labelCritere">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -110,7 +132,19 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBox">
+         <widget class="QComboBox" name="comboBoxCritere">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="editable">
            <bool>false</bool>
           </property>
@@ -128,6 +162,19 @@
            </property>
           </item>
          </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -339,6 +386,17 @@
         </column>
         <column>
          <property name="text">
+          <string>Convexité</string>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>Tx Actuariel</string>
          </property>
          <property name="font">
@@ -400,7 +458,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="pushButtonValider">
           <property name="text">
            <string>Valider</string>
           </property>

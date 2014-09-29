@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/test/Echeancier.ui'
 #
-# Created: Sun Sep 28 23:13:23 2014
+# Created: Sun Sep 28 23:25:08 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,9 +26,9 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(369, 249)
-        self.gridLayout = QtGui.QGridLayout(Dialog)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        Dialog.resize(382, 250)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(Dialog)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.tableWidget = QtGui.QTableWidget(Dialog)
         self.tableWidget.setObjectName(_fromUtf8("tableWidget"))
         self.tableWidget.setColumnCount(2)
@@ -37,17 +37,11 @@ class Ui_Dialog(object):
         self.tableWidget.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(1, item)
-        self.gridLayout.addWidget(self.tableWidget, 0, 0, 1, 1)
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.gridLayout.addWidget(self.buttonBox, 2, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
-        self.verticalLayout = QtGui.QVBoxLayout()
-        self.verticalLayout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.tableWidget.horizontalHeader().setStretchLastSection(True)
+        self.verticalLayout_2.addWidget(self.tableWidget)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.pushButtonAjouter = QtGui.QPushButton(Dialog)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -55,8 +49,13 @@ class Ui_Dialog(object):
         sizePolicy.setHeightForWidth(self.pushButtonAjouter.sizePolicy().hasHeightForWidth())
         self.pushButtonAjouter.setSizePolicy(sizePolicy)
         self.pushButtonAjouter.setMaximumSize(QtCore.QSize(90, 16777215))
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.pushButtonAjouter.setFont(font)
+        self.pushButtonAjouter.setFlat(False)
         self.pushButtonAjouter.setObjectName(_fromUtf8("pushButtonAjouter"))
-        self.verticalLayout.addWidget(self.pushButtonAjouter)
+        self.horizontalLayout.addWidget(self.pushButtonAjouter)
         self.pushButtonSupprimer = QtGui.QPushButton(Dialog)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -64,14 +63,26 @@ class Ui_Dialog(object):
         sizePolicy.setHeightForWidth(self.pushButtonSupprimer.sizePolicy().hasHeightForWidth())
         self.pushButtonSupprimer.setSizePolicy(sizePolicy)
         self.pushButtonSupprimer.setMaximumSize(QtCore.QSize(90, 16777215))
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.pushButtonSupprimer.setFont(font)
         self.pushButtonSupprimer.setObjectName(_fromUtf8("pushButtonSupprimer"))
-        self.verticalLayout.addWidget(self.pushButtonSupprimer)
-        self.gridLayout.addLayout(self.verticalLayout, 0, 1, 1, 1)
+        self.horizontalLayout.addWidget(self.pushButtonSupprimer)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
+        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem1)
+        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.verticalLayout_2.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
-        QtCore.QObject.connect(self.pushButtonSupprimer, QtCore.SIGNAL(_fromUtf8("clicked()")), self.tableWidget.clearSelection)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -80,6 +91,6 @@ class Ui_Dialog(object):
         item.setText(_translate("Dialog", "Date Coupon", None))
         item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("Dialog", "Flux Coupon", None))
-        self.pushButtonAjouter.setText(_translate("Dialog", "Ajouter", None))
-        self.pushButtonSupprimer.setText(_translate("Dialog", "Supprimer", None))
+        self.pushButtonAjouter.setText(_translate("Dialog", "+", None))
+        self.pushButtonSupprimer.setText(_translate("Dialog", "-", None))
 

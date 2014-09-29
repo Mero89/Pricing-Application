@@ -11,6 +11,9 @@ from EcheancierDialog import EcheancierDialog
 from LoginDialog import MyDialog
 from MonPortefeuille import Portfolios, PortefeuilleDialog
 from DPricer.lib.User import User
+from CourbeTauxScreen import CourbeTaux
+from GisementScreen import GisementScreen
+from AddAsset import AddAsset
 
 
 class MyClass(QMainWindow, Ui_MDIApp):
@@ -19,19 +22,44 @@ class MyClass(QMainWindow, Ui_MDIApp):
         QMainWindow.__init__(self)
         self.ui = Ui_MDIApp()
         self.ui.setupUi(self)
-        # log = MyDialog()
-        # log.accepted.connect(self.stats)
-        # log.exec_()
-        self.user = User('uname', 'password')
-        self.user.uid = 1
-        # self.user = log.user
+        log = MyDialog()
+        log.accepted.connect(self.stats)
+        log.exec_()
+        # self.user = User('uname', 'password')
+        # self.user.uid = 1
+        self.user = log.user
         nom = 'FAKIR'
         prenom = 'Marouane'
         self.ui.labelUser.setText(nom + ' ' + prenom)
         cur_day = QtCore.QDate().currentDate().toString()
         self.ui.labelDates.setText(cur_day)
-        self.ui.actionMonPortefeuille.triggered.connect(self.affiche)
+        self.connect_actions()
+
+    def connect_actions(self):
+        self.ui.actionMonPortefeuille.triggered.connect(self.open_portefeuille_screen)
         self.ui.actionAjoutPortefeuille.triggered.connect(self.open_portefeuille_dialog)
+        self.ui.actionVisualiser.triggered.connect(self.open_courbe_screen)
+        self.ui.actionGisement.triggered.connect(self.open_gisement_screen)
+        self.ui.actionAjoutObligation.triggered.connect(self.open_add_asset_screen)
+
+    @QtCore.pyqtSlot()
+    def open_add_asset_screen(self):
+        ct = AddAsset()
+        ct.setWindowTitle('Ajouter Actif')
+        self.ui.mdiArea.addSubWindow(ct)
+        ct.show()
+
+    @QtCore.pyqtSlot()
+    def open_gisement_screen(self):
+        ct = GisementScreen()
+        self.ui.mdiArea.addSubWindow(ct)
+        ct.show()
+
+    @QtCore.pyqtSlot()
+    def open_courbe_screen(self):
+        ct = CourbeTaux()
+        self.ui.mdiArea.addSubWindow(ct)
+        ct.show()
 
     @QtCore.pyqtSlot()
     def open_portefeuille_dialog(self):
@@ -40,7 +68,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
         pfdial.exec_()
 
     @QtCore.pyqtSlot()
-    def affiche(self):
+    def open_portefeuille_screen(self):
         pf = Portfolios()
         self.ui.mdiArea.addSubWindow(pf)
         pf.ui.tableWidgetPortefeuille.itemSelectionChanged.connect(self.stats)
@@ -54,14 +82,6 @@ class MyClass(QMainWindow, Ui_MDIApp):
         wnd = QDialog()
         self.ui.mdiArea.addSubWindow(wnd)
         wnd.show()
-
-    @QtCore.pyqtSlot()
-    def title_all(self):
-        i = 0
-        for wndw in self.ui.mdiArea.subWindowList():
-            i += 1
-            wndw.setWindowTitle('Window {}'.format(i))
-
 
     # @QtCore.pyqtSlot(int,int)
     @QtCore.pyqtSlot()

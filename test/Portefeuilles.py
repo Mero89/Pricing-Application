@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/test/Portefeuilles.ui'
 #
-# Created: Sun Sep 28 19:06:12 2014
+# Created: Mon Sep 29 09:26:03 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -72,7 +72,7 @@ class Ui_Portefeuilles(object):
         self.tableWidgetPortefeuille.setGridStyle(QtCore.Qt.SolidLine)
         self.tableWidgetPortefeuille.setRowCount(0)
         self.tableWidgetPortefeuille.setObjectName(_fromUtf8("tableWidgetPortefeuille"))
-        self.tableWidgetPortefeuille.setColumnCount(5)
+        self.tableWidgetPortefeuille.setColumnCount(6)
         item = QtGui.QTableWidgetItem()
         font = QtGui.QFont()
         font.setBold(True)
@@ -103,6 +103,12 @@ class Ui_Portefeuilles(object):
         font.setWeight(75)
         item.setFont(font)
         self.tableWidgetPortefeuille.setHorizontalHeaderItem(4, item)
+        item = QtGui.QTableWidgetItem()
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        item.setFont(font)
+        self.tableWidgetPortefeuille.setHorizontalHeaderItem(5, item)
         self.tableWidgetPortefeuille.horizontalHeader().setVisible(True)
         self.tableWidgetPortefeuille.horizontalHeader().setStretchLastSection(True)
         self.tableWidgetPortefeuille.verticalHeader().setVisible(False)
@@ -113,6 +119,8 @@ class Ui_Portefeuilles(object):
         self.verticalLayout_2.addWidget(self.tableWidgetPortefeuille)
         self.horizontalLayout.addWidget(self.groupBox)
         self.line = QtGui.QFrame(Portefeuilles)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setLineWidth(1)
         self.line.setFrameShape(QtGui.QFrame.VLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName(_fromUtf8("line"))
@@ -141,6 +149,7 @@ class Ui_Portefeuilles(object):
         font.setPointSize(10)
         self.tableWidgetActifs.setFont(font)
         self.tableWidgetActifs.setMidLineWidth(0)
+        self.tableWidgetActifs.setEditTriggers(QtGui.QAbstractItemView.DoubleClicked|QtGui.QAbstractItemView.EditKeyPressed)
         self.tableWidgetActifs.setDragDropOverwriteMode(False)
         self.tableWidgetActifs.setDefaultDropAction(QtCore.Qt.CopyAction)
         self.tableWidgetActifs.setAlternatingRowColors(True)
@@ -149,7 +158,7 @@ class Ui_Portefeuilles(object):
         self.tableWidgetActifs.setGridStyle(QtCore.Qt.SolidLine)
         self.tableWidgetActifs.setRowCount(0)
         self.tableWidgetActifs.setObjectName(_fromUtf8("tableWidgetActifs"))
-        self.tableWidgetActifs.setColumnCount(7)
+        self.tableWidgetActifs.setColumnCount(8)
         item = QtGui.QTableWidgetItem()
         font = QtGui.QFont()
         font.setBold(True)
@@ -192,6 +201,12 @@ class Ui_Portefeuilles(object):
         font.setWeight(75)
         item.setFont(font)
         self.tableWidgetActifs.setHorizontalHeaderItem(6, item)
+        item = QtGui.QTableWidgetItem()
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        item.setFont(font)
+        self.tableWidgetActifs.setHorizontalHeaderItem(7, item)
         self.tableWidgetActifs.horizontalHeader().setVisible(True)
         self.tableWidgetActifs.horizontalHeader().setStretchLastSection(True)
         self.tableWidgetActifs.verticalHeader().setVisible(False)
@@ -226,6 +241,8 @@ class Ui_Portefeuilles(object):
         item.setText(_translate("Portefeuilles", "Sensibilité", None))
         item = self.tableWidgetPortefeuille.horizontalHeaderItem(4)
         item.setText(_translate("Portefeuilles", "Duration", None))
+        item = self.tableWidgetPortefeuille.horizontalHeaderItem(5)
+        item.setText(_translate("Portefeuilles", "Convexité", None))
         self.groupBox_2.setTitle(_translate("Portefeuilles", "Structure Portefeuille", None))
         item = self.tableWidgetActifs.horizontalHeaderItem(0)
         item.setText(_translate("Portefeuilles", "ISIN", None))
@@ -241,5 +258,7 @@ class Ui_Portefeuilles(object):
         item.setText(_translate("Portefeuilles", "Sensibilité", None))
         item = self.tableWidgetActifs.horizontalHeaderItem(6)
         item.setText(_translate("Portefeuilles", "Duration", None))
+        item = self.tableWidgetActifs.horizontalHeaderItem(7)
+        item.setText(_translate("Portefeuilles", "Convexité", None))
         self.pushButtonFermer.setText(_translate("Portefeuilles", "Fermer", None))
 

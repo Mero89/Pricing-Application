@@ -21,7 +21,6 @@ class RenderBox(QDialog, Ui_SandBox):
         md = AppModel()
         session = md.get_session()
         results = session.query(ObligationMd).all()
-        # for i in range(50):
         for i in range(len(results)):
             el = results[i]
             a = QTableWidgetItem(el.isin)
