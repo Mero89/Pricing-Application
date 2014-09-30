@@ -8,7 +8,7 @@ import os
 
 def create_template(path):
     w = xlwt.Workbook()
-    s = w.add_sheet('Exemple')
+    s = w.add_sheet('Portfolio')
     row = s.row(0)
     row.write(0,'Code ISIN')
     row.write(1,'NOM')

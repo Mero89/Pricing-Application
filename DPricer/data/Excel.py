@@ -33,6 +33,16 @@ def read_excel(path_to_file):
 
 
 def get_date_courbe(path_to_file):
+    date_transaction = get_date_transaction(path_to_file)
+    if date_transaction.weekday() == 4:
+        delta = dt.timedelta(days=3)
+    else:
+        delta = dt.timedelta(days=1)
+    # retourne la date figurant dans le fichier +1 jour
+    return date_transaction + delta
+
+
+def get_date_transaction(path_to_file):
     try:
         wbook = xlrd.open_workbook(path_to_file)
     except IOError:
@@ -40,13 +50,8 @@ def get_date_courbe(path_to_file):
         return None
     sheet = wbook.sheet_by_index(0)
     cel = sheet.cell(1, 0).value
-    date_courbe = dt.datetime.strptime(cel.split(':')[1], '%d/%m/%Y')
-    if date_courbe.weekday() == 4:
-        delta = dt.timedelta(days=3)
-    else:
-        delta = dt.timedelta(days=1)
-    # retourne la date figurant dans le fichier +1 jour
-    return date_courbe + delta
+    date_transaction = dt.datetime.strptime(cel.split(':')[1], '%d/%m/%Y')
+    return date_transaction
 
 
 def list_excel_files(path_to_folder):
@@ -84,6 +89,7 @@ def commit_excel(excel_path, _date=None):
     elif type(_date) is str:
         _date = dt.datetime.strptime(_date, '%d/%m/%Y')
     rows = read_excel(excel_path)
+    d_transaction = get_date_transaction(excel_path)
     md = AppModel()
     session = md.get_session()
     existe = is_exists(_date)
@@ -96,6 +102,7 @@ def commit_excel(excel_path, _date=None):
                 courbe.transactions = rw[1]
                 courbe.taux_pondere = rw[2]
                 courbe.date_valeur = rw[3]
+                courbe.date_transaction = d_transaction
                 session.add(courbe)
             try:
                 session.commit()
@@ -122,38 +129,30 @@ def import_obligation(excel_path):
         for i in range(start_row, sheet.nrows - 1):
             a.append(sheet.row_values(i))
         for row in a:
-            if row[2] != '' and row[3] != '' and row[4] != '':
-                d_em = xlrd.xldate_as_tuple(int(row[2]), wbook.datemode)
-                d_js = xlrd.xldate_as_tuple(int(row[3]), wbook.datemode)
-                d_ech = xlrd.xldate_as_tuple(int(row[4]), wbook.datemode)
-                row[2] = dt.date(year=d_em[0], month=d_em[1], day=d_em[2])
-                row[3] = dt.date(year=d_js[0], month=d_js[1], day=d_js[2])
-                row[4] = dt.date(year=d_ech[0], month=d_ech[1], day=d_ech[2])
-            if type(row[1]) is not type(str) and row[1] != '':
+            if row[5] != '' and row[6] != '' and row[7] != '':
+                d_em = xlrd.xldate_as_tuple(int(row[5]), wbook.datemode)
+                d_js = xlrd.xldate_as_tuple(int(row[6]), wbook.datemode)
+                d_ech = xlrd.xldate_as_tuple(int(row[7]), wbook.datemode)
+                row[5] = dt.date(year=d_em[0], month=d_em[1], day=d_em[2])
+                row[6] = dt.date(year=d_js[0], month=d_js[1], day=d_js[2])
+                row[7] = dt.date(year=d_ech[0], month=d_ech[1], day=d_ech[2])
+            if type(row[1]) is type(str) and row[1] != '':
                 row[1] = str(int(row[1]))
-            if row[7] is None or row[7] == '':
-                row[7] = 0
 
         # enregistre Les données
         md = AppModel()
         session = md.get_session()
         for rw in a:
-            """
-        nom, isin, d_emission, d_jouissance,
-         0    1         2          3
-        maturite, tx_facial, nominal, spread,  type
-           4         5           6       7       8
-        """
             if rw[1] != '' and rw[0] != '':
                 oblig = ObligationMd()
-                oblig.nom = rw[0]
-                oblig.isin = rw[1]
-                oblig.date_emission = rw[2]
-                oblig.date_jouissance = rw[3]
-                oblig.maturite = rw[4]
-                oblig.taux_facial = rw[5]
-                oblig.nominal = rw[6]
-                oblig.spread = rw[7]
+                oblig.isin = rw[0]
+                oblig.nom = rw[1]
+                oblig.nominal = rw[2]
+                oblig.taux_facial = rw[3]
+                oblig.spread = rw[4]
+                oblig.date_emission = rw[5]
+                oblig.date_jouissance = rw[6]
+                oblig.maturite = rw[7]
                 oblig.type = rw[8]
                 session.add(oblig)
                 try:
@@ -174,24 +173,22 @@ def print_list(mylist):
 
 
 def test_import_obligation():
-    file_path = '/Users/mar/Dropbox/DTM/Projets/Societe Generale/Bond_Pricing_Tool.xls'
+    # file_path = '/Users/mar/Dropbox/DTM/Projets/Societe Generale/Bond_Pricing_Tool.xls'
+    file_path = '/Users/mar/Desktop/Template.xls'
     workbook = xlrd.open_workbook(file_path, encoding_override='utf-8')
-    # sheet = workbook.sheet_by_index(2)
     sheet = workbook.sheet_by_name('Portfolio')
-
     a = list()
     for i in range(1, sheet.nrows - 1):
-        # a.append([r for r in sheet.row_values(i)])
         a.append(sheet.row_values(i))
     for row in a:
-        if row[2] != '' and row[3] != '' and row[5] != '':
-            d_em = xlrd.xldate_as_tuple(int(row[2]), workbook.datemode)
-            d_js = xlrd.xldate_as_tuple(int(row[3]), workbook.datemode)
-            d_ech = xlrd.xldate_as_tuple(int(row[5]), workbook.datemode)
-            row[2] = dt.date(year=d_em[0], month=d_em[1], day=d_em[2])
-            row[3] = dt.date(year=d_js[0], month=d_js[1], day=d_js[2])
-            row[5] = dt.date(year=d_ech[0], month=d_ech[1], day=d_ech[2])
-        if type(row[1]) is not type(str) and row[1] != '':
+        if row[5] != '' and row[6] != '' and row[7] != '':
+            d_em = xlrd.xldate_as_tuple(int(row[5]), workbook.datemode)
+            d_js = xlrd.xldate_as_tuple(int(row[6]), workbook.datemode)
+            d_ech = xlrd.xldate_as_tuple(int(row[7]), workbook.datemode)
+            row[5] = dt.date(year=d_em[0], month=d_em[1], day=d_em[2])
+            row[6] = dt.date(year=d_js[0], month=d_js[1], day=d_js[2])
+            row[7] = dt.date(year=d_ech[0], month=d_ech[1], day=d_ech[2])
+        if type(row[1]) is type(str) and row[1] != '':
             row[1] = str(int(row[1]))
     print_list(a)
 
@@ -205,9 +202,9 @@ def main():
 
 
 def test():
-    dd = get_date_courbe('/Users/mar/PycharmProjects/DPricer/DPricer/data/repository/TauxBAM-18-8-2014.xls')
+    dd = get_date_courbe('/Users/mar/PycharmProjects/DPricer/DPricer/data/repository/TauxBAM-28-8-2014.xls')
     print dd
 
 
 if __name__ == '__main__':
-    test()
+    test_import_obligation()
