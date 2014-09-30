@@ -3,8 +3,8 @@ __author__ = 'F.Marouane'
 
 import copy
 import datetime as dt
-from DPricer.lib.Interpolation import Interpol
-from DPricer.lib.Obligation import Obligation
+from Interpolation import Interpol
+from Obligation import Obligation
 
 
 class ObligationAMC(Obligation):

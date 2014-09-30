@@ -2,7 +2,7 @@
 __author__ = 'F.Marouane'
 
 import calendar as cal
-from DPricer.data.AppModel import AppModel, CourbeMd
+from ..data.AppModel import AppModel, CourbeMd
 from Interpolation import Interpol
 import datetime
 import copy

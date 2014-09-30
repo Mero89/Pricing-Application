@@ -3,7 +3,7 @@ __author__ = 'F.Marouane'
 
 import calendar as cal
 import datetime as dt
-from DPricer.lib.Courbe import Courbe
+from Courbe import Courbe
 
 
 class Obligation(object):

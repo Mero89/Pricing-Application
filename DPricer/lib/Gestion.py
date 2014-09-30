@@ -1,7 +1,7 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
 
-from DPricer.data.AppModel import AppModel, GestionMd, PortefeuilleMd
+from ..data.AppModel import AppModel, GestionMd, PortefeuilleMd
 
 
 class Gestion(object):

@@ -1,7 +1,7 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
 
-from DPricer.data.AppModel import PanierMd, AppModel
+from ..data.AppModel import PanierMd, AppModel
 
 
 class Panier(object):

@@ -1,9 +1,9 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
 
-from DPricer.data.AppModel import AppModel, PortefeuilleMd, ObligationMd
-from DPricer.lib.Panier import Panier
-from DPricer.lib.Obligation import Obligation
+from ..data.AppModel import AppModel, PortefeuilleMd, ObligationMd
+from Panier import Panier
+from Obligation import Obligation
 import datetime as dt
 
 
