@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'PycharmProjects/DPricer/test/Gisement.ui'
+# Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/Gisement.ui'
 #
-# Created: Mon Sep 29 14:22:19 2014
+# Created: Tue Sep 30 11:55:55 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
