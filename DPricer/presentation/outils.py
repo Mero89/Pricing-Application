@@ -3,8 +3,10 @@ __author__ = 'F.Marouane'
 
 import sys
 import datetime as dt
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
 from DPricer.lib.VAN import VAN
 from DPricer.lib.Obligation import Obligation
 from UI_CalculetteFinanciere import Ui_Form
