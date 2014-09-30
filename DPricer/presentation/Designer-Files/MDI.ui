@@ -93,6 +93,12 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
       <property name="viewMode">
        <enum>QMdiArea::TabbedView</enum>
       </property>
@@ -150,9 +156,17 @@
     <property name="title">
      <string>Paramètres</string>
     </property>
+    <widget class="QMenu" name="menuDispositionDesFenetres">
+     <property name="title">
+      <string>Disposition des fenêtres</string>
+     </property>
+     <addaction name="actionOnglets"/>
+     <addaction name="actionSousFenetres"/>
+    </widget>
     <addaction name="actionProfilUtilisateur"/>
     <addaction name="separator"/>
     <addaction name="actionGeneral"/>
+    <addaction name="menuDispositionDesFenetres"/>
    </widget>
    <widget class="QMenu" name="menuOutils">
     <property name="title">
@@ -168,10 +182,10 @@
      <property name="title">
       <string>Importer</string>
      </property>
-     <addaction name="actionCSV_3"/>
-     <addaction name="actionCSV_4"/>
+     <addaction name="actionImporterActifExcel"/>
+     <addaction name="actionImporterActifCSV"/>
      <addaction name="separator"/>
-     <addaction name="actionG_n_rer_fichier_d_import"/>
+     <addaction name="actionGenererFichierImport"/>
     </widget>
     <addaction name="actionAjoutObligation"/>
     <addaction name="separator"/>
@@ -299,12 +313,12 @@
     <string>Nouveau Portefeuille</string>
    </property>
   </action>
-  <action name="actionCSV_3">
+  <action name="actionImporterActifExcel">
    <property name="text">
     <string>Excel</string>
    </property>
   </action>
-  <action name="actionCSV_4">
+  <action name="actionImporterActifCSV">
    <property name="text">
     <string>CSV</string>
    </property>
@@ -319,7 +333,7 @@
     <string>Autres</string>
    </property>
   </action>
-  <action name="actionG_n_rer_fichier_d_import">
+  <action name="actionGenererFichierImport">
    <property name="text">
     <string>Générer fichier d'import</string>
    </property>
@@ -332,6 +346,16 @@
   <action name="actionGeneral">
    <property name="text">
     <string>General</string>
+   </property>
+  </action>
+  <action name="actionOnglets">
+   <property name="text">
+    <string>Onglets</string>
+   </property>
+  </action>
+  <action name="actionSousFenetres">
+   <property name="text">
+    <string>Sous-fenêtres</string>
    </property>
   </action>
  </widget>

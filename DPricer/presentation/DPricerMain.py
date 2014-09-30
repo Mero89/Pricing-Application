@@ -7,7 +7,7 @@ import sys
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 from DPricer.presentation.PyuicFiles.MDI import Ui_MDIApp
-from LoginDialog import MyDialog
+from LoginDialog import LoginDialog
 from MonPortefeuille import Portfolios, PortefeuilleDialog
 from CourbeTauxScreen import CourbeTaux
 
@@ -18,7 +18,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
         QMainWindow.__init__(self)
         self.ui = Ui_MDIApp()
         self.ui.setupUi(self)
-        log = MyDialog()
+        log = LoginDialog()
         log.accepted.connect(self.stats)
         log.exec_()
         # self.user = User('uname', 'password')

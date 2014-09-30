@@ -9,7 +9,7 @@ from DPricer.presentation.PyuicFiles.Login import Ui_Login
 from DPricer.lib.User import User
 
 
-class MyDialog(QDialog, Ui_Login):
+class LoginDialog(QDialog, Ui_Login):
     def __init__(self):
         super(Ui_Login, self).__init__()
         QDialog.__init__(self)
@@ -42,6 +42,6 @@ class MyDialog(QDialog, Ui_Login):
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
-    form = MyDialog()
+    form = LoginDialog()
     form.show()
     ap.exec_()
