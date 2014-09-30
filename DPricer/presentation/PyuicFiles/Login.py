@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'PycharmProjects/DPricer/test/Login.ui'
+# Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/Login.ui'
 #
-# Created: Wed Sep 24 16:45:28 2014
+# Created: Tue Sep 30 12:31:42 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_Login(object):
     def setupUi(self, Login):
         Login.setObjectName(_fromUtf8("Login"))
         Login.setWindowModality(QtCore.Qt.ApplicationModal)
-        Login.resize(396, 220)
+        Login.resize(394, 278)
         Login.setModal(True)
         self.verticalLayout = QtGui.QVBoxLayout(Login)
         self.verticalLayout.setContentsMargins(-1, 8, -1, -1)
@@ -71,6 +71,8 @@ class Ui_Login(object):
         self.motDePasseLabel.setObjectName(_fromUtf8("motDePasseLabel"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.motDePasseLabel)
         self.motDePasseLineEdit = QtGui.QLineEdit(Login)
+        self.motDePasseLineEdit.setInputMask(_fromUtf8(""))
+        self.motDePasseLineEdit.setEchoMode(QtGui.QLineEdit.Password)
         self.motDePasseLineEdit.setObjectName(_fromUtf8("motDePasseLineEdit"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.motDePasseLineEdit)
         self.verticalLayout.addLayout(self.formLayout)

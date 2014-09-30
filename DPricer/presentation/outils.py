@@ -9,7 +9,7 @@ from PyQt4.QtGui import *
 
 from DPricer.lib.VAN import VAN
 from DPricer.lib.Obligation import Obligation
-from .PyuicFiles.UI_CalculetteFinanciere import Ui_Form
+from DPricer.presentation.PyuicFiles.UI_CalculetteFinanciere import Ui_Form
 
 
 class Calculette(QWidget, Ui_Form):

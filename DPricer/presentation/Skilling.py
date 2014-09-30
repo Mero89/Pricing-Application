@@ -6,7 +6,7 @@ __author__ = 'F.Marouane'
 import sys
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
-from .PyuicFiles.MDI import Ui_MDIApp
+from DPricer.presentation.PyuicFiles.MDI import Ui_MDIApp
 from LoginDialog import MyDialog
 from MonPortefeuille import Portfolios, PortefeuilleDialog
 from CourbeTauxScreen import CourbeTaux
