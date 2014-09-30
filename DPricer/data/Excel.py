@@ -8,7 +8,7 @@ from DPricer.data.AppModel import AppModel, CourbeMd, ObligationMd
 import datetime as dt
 
 
-def read_excel(path_to_file):
+def read_courbe_bam(path_to_file):
     """
     retourne une liste de lignes contenues dans le fichier BAM d'excel
     :param path_to_file:
@@ -77,7 +77,7 @@ def is_exists(_date):
     return existe
 
 
-def commit_excel(excel_path, _date=None):
+def commit_courbe_bam(excel_path, _date=None):
     """
     Enregistre la courbe de taux BAM dans la base de données
     :param excel_path: chemin vers le fichier
@@ -88,7 +88,7 @@ def commit_excel(excel_path, _date=None):
         _date = get_date_courbe(excel_path)
     elif type(_date) is str:
         _date = dt.datetime.strptime(_date, '%d/%m/%Y')
-    rows = read_excel(excel_path)
+    rows = read_courbe_bam(excel_path)
     d_transaction = get_date_transaction(excel_path)
     md = AppModel()
     session = md.get_session()
@@ -161,9 +161,9 @@ def import_obligation(excel_path):
                     session.rollback()
 
 
-def test_read_excel():
+def test_read_courbe_bam():
     file_path = '/Users/mar/Desktop/pylab/repo/OperationMarSecon.xls'
-    a = read_excel(file_path)
+    a = read_courbe_bam(file_path)
     print a
 
 
@@ -198,7 +198,7 @@ def main():
     xcl_files = list_excel_files(repo)
     for xcl in xcl_files:
         full_path = os.path.join(repo, xcl)
-        commit_excel(full_path)
+        commit_courbe_bam(full_path)
 
 
 def test():
