@@ -6,7 +6,7 @@ import sys
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 
-from DPricer.presentation.Echeancier import Ui_Dialog
+from DPricer.presentation.PyuicFiles.Echeancier import Ui_Dialog
 
 
 class EcheancierDialog(QDialog, Ui_Dialog):

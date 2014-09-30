@@ -7,7 +7,7 @@ import datetime as dt
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 
-from DPricer.presentation.CourbeTaux import Ui_CourbeTaux
+from DPricer.presentation.PyuicFiles.CourbeTaux import Ui_CourbeTaux
 from DPricer.data.AppModel import CourbeMd, AppModel
 
 
