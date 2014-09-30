@@ -5,7 +5,7 @@ import sys
 
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
-from DPricer.presentation.PyuicFiles.AddAssetDialog import Ui_AddAsset
+from .PyuicFiles.AddAssetDialog import Ui_AddAsset
 
 
 class AddAsset(QDialog, Ui_AddAsset):

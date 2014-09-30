@@ -6,8 +6,8 @@ import sys
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 
-from DPricer.presentation.PyuicFiles.AddPFDialog import Ui_AddPFDialog
-from DPricer.presentation.PyuicFiles.Portefeuilles import Ui_Portefeuilles
+from .PyuicFiles.AddPFDialog import Ui_AddPFDialog
+from .PyuicFiles.Portefeuilles import Ui_Portefeuilles
 from DPricer.lib.Gestion import Gestion
 from DPricer.lib.Portefeuille import Portefeuille
 from DPricer.data.AppModel import AppModel, PortefeuilleMd

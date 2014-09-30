@@ -6,10 +6,10 @@ __author__ = 'F.Marouane'
 import sys
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
-from DPricer.presentation.PyuicFiles.MDI import Ui_MDIApp
-from DPricer.presentation.LoginDialog import MyDialog
-from DPricer.presentation.MonPortefeuille import Portfolios, PortefeuilleDialog
-from DPricer.presentation.CourbeTauxScreen import CourbeTaux
+from .PyuicFiles.MDI import Ui_MDIApp
+from LoginDialog import MyDialog
+from MonPortefeuille import Portfolios, PortefeuilleDialog
+from CourbeTauxScreen import CourbeTaux
 
 
 class MyClass(QMainWindow, Ui_MDIApp):

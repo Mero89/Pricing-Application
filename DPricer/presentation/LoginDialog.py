@@ -6,7 +6,7 @@ import sys
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 
-from DPricer.presentation.PyuicFiles.Login import Ui_Login
+from .PyuicFiles.Login import Ui_Login
 from DPricer.lib.User import User
 
 
