@@ -2,9 +2,11 @@
 __author__ = 'F.Marouane'
 
 import sys
+
 from PyQt4.QtGui import *
-from AddPFDialog import Ui_AddPFDialog
 from PyQt4 import QtCore
+
+from DPricer.presentation.AddPFDialog import Ui_AddPFDialog
 from DPricer.data.AppModel import AppModel, PortefeuilleMd
 
 

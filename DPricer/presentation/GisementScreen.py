@@ -2,9 +2,11 @@
 __author__ = 'F.Marouane'
 
 import sys
+
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
-from Gisement import Ui_Gisement
+
+from DPricer.presentation.Gisement import Ui_Gisement
 from DPricer.data.AppModel import ObligationMd, AppModel
 from DPricer.lib.Obligation import Obligation
 

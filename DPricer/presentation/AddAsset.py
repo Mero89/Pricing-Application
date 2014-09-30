@@ -2,9 +2,11 @@
 __author__ = 'F.Marouane'
 
 import sys
+
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
-from AddAssetDialog import Ui_AddAsset
+
+from DPricer.presentation.AddAssetDialog import Ui_AddAsset
 
 
 class AddAsset(QDialog, Ui_AddAsset):

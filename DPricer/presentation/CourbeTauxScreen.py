@@ -2,11 +2,13 @@
 __author__ = 'F.Marouane'
 
 import sys
+import datetime as dt
+
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
-from CourbeTaux import Ui_CourbeTaux
+
+from DPricer.presentation.CourbeTaux import Ui_CourbeTaux
 from DPricer.data.AppModel import CourbeMd, AppModel
-import datetime as dt
 
 
 class CourbeTaux(QDialog, Ui_CourbeTaux):

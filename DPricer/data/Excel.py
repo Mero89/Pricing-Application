@@ -6,7 +6,10 @@ import xlrd
 import os
 from DPricer.data.AppModel import AppModel, CourbeMd, ObligationMd
 import datetime as dt
+import xlwt
 
+
+### Procédures Courbe de Taux BAM  ###
 
 def read_courbe_bam(path_to_file):
     """
@@ -54,23 +57,12 @@ def get_date_transaction(path_to_file):
     return date_transaction
 
 
-def list_excel_files(path_to_folder):
-    """
-    retourne une liste de fichiers excels sous forme de liste.
-    :param path_to_folder:
-    :return: list():
-    """
-    pf = path_to_folder
-    liste_dir = os.listdir(pf)
-    liste_excel = list()
-    for elm in liste_dir:
-        ext = os.path.splitext(elm)[1]
-        if ext == '.xls' or ext == '.xlsx':
-            liste_excel.append(elm)
-    return liste_excel
-
-
 def is_exists(_date):
+    """
+    Vérifie si la courbe de taux existe déjà dans la BDD
+    :param _date:
+    :return:
+    """
     md = AppModel()
     session = md.get_session()
     existe = session.query(CourbeMd).filter_by(date_req=_date).first()
@@ -109,6 +101,24 @@ def commit_courbe_bam(excel_path, _date=None):
             except ValueError:
                 return False
 
+
+def list_excel_files(path_to_folder):
+    """
+    retourne une liste de fichiers excels sous forme de liste.
+    :param path_to_folder:
+    :return: list():
+    """
+    pf = path_to_folder
+    liste_dir = os.listdir(pf)
+    liste_excel = list()
+    for elm in liste_dir:
+        ext = os.path.splitext(elm)[1]
+        if ext == '.xls' or ext == '.xlsx':
+            liste_excel.append(elm)
+    return liste_excel
+
+
+### Procédure pour importer liste d'actifs depuis Excel  ###
 
 def import_obligation(excel_path):
     """
@@ -161,6 +171,54 @@ def import_obligation(excel_path):
                     session.rollback()
 
 
+### Générer le fichier Template d'excel ###
+
+def create_template(path):
+    if os.path.exists(path):
+        w = xlwt.Workbook()
+        s = w.add_sheet('Portfolio')
+        row = s.row(0)
+        row.write(0, 'Code ISIN')
+        row.write(1, 'NOM')
+        row.write(2, 'Nominal')
+        row.write(3, 'Taux Facial')
+        row.write(4, 'Spread')
+        row.write(5, 'Date emission')
+        row.write(6, 'Date de jouissance')
+        row.write(7, 'Date echeance')
+        row.write(8, 'Type')
+        row.write(9, 'Pour le type mettre sans faute un des choix suivants: < N >, < AMC >, <REV>, < AMCRev >')
+        final_path = os.path.join(path, 'Template.xls')
+        w.save(final_path)
+
+### Exporter données vers Excel ###
+
+
+def export_to_excel(headers, data, path, filename):
+    """
+    :param headers: list
+    :param data: list
+    :param path: path
+    :return: excel file
+    """
+    if os.path.exists(path):
+        w = xlwt.Workbook()
+        s = w.add_sheet('Export')
+        row = s.row(0)
+        ### write header ###
+        for el in headers:
+            idx = headers.idex(el)
+            row.write(idx, str(el))
+        ### write data ###
+
+        ### save filename on path ###
+        final_path = os.path.join(path, filename)
+        w.save(final_path)
+
+
+### tests ###
+
+
 def test_read_courbe_bam():
     file_path = '/Users/mar/Desktop/pylab/repo/OperationMarSecon.xls'
     a = read_courbe_bam(file_path)
@@ -207,4 +265,4 @@ def test():
 
 
 if __name__ == '__main__':
-    test_import_obligation()
+    create_template('/users/mar/Desktop')

@@ -6,10 +6,8 @@ import datetime as dt
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from DPricer.lib.VAN import VAN
-from DPricer.lib.YieldManager import YieldManager
 from DPricer.lib.Obligation import Obligation
 from UI_CalculetteFinanciere import Ui_Form
-from UI_Import_Courbe import Ui_ImportForm
 
 
 class Calculette(QWidget, Ui_Form):
@@ -76,35 +74,6 @@ class Calculette(QWidget, Ui_Form):
     # def on_pushButtonObligEval_clicked(self):
     #     prix = self.evalue_obligation()
     #     self.ui.evaluerLineEdit.setText(str(prix))
-
-
-class PasDeCourbeDansLeFutur(Exception):
-    pass
-
-
-class ImportTaux(QWidget, Ui_ImportForm):
-    def __init__(self):
-        super(Ui_ImportForm, self).__init__()
-        QWidget.__init__(self)
-        d = QDate.currentDate(self)
-        self.ui = Ui_ImportForm()
-        self.ui.setupUi(self)
-        self.ui.DateEditTaux.setDate(d)
-        self.ui.DateEditDateFin.setDate(d)
-        try:
-            if self.convert_qdate(self.ui.DateEditDateFin.date().getDate()) > dt.datetime.today():
-                raise PasDeCourbeDansLeFutur
-        except PasDeCourbeDansLeFutur:
-            print 'La courbe de taux n \'est pas disponible pour une date ultérieure à celle d\'aujourd\'hui'
-
-    def convert_qdate(self, _qdate):
-        return dt.date(_qdate[0], _qdate[1], _qdate[2])
-
-    @pyqtSignature("")
-    def on_pushButtonCourbe_clicked(self):
-        _date = self.convert_qdate(self.ui.DateEditTaux.date().getDate())
-        YM = YieldManager(_date)
-        YM.import_auto()
 
 
 if __name__ == '__main__':

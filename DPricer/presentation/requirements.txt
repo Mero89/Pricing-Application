@@ -1,3 +1,4 @@
+xlwt
 psycopg2
 PyQt4
 scipy
