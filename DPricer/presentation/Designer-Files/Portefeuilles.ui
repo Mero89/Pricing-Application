@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Mes Portefeuiles</string>
+   <string>Mes Portefeuilles</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

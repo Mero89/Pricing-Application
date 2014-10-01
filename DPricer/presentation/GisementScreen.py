@@ -17,15 +17,38 @@ class GisementScreen(QDialog, Ui_Gisement):
         QDialog.__init__(self)
         self.ui = Ui_Gisement()
         self.ui.setupUi(self)
+        self.title = 'Gisement Obligataire'
+        self.setWindowTitle(self.title)
         self.session = AppModel().get_session()
         self.isin_list = list()
         self.nom_list = list()
         self.data = list()
-        self.ui.comboBoxCritere.currentIndexChanged.connect(self.set_completer_value)
+        self.connect_actions()
+        self.filter_by_value()
+        self.set_completer_value()
+
+    def connect_actions(self):
         self.ui.lineEditValeur.textChanged.connect(self.filter_by_value)
-        self.ui.lineEditValeur.setText('')
+        self.ui.comboBoxCritere.currentIndexChanged.connect(self.set_completer_value)
+        self.ui.toolButtonAdd.clicked.connect(self.open_add_dialog)
+        self.ui.toolButtonEdit.clicked.connect(self.edit_asset)
+        self.ui.toolButtonDelete.clicked.connect(self.delete_asset)
 
+    #### TableWidget editing related Method ####
 
+    def open_add_dialog(self):
+        # ouvre l'ecran d'ajout d'un actif
+        pass
+
+    def edit_asset(self):
+        # édite l'actif choisi
+        pass
+
+    def delete_asset(self):
+        # supprime l'actif désigné
+        pass
+
+    ##### TableWidget related Methods #####
     @QtCore.pyqtSlot()
     def set_completer_value(self):
         """
@@ -36,12 +59,10 @@ class GisementScreen(QDialog, Ui_Gisement):
             value_list = self.isin_list
         elif self.ui.comboBoxCritere.currentText() == 'NOM':
             value_list = self.nom_list
-
         completer = QCompleter(value_list, self)
         completer.setCaseSensitivity(2)
-        completer.setCompletionMode(1)
+        completer.setCompletionMode(0)
         self.ui.lineEditValeur.setCompleter(completer)
-
 
     @QtCore.pyqtSlot()
     def filter_by_value(self):
@@ -55,9 +76,12 @@ class GisementScreen(QDialog, Ui_Gisement):
             if self.ui.comboBoxCritere.currentText() == 'ISIN':
                 self.data = self.session.query(ObligationMd).filter_by(isin=str(self.ui.lineEditValeur.text())).all()
             elif self.ui.comboBoxCritere.currentText() == 'NOM':
-                self.data = self.session.query(ObligationMd).filter_by(nom=self.ui.lineEditValeur.text()).all()
+                self.data = self.session.query(ObligationMd).filter_by(nom=self.ui.lineEditValeur.text().toUtf8()).all()
         if self.data:
+            if self.ui.tableWidgetActifs.isSortingEnabled():
+                self.ui.tableWidgetActifs.setSortingEnabled(False)
             self.populate_table()
+            self.ui.tableWidgetActifs.setSortingEnabled(True)
 
     def populate_table(self):
         self.ui.tableWidgetActifs.clearContents()

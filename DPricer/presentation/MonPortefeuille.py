@@ -19,8 +19,10 @@ class Portfolios(QWidget, Ui_Portefeuilles):
         QWidget.__init__(self)
         self.ui = Ui_Portefeuilles()
         self.ui.setupUi(self)
-        self.User = None
+        self.title = 'Mes Portefeuilles'
+        self.setWindowTitle(self.title)
         self.ui.tableWidgetPortefeuille.setAlternatingRowColors(True)
+        self.User = None
 
     @QtCore.pyqtSlot()
     def affichePortefeuille(self):

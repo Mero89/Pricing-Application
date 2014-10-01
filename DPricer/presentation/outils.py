@@ -18,6 +18,8 @@ class Calculette(QWidget, Ui_Form):
         QWidget.__init__(self)
         self.ui = Ui_Form()
         self.ui.setupUi(self)
+        self.title = 'Outils'
+        self.setWindowTitle(self.title)
         # Add some modifs to the form
         self.frequence = dict(Mensuelle=12,
                               Trimestrielle=4,

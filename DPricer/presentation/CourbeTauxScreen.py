@@ -17,6 +17,8 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
         QDialog.__init__(self)
         self.ui = Ui_CourbeTaux()
         self.ui.setupUi(self)
+        self.title = 'Courbes de Taux'
+        self.setWindowTitle(self.title)
         self.session = AppModel().get_session()
         self.data = list()  # data est une liste contenant les Objets [CourbeMd]
         self.ui.dateEditFilter.setDate(QtCore.QDate(2014, 9, 22))

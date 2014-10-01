@@ -14,6 +14,8 @@ class AddAsset(QDialog, Ui_AddAsset):
         QDialog.__init__(self)
         self.ui = Ui_AddAsset()
         self.ui.setupUi(self)
+        self.title = 'Ajouter Actif'
+        self.setWindowTitle(self.title)
 
 
     def keyPressEvent(self, e):

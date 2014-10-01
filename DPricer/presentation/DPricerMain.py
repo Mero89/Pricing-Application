@@ -1,15 +1,17 @@
 # coding=utf-8
-from DPricer.presentation import AddAsset, GisementScreen
+
 
 __author__ = 'F.Marouane'
-
 import sys
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 from DPricer.presentation.PyuicFiles.MDI import Ui_MDIApp
+from AddAsset import AddAsset
+from GisementScreen import GisementScreen
 from LoginDialog import LoginDialog
 from MonPortefeuille import Portfolios, PortefeuilleDialog
 from CourbeTauxScreen import CourbeTaux
+from DPricer.lib.User import User
 
 
 class MyClass(QMainWindow, Ui_MDIApp):
@@ -18,12 +20,12 @@ class MyClass(QMainWindow, Ui_MDIApp):
         QMainWindow.__init__(self)
         self.ui = Ui_MDIApp()
         self.ui.setupUi(self)
-        log = LoginDialog()
-        log.accepted.connect(self.stats)
-        log.exec_()
-        # self.user = User('uname', 'password')
-        # self.user.uid = 1
-        self.user = log.user
+        # log = LoginDialog()
+        # log.accepted.connect(self.stats)
+        # log.exec_()
+        self.user = User('uname', 'password')
+        self.user.uid = 1
+        # self.user = log.user
         nom = 'FAKIR'
         prenom = 'Marouane'
         self.ui.labelUser.setText(nom + ' ' + prenom)
@@ -37,25 +39,51 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionVisualiser.triggered.connect(self.open_courbe_screen)
         self.ui.actionGisement.triggered.connect(self.open_gisement_screen)
         self.ui.actionAjoutObligation.triggered.connect(self.open_add_asset_screen)
+        self.ui.actionOnglets.triggered.connect(self.set_tabview_mode)
+        self.ui.actionSousFenetres.triggered.connect(self.set_windowview_mode)
+
+
+    def title_list(self):
+        """
+        retourne la liste des titres des sous-fenêtres
+        :return:
+        """
+        l = [el.windowTitle() for el in self.ui.mdiArea.subWindowList()]
+        return l
+
+    def set_windowview_mode(self):
+        self.ui.mdiArea.setViewMode(0)
+
+    def set_tabview_mode(self):
+        self.ui.mdiArea.setViewMode(1)
+
 
     @QtCore.pyqtSlot()
     def open_add_asset_screen(self):
         ct = AddAsset()
-        ct.setWindowTitle('Ajouter Actif')
-        self.ui.mdiArea.addSubWindow(ct)
-        ct.show()
+        if ct.title not in self.title_list():
+            self.ui.mdiArea.addSubWindow(ct)
+            ct.show()
+        else:
+            del ct
 
     @QtCore.pyqtSlot()
     def open_gisement_screen(self):
         ct = GisementScreen()
-        self.ui.mdiArea.addSubWindow(ct)
-        ct.show()
+        if ct.title not in self.title_list():
+            self.ui.mdiArea.addSubWindow(ct)
+            ct.show()
+        else:
+            del ct
 
     @QtCore.pyqtSlot()
     def open_courbe_screen(self):
         ct = CourbeTaux()
-        self.ui.mdiArea.addSubWindow(ct)
-        ct.show()
+        if ct.title not in self.title_list():
+            self.ui.mdiArea.addSubWindow(ct)
+            ct.show()
+        else:
+            del ct
 
     @QtCore.pyqtSlot()
     def open_portefeuille_dialog(self):
@@ -66,12 +94,15 @@ class MyClass(QMainWindow, Ui_MDIApp):
     @QtCore.pyqtSlot()
     def open_portefeuille_screen(self):
         pf = Portfolios()
-        self.ui.mdiArea.addSubWindow(pf)
-        pf.ui.tableWidgetPortefeuille.itemSelectionChanged.connect(self.stats)
-        pf.ui.pushButtonFermer.clicked.connect(self.ui.mdiArea.closeActiveSubWindow)
-        pf.User = self.user
-        pf.show()
-        pf.affichePortefeuille()
+        if pf.title not in self.title_list():
+            self.ui.mdiArea.addSubWindow(pf)
+            pf.ui.tableWidgetPortefeuille.itemSelectionChanged.connect(self.stats)
+            pf.ui.pushButtonFermer.clicked.connect(self.ui.mdiArea.closeActiveSubWindow)
+            pf.User = self.user
+            pf.show()
+            pf.affichePortefeuille()
+        else:
+            del pf
 
     @QtCore.pyqtSlot()
     def filenew(self):
@@ -92,7 +123,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_W:
             self.filenew()
-        # Comment to commit
+            # Comment to commit
 
 
 if __name__ == '__main__':

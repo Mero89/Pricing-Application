@@ -15,6 +15,8 @@ class LoginDialog(QDialog, Ui_Login):
         QDialog.__init__(self)
         self.ui = Ui_Login()
         self.ui.setupUi(self)
+        self.title = 'Login'
+        self.setWindowTitle(self.title)
         self.connect(self, QtCore.SIGNAL('accepted()'), self, QtCore.SLOT('check_user()'))
         self.connect(self, QtCore.SIGNAL('rejected()'), self, QtCore.SLOT('check_user()'))
         self.user = None

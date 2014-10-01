@@ -165,8 +165,11 @@ class Obligation(object):
             self.tx_actuariel += .01
             new_price = self.prix()
             self.tx_actuariel -= .01
-            r = abs(new_price - real_price) / real_price
-            return round(r * 100, 4)
+            try:
+                r = abs(new_price - real_price) / real_price
+                return round(r * 100, 4)
+            except ZeroDivisionError:
+                return 0
         else:
             return 0
 
