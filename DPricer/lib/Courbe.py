@@ -6,7 +6,6 @@ from ..data.AppModel import AppModel, CourbeMd
 from Interpolation import Interpol
 import datetime
 import copy
-import numpy as np
 
 
 class Courbe(CourbeMd):
