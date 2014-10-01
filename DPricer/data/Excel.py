@@ -173,27 +173,32 @@ def import_obligation(excel_path):
 
 ### Générer le fichier Template d'excel ###
 
-def create_template(path):
+def create_template(path, filename):
     if os.path.exists(path):
-        w = xlwt.Workbook()
-        s = w.add_sheet('Portfolio')
+        w = xlwt.Workbook(encoding='utf-8')
+        s = w.add_sheet('Exemple')
         row = s.row(0)
-        row.write(0, 'Code ISIN')
-        row.write(1, 'NOM')
-        row.write(2, 'Nominal')
-        row.write(3, 'Taux Facial')
-        row.write(4, 'Spread')
-        row.write(5, 'Date emission')
-        row.write(6, 'Date de jouissance')
-        row.write(7, 'Date echeance')
-        row.write(8, 'Type')
-        row.write(9, 'Pour le type mettre sans faute un des choix suivants: < N >, < AMC >, <REV>, < AMCRev >')
-        final_path = os.path.join(path, 'Template.xls')
+        style = xlwt.easyxf('font: name Menlo, bold True, height 280, colour blue;')
+        warning = xlwt.easyxf('font: name Menlo, bold True, height 320, colour red;'
+                              'alignment: vertical top, wrap True')
+
+        row.write(0, 'Code ISIN', style)
+        row.write(1, 'NOM', style)
+        row.write(2, 'Nominal', style)
+        row.write(3, 'Taux Facial', style)
+        row.write(4, 'Spread', style)
+        row.write(5, 'Date emission', style)
+        row.write(6, 'Date de jouissance', style)
+        row.write(7, 'Date echeance', style)
+        row.write(8, 'Type', style)
+        s.write_merge(0, 4, 10, 14,
+                      'Pour le type mettre sans faute un des choix suivants: < N >, < AMC >, <REV>, < AMCRev >',
+                      warning)
+        final_path = os.path.join(path, filename)
         w.save(final_path)
 
+
 ### Exporter données vers Excel ###
-
-
 def export_to_excel(headers, data, path, filename):
     """
     :param headers: list
@@ -201,16 +206,22 @@ def export_to_excel(headers, data, path, filename):
     :param path: path
     :return: excel file
     """
+    header_style = xlwt.easyxf('font: name Menlo, bold True, height 280, colour blue;')
     if os.path.exists(path):
         w = xlwt.Workbook()
         s = w.add_sheet('Export')
         row = s.row(0)
         ### write header ###
         for el in headers:
-            idx = headers.idex(el)
-            row.write(idx, str(el))
+            idx = headers.index(el)
+            row.write(idx, str(el), header_style)
         ### write data ###
-
+        for rw in data:
+            row_idx = data.index(rw)+1
+            row = s.row(row_idx)
+            for col in rw:
+                col_idx = rw.index(col)
+                row.write(col_idx, col)
         ### save filename on path ###
         final_path = os.path.join(path, filename)
         w.save(final_path)
