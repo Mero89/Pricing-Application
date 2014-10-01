@@ -25,6 +25,7 @@ class GisementScreen(QDialog, Ui_Gisement):
         self.data = list()
         self.connect_actions()
         self.filter_by_value()
+        self.populate_completer()
         self.set_completer_value()
 
     def connect_actions(self):
@@ -69,19 +70,22 @@ class GisementScreen(QDialog, Ui_Gisement):
         # All data
         if self.ui.lineEditValeur.text() == '':
             self.data = self.session.query(ObligationMd).all()
-            self.isin_list = [el.isin for el in self.data]
-            self.nom_list = [el.nom for el in self.data]
         else:
             # criterion = ISIN or NOM
             if self.ui.comboBoxCritere.currentText() == 'ISIN':
                 self.data = self.session.query(ObligationMd).filter_by(isin=str(self.ui.lineEditValeur.text())).all()
             elif self.ui.comboBoxCritere.currentText() == 'NOM':
-                self.data = self.session.query(ObligationMd).filter_by(nom=self.ui.lineEditValeur.text().toUtf8()).all()
+                self.data = self.session.query(ObligationMd).filter_by(nom=unicode(self.ui.lineEditValeur.text())).all()
         if self.data:
             if self.ui.tableWidgetActifs.isSortingEnabled():
                 self.ui.tableWidgetActifs.setSortingEnabled(False)
             self.populate_table()
             self.ui.tableWidgetActifs.setSortingEnabled(True)
+
+    def populate_completer(self):
+        self.isin_list = [el.isin for el in self.data]
+        self.nom_list = [el.nom for el in self.data]
+
 
     def populate_table(self):
         self.ui.tableWidgetActifs.clearContents()
