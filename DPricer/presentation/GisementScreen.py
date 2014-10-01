@@ -2,10 +2,9 @@
 __author__ = 'F.Marouane'
 
 import sys
-
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
-
+from DPricer.presentation.PyuicFiles.AddAssetDialog import Ui_AddAsset
 from DPricer.presentation.PyuicFiles.Gisement import Ui_Gisement
 from DPricer.data.AppModel import ObligationMd, AppModel
 from DPricer.lib.Obligation import Obligation
@@ -86,7 +85,6 @@ class GisementScreen(QDialog, Ui_Gisement):
         self.isin_list = [el.isin for el in self.data]
         self.nom_list = [el.nom for el in self.data]
 
-
     def populate_table(self):
         self.ui.tableWidgetActifs.clearContents()
         cur_rows = self.ui.tableWidgetActifs.rowCount()
@@ -111,7 +109,7 @@ class GisementScreen(QDialog, Ui_Gisement):
                 sensi = QTableWidgetItem(str(obl.sensibilite()))
                 dur = QTableWidgetItem(str(obl.duration()))
                 conv = QTableWidgetItem(str('Not Implemented'))
-                tx_act = QTableWidgetItem(str(round(obl.tx_actuariel * 100, 6)) + ' %')
+                tx_act = QTableWidgetItem(str(round((obl.tx_actuariel + obl.spread) * 100, 6)) + ' %')
                 if idx + 1 >= cur_rows:
                     self.ui.tableWidgetActifs.insertRow(idx)
                     self.ui.tableWidgetActifs.setRowHeight(idx, 25)
@@ -136,6 +134,16 @@ class GisementScreen(QDialog, Ui_Gisement):
         # define key event
         if e.key() == QtCore.Qt.Key_W:
             self.close()
+
+
+class AddAsset(QDialog, Ui_AddAsset):
+    def __init__(self):
+        super(Ui_AddAsset, self).__init__()
+        QDialog.__init__(self)
+        self.ui = Ui_AddAsset()
+        self.ui.setupUi(self)
+        self.title = 'Ajouter Actif'
+        self.setWindowTitle(self.title)
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

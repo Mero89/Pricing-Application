@@ -42,7 +42,6 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionOnglets.triggered.connect(self.set_tabview_mode)
         self.ui.actionSousFenetres.triggered.connect(self.set_windowview_mode)
 
-
     def title_list(self):
         """
         retourne la liste des titres des sous-fenêtres

@@ -228,8 +228,6 @@ def export_to_excel(headers, data, path, filename):
 
 
 ### tests ###
-
-
 def test_read_courbe_bam():
     file_path = '/Users/mar/Desktop/pylab/repo/OperationMarSecon.xls'
     a = read_courbe_bam(file_path)
