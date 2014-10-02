@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'PycharmProjects/DPricer/test/AddAssetDialog.ui'
+# Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/AddAssetDialog.ui'
 #
-# Created: Sun Sep 28 21:34:30 2014
+# Created: Thu Oct  2 13:24:42 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_AddAsset(object):
     def setupUi(self, AddAsset):
         AddAsset.setObjectName(_fromUtf8("AddAsset"))
-        AddAsset.resize(706, 478)
+        AddAsset.resize(674, 506)
         self.verticalLayout = QtGui.QVBoxLayout(AddAsset)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -165,12 +165,12 @@ class Ui_AddAsset(object):
         self.verticalLayout_2.addWidget(self.tableWidget)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.toolButton = QtGui.QToolButton(self.groupBoxAvance)
-        self.toolButton.setObjectName(_fromUtf8("toolButton"))
-        self.horizontalLayout_2.addWidget(self.toolButton)
-        self.toolButton_2 = QtGui.QToolButton(self.groupBoxAvance)
-        self.toolButton_2.setObjectName(_fromUtf8("toolButton_2"))
-        self.horizontalLayout_2.addWidget(self.toolButton_2)
+        self.toolButtonAdd = QtGui.QToolButton(self.groupBoxAvance)
+        self.toolButtonAdd.setObjectName(_fromUtf8("toolButtonAdd"))
+        self.horizontalLayout_2.addWidget(self.toolButtonAdd)
+        self.toolButtonRemove = QtGui.QToolButton(self.groupBoxAvance)
+        self.toolButtonRemove.setObjectName(_fromUtf8("toolButtonRemove"))
+        self.horizontalLayout_2.addWidget(self.toolButtonRemove)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
@@ -233,6 +233,6 @@ class Ui_AddAsset(object):
         item.setText(_translate("AddAsset", "Date Coupon", None))
         item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("AddAsset", "Flux Coupon (MAD)", None))
-        self.toolButton.setText(_translate("AddAsset", "+", None))
-        self.toolButton_2.setText(_translate("AddAsset", "-", None))
+        self.toolButtonAdd.setText(_translate("AddAsset", "+", None))
+        self.toolButtonRemove.setText(_translate("AddAsset", "-", None))
 

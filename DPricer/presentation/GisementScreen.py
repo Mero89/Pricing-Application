@@ -8,12 +8,13 @@ from DPricer.presentation.PyuicFiles.AddAssetDialog import Ui_AddAsset
 from DPricer.presentation.PyuicFiles.Gisement import Ui_Gisement
 from DPricer.data.AppModel import ObligationMd, AppModel
 from DPricer.lib.Obligation import Obligation
+from ConfirmDialog import ConfirmDialog
 
 
-class GisementScreen(QDialog, Ui_Gisement):
+class GisementScreen(QWidget, Ui_Gisement):
     def __init__(self):
         super(Ui_Gisement, self).__init__()
-        QDialog.__init__(self)
+        QWidget.__init__(self)
         self.ui = Ui_Gisement()
         self.ui.setupUi(self)
         self.title = 'Gisement Obligataire'
@@ -41,7 +42,7 @@ class GisementScreen(QDialog, Ui_Gisement):
     def open_add_dialog(self):
         # ouvre l'ecran d'ajout d'un actif
         dialog = AddAsset()
-        dialog.show()
+        dialog.exec_()
         pass
 
     def edit_asset(self):
@@ -56,18 +57,28 @@ class GisementScreen(QDialog, Ui_Gisement):
             for el in selection:
                 if el.column() == 0:
                     liste_isin.append((el.row(), str(self.ui.tableWidgetActifs.itemFromIndex(el).text())))
-        # confirmation de la suppression
+            # confirmation de la suppression
+            confirm = ConfirmDialog()
+            if len(liste_isin) == 1:
+                confirm.set_message(u"Vous êtes sur le point de supprimer l'actif sélectionné")
+            else:
+                confirm.set_message(u'Vous êtes sur le point de supprimer les actifs sélectionnés')
+            rep = confirm.exec_()
+            if rep:
+                # Suppression de la BDD
+                session = AppModel().get_session()
+                liste_assets = [session.query(ObligationMd).get(isin[1]) for isin in liste_isin]
+                for asset in liste_assets:
+                    session.delete(asset)
+                else:
+                    try:
+                        session.commit()
+                    except:
+                        session.rollback()
+                self.filter_by_value()
+                self.populate_completer()
+                self.set_completer_value()
 
-        # Suppression de la BDD
-        session = AppModel().get_session()
-        liste_assets = [session.query(ObligationMd).get(isin[1]) for isin in liste_isin]
-        for asset in liste_assets:
-            session.delete(asset)
-        else:
-            try:
-                session.commit()
-            except:
-                session.rollback()
 
     ##### TableWidget related Methods #####
     @QtCore.pyqtSlot()
@@ -165,6 +176,16 @@ class AddAsset(QDialog, Ui_AddAsset):
         self.ui.setupUi(self)
         self.title = 'Ajouter Actif'
         self.setWindowTitle(self.title)
+
+    @QtCore.pyqtSlot()
+    def toolButtonAjouter(self):
+        num = self.ui.tableWidget.rowCount()
+        dd = QTableWidgetItem()
+        ff = QTableWidgetItem()
+        self.ui.tableWidget.insertRow(num)
+        self.ui.tableWidget.setItem(num, 0, dd)
+        self.ui.tableWidget.setItem(num, 1, ff)
+
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

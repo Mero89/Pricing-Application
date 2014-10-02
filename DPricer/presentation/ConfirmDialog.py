@@ -25,5 +25,7 @@ class ConfirmDialog(QDialog, Ui_ConfirmDialog):
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
     form = ConfirmDialog()
-    form.show()
+    if form.exec_():
+        print 'ok pressed'
+        form.close()
     ap.exec_()

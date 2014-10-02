@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/ConfirmDialog.ui'
 #
-# Created: Thu Oct  2 11:27:26 2014
+# Created: Thu Oct  2 12:17:03 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_ConfirmDialog(object):
     def setupUi(self, ConfirmDialog):
         ConfirmDialog.setObjectName(_fromUtf8("ConfirmDialog"))
-        ConfirmDialog.resize(363, 111)
+        ConfirmDialog.resize(418, 140)
         ConfirmDialog.setModal(True)
         self.verticalLayout = QtGui.QVBoxLayout(ConfirmDialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
@@ -50,7 +50,7 @@ class Ui_ConfirmDialog(object):
         self.label.setFrameShape(QtGui.QFrame.WinPanel)
         self.label.setFrameShadow(QtGui.QFrame.Raised)
         self.label.setTextFormat(QtCore.Qt.AutoText)
-        self.label.setScaledContents(False)
+        self.label.setScaledContents(True)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setWordWrap(True)
         self.label.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
