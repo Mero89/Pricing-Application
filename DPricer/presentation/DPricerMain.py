@@ -1,13 +1,12 @@
 # coding=utf-8
-
-
 __author__ = 'F.Marouane'
+
 import sys
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 from DPricer.presentation.PyuicFiles.MDI import Ui_MDIApp
-from AddAsset import AddAsset
-from GisementScreen import GisementScreen
+### import Screens and Dialogs ###
+from GisementScreen import GisementScreen, AddAsset
 from LoginDialog import LoginDialog
 from MonPortefeuille import Portfolios, PortefeuilleDialog
 from CourbeTauxScreen import CourbeTaux
@@ -55,7 +54,6 @@ class MyClass(QMainWindow, Ui_MDIApp):
 
     def set_tabview_mode(self):
         self.ui.mdiArea.setViewMode(1)
-
 
     @QtCore.pyqtSlot()
     def open_add_asset_screen(self):

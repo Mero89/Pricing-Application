@@ -2,21 +2,20 @@
 __author__ = 'F.Marouane'
 
 import sys
-
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
-from DPricer.presentation.PyuicFiles.AddAssetDialog import Ui_AddAsset
+from DPricer.presentation.PyuicFiles.ConfirmDialog import Ui_ConfirmDialog
 
 
-class AddAsset(QDialog, Ui_AddAsset):
+class ConfirmDialog(QDialog, Ui_ConfirmDialog):
     def __init__(self):
-        super(Ui_AddAsset, self).__init__()
+        super(Ui_ConfirmDialog, self).__init__()
         QDialog.__init__(self)
-        self.ui = Ui_AddAsset()
+        self.ui = Ui_ConfirmDialog()
         self.ui.setupUi(self)
-        self.title = 'Ajouter Actif'
-        self.setWindowTitle(self.title)
 
+    def set_message(self, message):
+        self.ui.label.setText(message)
 
     def keyPressEvent(self, e):
         # define key event
@@ -25,6 +24,6 @@ class AddAsset(QDialog, Ui_AddAsset):
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
-    form = AddAsset()
+    form = ConfirmDialog()
     form.show()
     ap.exec_()

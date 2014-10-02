@@ -28,6 +28,7 @@ class GisementScreen(QDialog, Ui_Gisement):
         self.set_completer_value()
         self.ui.tableWidgetActifs.resizeColumnsToContents()
 
+
     def connect_actions(self):
         self.ui.lineEditValeur.textChanged.connect(self.filter_by_value)
         self.ui.comboBoxCritere.currentIndexChanged.connect(self.set_completer_value)
@@ -39,6 +40,8 @@ class GisementScreen(QDialog, Ui_Gisement):
 
     def open_add_dialog(self):
         # ouvre l'ecran d'ajout d'un actif
+        dialog = AddAsset()
+        dialog.show()
         pass
 
     def edit_asset(self):
