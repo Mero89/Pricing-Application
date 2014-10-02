@@ -58,7 +58,6 @@ class Portfolios(QWidget, Ui_Portefeuilles):
         pour_afficher = [[el[0], el[1], pf.ponderation(el[0].isin)] for el in assets]
         return pour_afficher
 
-
     @QtCore.pyqtSlot()
     def update_assets(self):
         self.ui.tableWidgetActifs.clearContents()

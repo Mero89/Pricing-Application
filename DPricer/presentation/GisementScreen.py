@@ -26,6 +26,7 @@ class GisementScreen(QDialog, Ui_Gisement):
         self.filter_by_value()
         self.populate_completer()
         self.set_completer_value()
+        self.ui.tableWidgetActifs.resizeColumnsToContents()
 
     def connect_actions(self):
         self.ui.lineEditValeur.textChanged.connect(self.filter_by_value)
@@ -46,7 +47,23 @@ class GisementScreen(QDialog, Ui_Gisement):
 
     def delete_asset(self):
         # supprime l'actif désigné
-        pass
+        selection = self.ui.tableWidgetActifs.selectedIndexes()
+        liste_isin = list()
+        if len(selection) >= 1:
+            for el in selection:
+                if el.column() == 0:
+                    liste_isin.append((el.row(), str(self.ui.tableWidgetActifs.itemFromIndex(el).text())))
+        # confirmation de la suppression
+        # Suppression de la BDD
+        session = AppModel().get_session()
+        liste_assets = [session.query(ObligationMd).get(isin[1]) for isin in liste_isin]
+        for asset in liste_assets:
+            session.delete(asset)
+        else:
+            try:
+                session.commit()
+            except:
+                session.rollback()
 
     ##### TableWidget related Methods #####
     @QtCore.pyqtSlot()
