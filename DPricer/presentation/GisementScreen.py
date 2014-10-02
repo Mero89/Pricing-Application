@@ -54,6 +54,7 @@ class GisementScreen(QDialog, Ui_Gisement):
                 if el.column() == 0:
                     liste_isin.append((el.row(), str(self.ui.tableWidgetActifs.itemFromIndex(el).text())))
         # confirmation de la suppression
+
         # Suppression de la BDD
         session = AppModel().get_session()
         liste_assets = [session.query(ObligationMd).get(isin[1]) for isin in liste_isin]
