@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/Gisement.ui'
 #
-# Created: Tue Sep 30 11:55:55 2014
+# Created: Thu Oct  2 16:28:41 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -100,7 +100,9 @@ class Ui_Gisement(object):
         font.setPointSize(10)
         self.tableWidgetActifs.setFont(font)
         self.tableWidgetActifs.setMidLineWidth(0)
-        self.tableWidgetActifs.setEditTriggers(QtGui.QAbstractItemView.EditKeyPressed)
+        self.tableWidgetActifs.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.tableWidgetActifs.setTabKeyNavigation(False)
+        self.tableWidgetActifs.setProperty("showDropIndicator", False)
         self.tableWidgetActifs.setDragDropOverwriteMode(False)
         self.tableWidgetActifs.setDefaultDropAction(QtCore.Qt.CopyAction)
         self.tableWidgetActifs.setAlternatingRowColors(True)
@@ -231,17 +233,17 @@ class Ui_Gisement(object):
         self.toolButtonDelete.setObjectName(_fromUtf8("toolButtonDelete"))
         self.horizontalLayout_2.addWidget(self.toolButtonDelete)
         self.toolButtonEdit = QtGui.QToolButton(self.groupBox)
+        self.toolButtonEdit.setCheckable(False)
+        self.toolButtonEdit.setChecked(False)
         self.toolButtonEdit.setObjectName(_fromUtf8("toolButtonEdit"))
         self.horizontalLayout_2.addWidget(self.toolButtonEdit)
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
-        self.pushButtonValider = QtGui.QPushButton(self.groupBox)
-        self.pushButtonValider.setObjectName(_fromUtf8("pushButtonValider"))
-        self.horizontalLayout_2.addWidget(self.pushButtonValider)
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
         self.verticalLayout.addWidget(self.groupBox)
 
         self.retranslateUi(Gisement)
+        self.comboBoxCritere.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Gisement)
 
     def retranslateUi(self, Gisement):
@@ -287,5 +289,4 @@ class Ui_Gisement(object):
         self.toolButtonAdd.setText(_translate("Gisement", "+", None))
         self.toolButtonDelete.setText(_translate("Gisement", "-", None))
         self.toolButtonEdit.setText(_translate("Gisement", "modif", None))
-        self.pushButtonValider.setText(_translate("Gisement", "Valider", None))
 

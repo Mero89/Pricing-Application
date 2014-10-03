@@ -66,7 +66,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
 
     @QtCore.pyqtSlot()
     def open_gisement_screen(self):
-        ct = GisementScreen()
+        ct = GisementScreen(parent=self)
         if ct.title not in self.title_list():
             self.ui.mdiArea.addSubWindow(ct)
             ct.show()

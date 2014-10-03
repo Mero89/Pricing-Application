@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/MDI.ui'
 #
-# Created: Tue Sep 30 12:38:32 2014
+# Created: Fri Oct  3 09:41:25 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -93,6 +93,11 @@ class Ui_MDIApp(object):
         self.menuAbout.setObjectName(_fromUtf8("menuAbout"))
         MDIApp.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MDIApp)
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.statusbar.setFont(font)
+        self.statusbar.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.statusbar.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MDIApp.setStatusBar(self.statusbar)
         self.actionNW = QtGui.QAction(MDIApp)

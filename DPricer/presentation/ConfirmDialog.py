@@ -8,11 +8,12 @@ from DPricer.presentation.PyuicFiles.ConfirmDialog import Ui_ConfirmDialog
 
 
 class ConfirmDialog(QDialog, Ui_ConfirmDialog):
-    def __init__(self):
+    def __init__(self, parent=None):
         super(Ui_ConfirmDialog, self).__init__()
         QDialog.__init__(self)
         self.ui = Ui_ConfirmDialog()
         self.ui.setupUi(self)
+        self.parent = parent
 
     def set_message(self, message):
         self.ui.label.setText(message)

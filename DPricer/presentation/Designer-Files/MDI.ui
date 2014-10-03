@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>492</height>
+    <width>660</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -123,7 +123,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>673</width>
+     <width>660</width>
      <height>25</height>
     </rect>
    </property>
@@ -222,7 +222,28 @@
    <addaction name="menuParametres"/>
    <addaction name="menuAbout"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::DefaultContextMenu</enum>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="sizeGripEnabled">
+    <bool>true</bool>
+   </property>
+  </widget>
   <action name="actionNW">
    <property name="text">
     <string>Ouvrir écheancier</string>

@@ -192,7 +192,13 @@
          <number>0</number>
         </property>
         <property name="editTriggers">
-         <set>QAbstractItemView::EditKeyPressed</set>
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="tabKeyNavigation">
+         <bool>false</bool>
+        </property>
+        <property name="showDropIndicator" stdset="0">
+         <bool>false</bool>
         </property>
         <property name="dragDropOverwriteMode">
          <bool>false</bool>
@@ -445,6 +451,12 @@
           <property name="text">
            <string>modif</string>
           </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -459,13 +471,6 @@
            </size>
           </property>
          </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonValider">
-          <property name="text">
-           <string>Valider</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>

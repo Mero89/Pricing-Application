@@ -12,9 +12,10 @@ from ConfirmDialog import ConfirmDialog
 
 
 class GisementScreen(QWidget, Ui_Gisement):
-    def __init__(self):
-        super(Ui_Gisement, self).__init__()
+    def __init__(self, parent=None ):
+        super(Ui_Gisement, self).__init__(parent)
         QWidget.__init__(self)
+        self.parent = parent
         self.ui = Ui_Gisement()
         self.ui.setupUi(self)
         self.title = 'Gisement Obligataire'
@@ -29,25 +30,19 @@ class GisementScreen(QWidget, Ui_Gisement):
         self.set_completer_value()
         self.ui.tableWidgetActifs.resizeColumnsToContents()
 
-
     def connect_actions(self):
         self.ui.lineEditValeur.textChanged.connect(self.filter_by_value)
         self.ui.comboBoxCritere.currentIndexChanged.connect(self.set_completer_value)
-        self.ui.toolButtonAdd.clicked.connect(self.open_add_dialog)
-        self.ui.toolButtonEdit.clicked.connect(self.edit_asset)
         self.ui.toolButtonDelete.clicked.connect(self.delete_asset)
+        self.ui.toolButtonEdit.clicked.connect(self.edit_asset)
+        # parent's connect
+        if self.parent is not None:
+            self.ui.toolButtonAdd.clicked.connect(self.parent.open_add_asset_screen)
 
     #### TableWidget editing related Method ####
-
-    def open_add_dialog(self):
-        # ouvre l'ecran d'ajout d'un actif
-        dialog = AddAsset()
-        dialog.exec_()
-        pass
-
     def edit_asset(self):
         # édite l'actif choisi
-        pass
+        row = self.ui.tableWidgetActifs.currentRow()
 
     def delete_asset(self):
         # supprime l'actif désigné
@@ -73,12 +68,12 @@ class GisementScreen(QWidget, Ui_Gisement):
                 else:
                     try:
                         session.commit()
-                    except:
+                    except Exception as e:
                         session.rollback()
-                self.filter_by_value()
+                        self.tell_status("Suppression échouée.")
+                        self.tell_status(e.message)
                 self.populate_completer()
-                self.set_completer_value()
-
+                self.tell_status("Actif(s) supprimé(s) avec succès.")
 
     ##### TableWidget related Methods #####
     @QtCore.pyqtSlot()
@@ -162,6 +157,9 @@ class GisementScreen(QWidget, Ui_Gisement):
                 self.ui.tableWidgetActifs.setItem(idx, 14, conv)
                 self.ui.tableWidgetActifs.setItem(idx, 15, tx_act)
 
+    def tell_status(self, status):
+        self.parent.ui.statusbar.showMessage(status, 3000)
+
     def keyPressEvent(self, e):
         # define key event
         if e.key() == QtCore.Qt.Key_W:
@@ -169,13 +167,18 @@ class GisementScreen(QWidget, Ui_Gisement):
 
 
 class AddAsset(QDialog, Ui_AddAsset):
-    def __init__(self):
+    def __init__(self, parent=None):
         super(Ui_AddAsset, self).__init__()
         QDialog.__init__(self)
         self.ui = Ui_AddAsset()
         self.ui.setupUi(self)
+        self.parent = parent
         self.title = 'Ajouter Actif'
         self.setWindowTitle(self.title)
+        self.ui.buttonBox.accepted.connect(self.save_asset)
+
+    def save_asset(self):
+        pass
 
     @QtCore.pyqtSlot()
     def toolButtonAjouter(self):
@@ -186,6 +189,14 @@ class AddAsset(QDialog, Ui_AddAsset):
         self.ui.tableWidget.setItem(num, 0, dd)
         self.ui.tableWidget.setItem(num, 1, ff)
 
+    @QtCore.pyqtSlot()
+    def toolButtonSupprimer(self):
+        itm = self.ui.tableWidget.currentItem()
+        idx = self.ui.tableWidget.indexFromItem(itm)
+        self.ui.tableWidget.removeRow(idx.row())
+
+    def tell_status(self, status):
+        self.parent.ui.statusbar.showMessage(status, 2500)
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

@@ -14,11 +14,12 @@ from DPricer.data.AppModel import AppModel, PortefeuilleMd
 
 
 class Portfolios(QWidget, Ui_Portefeuilles):
-    def __init__(self):
+    def __init__(self,parent=None):
         super(Ui_Portefeuilles, self).__init__()
         QWidget.__init__(self)
         self.ui = Ui_Portefeuilles()
         self.ui.setupUi(self)
+        self.parent = parent
         self.title = 'Mes Portefeuilles'
         self.setWindowTitle(self.title)
         self.ui.tableWidgetPortefeuille.setAlternatingRowColors(True)
@@ -92,6 +93,9 @@ class Portfolios(QWidget, Ui_Portefeuilles):
         if e.key() == QtCore.Qt.Key_Q:
             self.close()
 
+    def tell_status(self, status):
+        self.parent.ui.statusbar.showMessage(status, 2500)
+
 
 class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
     def __init__(self):
@@ -101,8 +105,8 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
         self.ui.setupUi(self)
         self.setWindowTitle('Ajout de Portefeuilles')
         self.accepted.connect(self.save_portefeuille)
-        self.ui.pushButtonAjouter.clicked.connect(self.Ajouter_clicked)
-        self.ui.pushButtonSupprimer.clicked.connect(self.Supprimer_clicked)
+        self.ui.pushButtonAjouter.clicked.connect(self.ajouter_clicked)
+        self.ui.pushButtonSupprimer.clicked.connect(self.supprimer_clicked)
 
     @QtCore.pyqtSlot()
     def save_portefeuille(self):
@@ -118,11 +122,13 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
         session.add_all(ma_liste)
         try:
             session.commit()
+            self.tell_status("Portefeuille ajouté avec succès.")
         except Exception as e:
             print e.message
+            session.rollback()
 
     @QtCore.pyqtSlot()
-    def Ajouter_clicked(self):
+    def ajouter_clicked(self):
         num = self.ui.tableWidget.rowCount()
         dd = QTableWidgetItem()
         ff = QTableWidgetItem()
@@ -132,10 +138,13 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
         self.ui.tableWidget.setFocus()
 
     @QtCore.pyqtSlot()
-    def Supprimer_clicked(self):
+    def supprimer_clicked(self):
         itm = self.ui.tableWidget.currentItem()
         idx = self.ui.tableWidget.indexFromItem(itm)
         self.ui.tableWidget.removeRow(idx.row())
+
+    def tell_status(self, status):
+        self.parent.ui.statusbar.showMessage(status, 2500)
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

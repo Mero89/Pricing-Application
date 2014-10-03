@@ -12,11 +12,12 @@ from DPricer.data.AppModel import CourbeMd, AppModel
 
 
 class CourbeTaux(QDialog, Ui_CourbeTaux):
-    def __init__(self):
+    def __init__(self, parent=None):
         super(Ui_CourbeTaux, self).__init__()
         QDialog.__init__(self)
         self.ui = Ui_CourbeTaux()
         self.ui.setupUi(self)
+        self.parent = parent
         self.title = 'Courbes de Taux'
         self.setWindowTitle(self.title)
         self.session = AppModel().get_session()
@@ -58,6 +59,8 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
     def convert_qdate(self, _qdate):
         return dt.date(_qdate[0], _qdate[1], _qdate[2])
 
+    def tell_status(self, status):
+        self.parent.ui.statusbar.showMessage(status, 2500)
 
     def keyPressEvent(self, e):
         # define key event
