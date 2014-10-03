@@ -41,6 +41,56 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionOnglets.triggered.connect(self.set_tabview_mode)
         self.ui.actionSousFenetres.triggered.connect(self.set_windowview_mode)
 
+    # Ouvre l'écran d'ajout d'un actif
+    @QtCore.pyqtSlot()
+    def open_add_asset_screen(self):
+        ct = AddAsset(parent=self)
+        if ct.title not in self.title_list():
+            self.ui.mdiArea.addSubWindow(ct)
+            ct.show()
+        else:
+            del ct
+
+    # Ouvre l'écran des actifs
+    @QtCore.pyqtSlot()
+    def open_gisement_screen(self):
+        ct = GisementScreen(parent=self)
+        if ct.title not in self.title_list():
+            self.ui.mdiArea.addSubWindow(ct)
+            ct.show()
+        else:
+            del ct
+
+    # Ouvre l'écran de la courbe de taux
+    @QtCore.pyqtSlot()
+    def open_courbe_screen(self):
+        ct = CourbeTaux(parent=self)
+        if ct.title not in self.title_list():
+            self.ui.mdiArea.addSubWindow(ct)
+            ct.show()
+        else:
+            del ct
+
+    # Ouvre le dialogue du portefeuille
+    @QtCore.pyqtSlot()
+    def open_portefeuille_dialog(self):
+        pfdial = PortefeuilleDialog()
+        # self.ui.mdiArea.addSubWindow(pfdial)
+        pfdial.exec_()
+
+    # Ouvre l'écran du portefeuille
+    @QtCore.pyqtSlot()
+    def open_portefeuille_screen(self):
+        pf = Portfolios(parent=self)
+        if pf.title not in self.title_list():
+            self.ui.mdiArea.addSubWindow(pf)
+            pf.ui.pushButtonFermer.clicked.connect(self.ui.mdiArea.closeActiveSubWindow)
+            pf.User = self.user
+            pf.show()
+            pf.affichePortefeuille()
+        else:
+            del pf
+
     def title_list(self):
         """
         retourne la liste des titres des sous-fenêtres
@@ -54,68 +104,6 @@ class MyClass(QMainWindow, Ui_MDIApp):
 
     def set_tabview_mode(self):
         self.ui.mdiArea.setViewMode(1)
-
-    @QtCore.pyqtSlot()
-    def open_add_asset_screen(self):
-        ct = AddAsset()
-        if ct.title not in self.title_list():
-            self.ui.mdiArea.addSubWindow(ct)
-            ct.show()
-        else:
-            del ct
-
-    @QtCore.pyqtSlot()
-    def open_gisement_screen(self):
-        ct = GisementScreen(parent=self)
-        if ct.title not in self.title_list():
-            self.ui.mdiArea.addSubWindow(ct)
-            ct.show()
-        else:
-            del ct
-
-    @QtCore.pyqtSlot()
-    def open_courbe_screen(self):
-        ct = CourbeTaux()
-        if ct.title not in self.title_list():
-            self.ui.mdiArea.addSubWindow(ct)
-            ct.show()
-        else:
-            del ct
-
-    @QtCore.pyqtSlot()
-    def open_portefeuille_dialog(self):
-        pfdial = PortefeuilleDialog()
-        # self.ui.mdiArea.addSubWindow(pfdial)
-        pfdial.exec_()
-
-    @QtCore.pyqtSlot()
-    def open_portefeuille_screen(self):
-        pf = Portfolios()
-        if pf.title not in self.title_list():
-            self.ui.mdiArea.addSubWindow(pf)
-            pf.ui.tableWidgetPortefeuille.itemSelectionChanged.connect(self.stats)
-            pf.ui.pushButtonFermer.clicked.connect(self.ui.mdiArea.closeActiveSubWindow)
-            pf.User = self.user
-            pf.show()
-            pf.affichePortefeuille()
-        else:
-            del pf
-
-    @QtCore.pyqtSlot()
-    def filenew(self):
-        wnd = QDialog()
-        self.ui.mdiArea.addSubWindow(wnd)
-        wnd.show()
-
-    # @QtCore.pyqtSlot(int,int)
-    @QtCore.pyqtSlot()
-    def stats(self):
-        self.ui.statusbar.showMessage('Signal received row:{}, col:{} !!!!', 3500)
-        # self.ui.statusbar.showMessage('Signal received !!!!', 3500)
-
-    @QtCore.pyqtSlot()
-    def action_stats(self):
-        self.ui.statusbar.showMessage('Action Triggered !!!!', 2000)
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_W:

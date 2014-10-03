@@ -32,6 +32,10 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
         if self.data:
             self.ui.lineEditTransaction.setText(str(self.data[0].date_transaction.strftime('%d/%m/%Y')))
             self.populate_table()
+        else:
+            self.ui.tableWidgetCourbe.clearContents()
+            self.ui.lineEditTransaction.clear()
+            self.tell_status('Courbe non disponible')
 
     def populate_table(self):
         self.ui.tableWidgetCourbe.clearContents()
@@ -53,14 +57,13 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
                 self.ui.tableWidgetCourbe.setItem(idx, 2, date_valeur)
                 self.ui.tableWidgetCourbe.setItem(idx, 3, date_echeance)
                 self.ui.tableWidgetCourbe.setItem(idx, 4, transaction)
-                # self.ui.tableWidgetCourbe.resizeRowsToContents()
-                # self.ui.tableWidgetCourbe.resizeColumnsToContents()
+                self.ui.tableWidgetCourbe.resizeColumnsToContents()
 
     def convert_qdate(self, _qdate):
         return dt.date(_qdate[0], _qdate[1], _qdate[2])
 
     def tell_status(self, status):
-        self.parent.ui.statusbar.showMessage(status, 2500)
+        self.parent.ui.statusbar.showMessage(status, 3200)
 
     def keyPressEvent(self, e):
         # define key event

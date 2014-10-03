@@ -176,7 +176,7 @@
    </widget>
    <widget class="QMenu" name="menuBDD">
     <property name="title">
-     <string>BDD</string>
+     <string>Actifs</string>
     </property>
     <widget class="QMenu" name="menuImporter">
      <property name="title">

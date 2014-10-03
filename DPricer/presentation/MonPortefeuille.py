@@ -94,7 +94,7 @@ class Portfolios(QWidget, Ui_Portefeuilles):
             self.close()
 
     def tell_status(self, status):
-        self.parent.ui.statusbar.showMessage(status, 2500)
+        self.parent.ui.statusbar.showMessage(status, 3200)
 
 
 class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
@@ -144,7 +144,7 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
         self.ui.tableWidget.removeRow(idx.row())
 
     def tell_status(self, status):
-        self.parent.ui.statusbar.showMessage(status, 2500)
+        self.parent.ui.statusbar.showMessage(status, 3200)
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

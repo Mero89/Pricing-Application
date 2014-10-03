@@ -88,6 +88,16 @@
             <day>1</day>
            </date>
           </property>
+          <property name="minimumDateTime">
+           <datetime>
+            <hour>0</hour>
+            <minute>0</minute>
+            <second>0</second>
+            <year>1785</year>
+            <month>9</month>
+            <day>14</day>
+           </datetime>
+          </property>
           <property name="currentSection">
            <enum>QDateTimeEdit::DaySection</enum>
           </property>
@@ -207,6 +217,9 @@
         </property>
         <property name="gridStyle">
          <enum>Qt::DashLine</enum>
+        </property>
+        <property name="wordWrap">
+         <bool>false</bool>
         </property>
         <property name="rowCount">
          <number>0</number>

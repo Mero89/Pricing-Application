@@ -39,11 +39,12 @@ class GisementScreen(QWidget, Ui_Gisement):
         if self.parent is not None:
             self.ui.toolButtonAdd.clicked.connect(self.parent.open_add_asset_screen)
 
-    #### TableWidget editing related Method ####
+    # Modifie un actif
     def edit_asset(self):
-        # édite l'actif choisi
         row = self.ui.tableWidgetActifs.currentRow()
 
+
+    # Supprime l'actif choisi
     def delete_asset(self):
         # supprime l'actif désigné
         selection = self.ui.tableWidgetActifs.selectedIndexes()
@@ -75,7 +76,7 @@ class GisementScreen(QWidget, Ui_Gisement):
                 self.populate_completer()
                 self.tell_status("Actif(s) supprimé(s) avec succès.")
 
-    ##### TableWidget related Methods #####
+    # Configure l'auto-completion en fonction du critère choisi
     @QtCore.pyqtSlot()
     def set_completer_value(self):
         """
@@ -91,6 +92,7 @@ class GisementScreen(QWidget, Ui_Gisement):
         completer.setCompletionMode(0)
         self.ui.lineEditValeur.setCompleter(completer)
 
+    # filtre la liste des actifs selon le critère choisi
     @QtCore.pyqtSlot()
     def filter_by_value(self):
         # All data
@@ -108,10 +110,12 @@ class GisementScreen(QWidget, Ui_Gisement):
             self.populate_table()
             self.ui.tableWidgetActifs.setSortingEnabled(True)
 
+    # Fournit la liste de l'auto-completion
     def populate_completer(self):
         self.isin_list = [el.isin for el in self.data]
         self.nom_list = [el.nom for el in self.data]
 
+    # Remplit la table
     def populate_table(self):
         self.ui.tableWidgetActifs.clearContents()
         cur_rows = self.ui.tableWidgetActifs.rowCount()
@@ -158,7 +162,7 @@ class GisementScreen(QWidget, Ui_Gisement):
                 self.ui.tableWidgetActifs.setItem(idx, 15, tx_act)
 
     def tell_status(self, status):
-        self.parent.ui.statusbar.showMessage(status, 3000)
+        self.parent.ui.statusbar.showMessage(status, 3200)
 
     def keyPressEvent(self, e):
         # define key event
@@ -178,6 +182,7 @@ class AddAsset(QDialog, Ui_AddAsset):
         self.ui.buttonBox.accepted.connect(self.save_asset)
 
     def save_asset(self):
+
         pass
 
     @QtCore.pyqtSlot()
@@ -196,7 +201,7 @@ class AddAsset(QDialog, Ui_AddAsset):
         self.ui.tableWidget.removeRow(idx.row())
 
     def tell_status(self, status):
-        self.parent.ui.statusbar.showMessage(status, 2500)
+        self.parent.ui.statusbar.showMessage(status, 3200)
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
