@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/MDI.ui'
 #
-# Created: Fri Oct  3 09:41:25 2014
+# Created: Fri Oct  3 11:11:44 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MDIApp(object):
     def setupUi(self, MDIApp):
         MDIApp.setObjectName(_fromUtf8("MDIApp"))
-        MDIApp.resize(673, 492)
+        MDIApp.resize(660, 480)
         MDIApp.setDocumentMode(False)
         self.centralwidget = QtGui.QWidget(MDIApp)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
@@ -67,7 +67,7 @@ class Ui_MDIApp(object):
         self.verticalLayout.addWidget(self.mdiArea)
         MDIApp.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MDIApp)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 673, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 660, 25))
         self.menubar.setMinimumSize(QtCore.QSize(0, 25))
         self.menubar.setMaximumSize(QtCore.QSize(16777215, 35))
         self.menubar.setDefaultUp(False)
@@ -97,7 +97,10 @@ class Ui_MDIApp(object):
         font.setPointSize(11)
         self.statusbar.setFont(font)
         self.statusbar.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.statusbar.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.statusbar.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+        self.statusbar.setAcceptDrops(False)
+        self.statusbar.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.statusbar.setSizeGripEnabled(True)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MDIApp.setStatusBar(self.statusbar)
         self.actionNW = QtGui.QAction(MDIApp)
@@ -197,7 +200,7 @@ class Ui_MDIApp(object):
         self.menuParametres.setTitle(_translate("MDIApp", "Paramètres", None))
         self.menuDispositionDesFenetres.setTitle(_translate("MDIApp", "Disposition des fenêtres", None))
         self.menuOutils.setTitle(_translate("MDIApp", "Outils", None))
-        self.menuBDD.setTitle(_translate("MDIApp", "BDD", None))
+        self.menuBDD.setTitle(_translate("MDIApp", "Actifs", None))
         self.menuImporter.setTitle(_translate("MDIApp", "Importer", None))
         self.menuCourbe.setTitle(_translate("MDIApp", "Courbe Taux", None))
         self.menuImporterCourbe.setTitle(_translate("MDIApp", "Importer", None))

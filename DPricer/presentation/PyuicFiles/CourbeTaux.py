@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'PycharmProjects/DPricer/test/CourbeTaux.ui'
+# Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/CourbeTaux.ui'
 #
-# Created: Mon Sep 29 13:27:24 2014
+# Created: Fri Oct  3 11:12:42 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -58,6 +58,7 @@ class Ui_CourbeTaux(object):
         self.dateEditFilter = QtGui.QDateEdit(self.groupBox)
         self.dateEditFilter.setMaximumSize(QtCore.QSize(250, 16777215))
         self.dateEditFilter.setDate(QtCore.QDate(2014, 10, 1))
+        self.dateEditFilter.setMinimumDateTime(QtCore.QDateTime(QtCore.QDate(1785, 9, 14), QtCore.QTime(0, 0, 0)))
         self.dateEditFilter.setCurrentSection(QtGui.QDateTimeEdit.DaySection)
         self.dateEditFilter.setCalendarPopup(True)
         self.dateEditFilter.setCurrentSectionIndex(0)
@@ -102,6 +103,7 @@ class Ui_CourbeTaux(object):
         self.tableWidgetCourbe.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tableWidgetCourbe.setShowGrid(False)
         self.tableWidgetCourbe.setGridStyle(QtCore.Qt.DashLine)
+        self.tableWidgetCourbe.setWordWrap(False)
         self.tableWidgetCourbe.setRowCount(0)
         self.tableWidgetCourbe.setObjectName(_fromUtf8("tableWidgetCourbe"))
         self.tableWidgetCourbe.setColumnCount(5)

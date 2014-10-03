@@ -10,11 +10,11 @@ from DPricer.presentation.PyuicFiles.AddPFDialog import Ui_AddPFDialog
 from DPricer.presentation.PyuicFiles.Portefeuilles import Ui_Portefeuilles
 from DPricer.lib.Gestion import Gestion
 from DPricer.lib.Portefeuille import Portefeuille
-from DPricer.data.AppModel import AppModel, PortefeuilleMd
+from DPricer.data.AppModel import AppModel, PortefeuilleMd, GestionMd
 
 
 class Portfolios(QWidget, Ui_Portefeuilles):
-    def __init__(self,parent=None):
+    def __init__(self, parent=None):
         super(Ui_Portefeuilles, self).__init__()
         QWidget.__init__(self)
         self.ui = Ui_Portefeuilles()
@@ -98,11 +98,12 @@ class Portfolios(QWidget, Ui_Portefeuilles):
 
 
 class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
-    def __init__(self):
+    def __init__(self, parent=None):
         super(Ui_AddPFDialog, self).__init__()
         QDialog.__init__(self)
         self.ui = Ui_AddPFDialog()
         self.ui.setupUi(self)
+        self.parent = parent
         self.setWindowTitle('Ajout de Portefeuilles')
         self.accepted.connect(self.save_portefeuille)
         self.ui.pushButtonAjouter.clicked.connect(self.ajouter_clicked)
@@ -111,15 +112,20 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
     @QtCore.pyqtSlot()
     def save_portefeuille(self):
         num = self.ui.tableWidget.rowCount()
-        ma_liste = list()
+        pf_liste = list()
+        g_liste = list()
         if num >= 1:
             for i in range(num):
                 isin = self.ui.tableWidget.item(i, 0).text()
                 nom = self.ui.tableWidget.item(i, 1).text()
                 if isin != str and nom != str:
-                    ma_liste.append(PortefeuilleMd(p_isin=str(isin), nom=str(nom)))
+                    pf_liste.append(PortefeuilleMd(p_isin=str(isin), nom=str(nom)))
+                    if self.parent is not None:
+                        g_liste.append(GestionMd(uid=self.parent.user.uid, p_isin=str(isin)))
         session = AppModel().get_session()
-        session.add_all(ma_liste)
+        session.add_all(pf_liste)
+        if self.parent is not None:
+            session.add_all(g_liste)
         try:
             session.commit()
             self.tell_status("Portefeuille ajouté avec succès.")

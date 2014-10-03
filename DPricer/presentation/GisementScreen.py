@@ -2,6 +2,7 @@
 __author__ = 'F.Marouane'
 
 import sys
+import datetime as dt
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 from DPricer.presentation.PyuicFiles.AddAssetDialog import Ui_AddAsset
@@ -179,11 +180,69 @@ class AddAsset(QDialog, Ui_AddAsset):
         self.parent = parent
         self.title = 'Ajouter Actif'
         self.setWindowTitle(self.title)
-        self.ui.buttonBox.accepted.connect(self.save_asset)
+        self.data = dict()
+        self.choix = {'3':'AMCREV','0':'N', '1':'AMC','2':'REV'}
+        self.ui.toolButtonAdd.clicked.connect(self.toolButtonAjouter)
+        self.ui.toolButtonRemove.clicked.connect(self.toolButtonSupprimer)
+        self.ui.buttonBox.accepted.connect(self.get_data)
+
+    def get_data(self):
+        # extrait les données saisies
+        self.data['isin'] = str(self.ui.isinLineEdit.text())
+        self.data['nom'] = unicode(self.ui.nomLineEdit.text())
+        self.data['nominal'] = self.validate_float(self.ui.nominalLineEdit.text())
+        self.data['tx_facial'] = self.ui.doubleSpinBoxTauxFacial.value()/100.
+        self.data['spread'] = self.ui.doubleSpinBoxSpread.value()/100.
+        self.data['d_emission'] = self.convert_qdate(self.ui.dateEditDateEmission.date().getDate())
+        self.data['d_jouissance'] = self.convert_qdate(self.ui.dateEditDateJouissance.date().getDate())
+        self.data['d_echeance'] = self.convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
+        self.data['type'] = self.choix[str(self.ui.typeComboBox.currentIndex())]
+        self.data['forcee'] = self.ui.forcerCheckBox.isChecked()
+        if self.data['d_echeance'] < dt.date.today():
+            self.data['echue'] = False
+        else:
+            self.data['echue'] = True
+        missing = list()
+        for key, value in self.data.items():
+            if not value and type(value) is not bool:
+                missing.append(key)
+        if len(missing) >= 1:
+            confirm = ConfirmDialog(self)
+            confirm.set_message('les champs suivants sont manquants:\n {}'.format(missing))
+            confirm.exec_()
+        else:
+            self.save_asset()
 
     def save_asset(self):
+        d = self.data
+        session = AppModel().get_session()
+        # Enregistre les données saisies
+        obl = ObligationMd(isin=d['isin'], nom=d['nom'], nominal=d['nominal'],
+                           taux_facial=d['tx_facial'], spread=d['spread'], date_emission=d['d_emission'],
+                           date_jouissance=d['d_jouissance'], forcee=d['forcee'],
+                           maturite=d['d_echeance'], type=d['type'], echue=d['echue'])
+        if session.query(ObligationMd).get(obl.isin):
+            confirm = ConfirmDialog(self)
+            confirm.set_message(u"l'actif fourni existe déjà dans la base de données.")
+            confirm.exec_()
+        elif not session.query(ObligationMd).get(obl.isin):
+            session.add(obl)
+            try:
+                session.commit()
+                self.tell_status(u'Actif ajouté avec succès.')
+            except Exception as e:
+                self.tell_status(u'Actif non ajouté.')
+                session.rollback()
+                self.tell_status(e.message)
 
-        pass
+    def validate_float(self, _num):
+        if _num == '':
+            return 0
+        else:
+            return float(_num)
+
+    def convert_qdate(self, _qdate):
+        return dt.date(_qdate[0], _qdate[1], _qdate[2])
 
     @QtCore.pyqtSlot()
     def toolButtonAjouter(self):
@@ -205,6 +264,7 @@ class AddAsset(QDialog, Ui_AddAsset):
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
-    form = GisementScreen()
+    # form = GisementScreen()
+    form = AddAsset()
     form.show()
     ap.exec_()
