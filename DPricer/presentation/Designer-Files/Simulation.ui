@@ -173,6 +173,17 @@
           </column>
           <column>
            <property name="text">
+            <string>Prix</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
             <string>Tx Actuariel</string>
            </property>
            <property name="font">

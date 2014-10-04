@@ -201,6 +201,9 @@ class Courbe(CourbeMd):
             px.append(tf/pow((1+zc[1]), zc[0]))
         return sum(px)
 
+    def tenors(self):
+        # genere les tenors fixes
+        pass
 
 def test_monetaire_actuel():
     dd = datetime.date.today()
