@@ -10,7 +10,6 @@ class Obligation(object):
     """
     Classe représentant une Obligation.
     """
-
     def __init__(self, nominal, tx_f, d_em, d_j, d_ech, d_eval=None, spread=0, tx_act=None, nom='', le_type='',
                  isin=''):
         # si Date evaluation n'est pas definie, elle prend la valeur d'aujourd'hui
