@@ -37,24 +37,29 @@ def read_courbe_bam(path_to_file):
 
 def get_date_courbe(path_to_file):
     date_transaction = get_date_transaction(path_to_file)
-    if date_transaction.weekday() == 4:
-        delta = dt.timedelta(days=3)
-    else:
-        delta = dt.timedelta(days=1)
-    # retourne la date figurant dans le fichier +1 jour
-    return date_transaction + delta
+    if date_transaction is not None:
+        if date_transaction.weekday() == 4:
+            delta = dt.timedelta(days=3)
+        else:
+            delta = dt.timedelta(days=1)
+        # retourne la date figurant dans le fichier +1 jour
+        return date_transaction + delta
 
 
 def get_date_transaction(path_to_file):
-    try:
-        wbook = xlrd.open_workbook(path_to_file)
-    except IOError:
-        print 'Erreur fichier introuvable'
+    ext = os.path.splitext(str(path_to_file))[1]
+    if ext == '.xls' or ext == '.xlsx':
+        try:
+            wbook = xlrd.open_workbook(path_to_file)
+        except IOError:
+            print 'Erreur fichier introuvable'
+            return None
+        sheet = wbook.sheet_by_index(0)
+        cel = sheet.cell(1, 0).value
+        date_transaction = dt.datetime.strptime(cel.split(':')[1], '%d/%m/%Y')
+        return date_transaction
+    else:
         return None
-    sheet = wbook.sheet_by_index(0)
-    cel = sheet.cell(1, 0).value
-    date_transaction = dt.datetime.strptime(cel.split(':')[1], '%d/%m/%Y')
-    return date_transaction
 
 
 def is_exists(_date):
@@ -66,6 +71,7 @@ def is_exists(_date):
     md = AppModel()
     session = md.get_session()
     existe = session.query(CourbeMd).filter_by(date_req=_date).first()
+    # return None si la courbe n'existe pas dans la BDD
     return existe
 
 
@@ -98,8 +104,14 @@ def commit_courbe_bam(excel_path, _date=None):
                 session.add(courbe)
             try:
                 session.commit()
+                # Succès
+                return 1
             except ValueError:
-                return False
+                # Format incompatible
+                return -1
+    else:
+        # Courbe existe déjà
+        return 0
 
 
 def list_excel_files(path_to_folder):
@@ -146,14 +158,14 @@ def import_obligation(excel_path):
                 row[5] = dt.date(year=d_em[0], month=d_em[1], day=d_em[2])
                 row[6] = dt.date(year=d_js[0], month=d_js[1], day=d_js[2])
                 row[7] = dt.date(year=d_ech[0], month=d_ech[1], day=d_ech[2])
-            if type(row[1]) is type(str) and row[1] != '':
-                row[1] = str(int(row[1]))
+            if type(row[0]) is type(str) and row[0] != '':
+                row[0] = str(int(row[0]))
 
         # enregistre Les données
         md = AppModel()
         session = md.get_session()
         for rw in a:
-            if rw[1] != '' and rw[0] != '':
+            if rw[1] and rw[0]:
                 oblig = ObligationMd()
                 oblig.isin = rw[0]
                 oblig.nom = rw[1]
@@ -167,8 +179,12 @@ def import_obligation(excel_path):
                 session.add(oblig)
                 try:
                     session.commit()
+                    return 1
                 except Exception:
                     session.rollback()
+                    return -1
+            else:
+                return 0
 
 
 ### Générer le fichier Template d'excel ###
@@ -176,7 +192,7 @@ def import_obligation(excel_path):
 def create_template(path, filename):
     if os.path.exists(path):
         w = xlwt.Workbook(encoding='utf-8')
-        s = w.add_sheet('Exemple')
+        s = w.add_sheet('Portfolio')
         row = s.row(0)
         style = xlwt.easyxf('font: name Menlo, bold True, height 280, colour blue;')
         warning = xlwt.easyxf('font: name Menlo, bold True, height 320, colour red;'

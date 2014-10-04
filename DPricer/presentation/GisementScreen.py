@@ -182,8 +182,8 @@ class AddAsset(QDialog, Ui_AddAsset):
         self.setWindowTitle(self.title)
         self.data = dict()
         self.choix = {'3':'AMCREV','0':'N', '1':'AMC','2':'REV'}
-        self.ui.toolButtonAdd.clicked.connect(self.toolButtonAjouter)
-        self.ui.toolButtonRemove.clicked.connect(self.toolButtonSupprimer)
+        # self.ui.toolButtonAdd.clicked.connect(self.toolButtonAjouter)
+        # self.ui.toolButtonRemove.clicked.connect(self.toolButtonSupprimer)
         self.ui.buttonBox.accepted.connect(self.get_data)
 
     def get_data(self):
@@ -197,7 +197,7 @@ class AddAsset(QDialog, Ui_AddAsset):
         self.data['d_jouissance'] = self.convert_qdate(self.ui.dateEditDateJouissance.date().getDate())
         self.data['d_echeance'] = self.convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
         self.data['type'] = self.choix[str(self.ui.typeComboBox.currentIndex())]
-        self.data['forcee'] = self.ui.forcerCheckBox.isChecked()
+        # self.data['forcee'] = self.ui.forcerCheckBox.isChecked()
         if self.data['d_echeance'] < dt.date.today():
             self.data['echue'] = False
         else:
@@ -219,7 +219,7 @@ class AddAsset(QDialog, Ui_AddAsset):
         # Enregistre les données saisies
         obl = ObligationMd(isin=d['isin'], nom=d['nom'], nominal=d['nominal'],
                            taux_facial=d['tx_facial'], spread=d['spread'], date_emission=d['d_emission'],
-                           date_jouissance=d['d_jouissance'], forcee=d['forcee'],
+                           date_jouissance=d['d_jouissance'], forcee=False,
                            maturite=d['d_echeance'], type=d['type'], echue=d['echue'])
         if session.query(ObligationMd).get(obl.isin):
             confirm = ConfirmDialog(self)

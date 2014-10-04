@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/MDI.ui'
 #
-# Created: Fri Oct  3 11:11:44 2014
+# Created: Sat Oct  4 17:32:46 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -161,13 +161,10 @@ class Ui_MDIApp(object):
         self.menuPortefeuille.addAction(self.actionAjoutPortefeuille)
         self.menuDispositionDesFenetres.addAction(self.actionOnglets)
         self.menuDispositionDesFenetres.addAction(self.actionSousFenetres)
-        self.menuParametres.addAction(self.actionProfilUtilisateur)
-        self.menuParametres.addSeparator()
         self.menuParametres.addAction(self.actionGeneral)
         self.menuParametres.addAction(self.menuDispositionDesFenetres.menuAction())
         self.menuOutils.addAction(self.actionCalculette)
         self.menuImporter.addAction(self.actionImporterActifExcel)
-        self.menuImporter.addAction(self.actionImporterActifCSV)
         self.menuImporter.addSeparator()
         self.menuImporter.addAction(self.actionGenererFichierImport)
         self.menuBDD.addAction(self.actionAjoutObligation)
@@ -176,8 +173,6 @@ class Ui_MDIApp(object):
         self.menuBDD.addSeparator()
         self.menuBDD.addAction(self.menuImporter.menuAction())
         self.menuImporterCourbe.addAction(self.actionExcelCourbe)
-        self.menuImporterCourbe.addSeparator()
-        self.menuImporterCourbe.addAction(self.actionCSVCourbe)
         self.menuCourbe.addAction(self.actionMettreAJour)
         self.menuCourbe.addAction(self.menuImporterCourbe.menuAction())
         self.menuCourbe.addSeparator()

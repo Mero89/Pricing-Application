@@ -1,16 +1,19 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
 
+### App Library modules
+from DPricer.lib.User import User
+from DPricer.data import Excel
+### Library modules
 import sys
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
+### Import App Screens and Dialogs ###
 from DPricer.presentation.PyuicFiles.MDI import Ui_MDIApp
-### import Screens and Dialogs ###
 from GisementScreen import GisementScreen, AddAsset
 from LoginDialog import LoginDialog
 from MonPortefeuille import Portfolios, PortefeuilleDialog
 from CourbeTauxScreen import CourbeTaux
-from DPricer.lib.User import User
 
 
 class MyClass(QMainWindow, Ui_MDIApp):
@@ -40,6 +43,8 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionAjoutObligation.triggered.connect(self.open_add_asset_screen)
         self.ui.actionOnglets.triggered.connect(self.set_tabview_mode)
         self.ui.actionSousFenetres.triggered.connect(self.set_windowview_mode)
+        self.ui.actionExcelCourbe.triggered.connect(self.import_courbe_taux)
+        self.ui.actionImporterActifExcel.triggered.connect(self.import_obligations)
 
     # Ouvre l'écran d'ajout d'un actif
     @QtCore.pyqtSlot()
@@ -110,6 +115,41 @@ class MyClass(QMainWindow, Ui_MDIApp):
             self.filenew()
             # Comment to commit
 
+    def import_courbe_taux(self):
+        filename = self.open_excel()
+        # importe Le fichier dans la BDD
+        if str(filename):
+            rep = Excel.commit_courbe_bam(filename)
+            if rep == 1:
+                message = u"La courbe a été importée avec succès."
+                self.ui.statusbar.showMessage(message, 4000)
+            elif rep == 0:
+                message = u"La courbe existe déjà."
+                self.ui.statusbar.showMessage(message, 4000)
+            elif rep == -1:
+                message = u"Le fichier ne contient pas les données au format attendu."
+                self.ui.statusbar.showMessage(message, 4000)
+
+    def import_obligations(self):
+        filename = self.open_excel()
+        if str(filename):
+            rep = Excel.import_obligation(filename)
+            if rep == 1:
+                message = u"Le fichier a été importé avec succès."
+                self.ui.statusbar.showMessage(message, 4000)
+            elif rep == 0:
+                message = u"Certains champs sont manquants."
+                self.ui.statusbar.showMessage(message, 4000)
+            elif rep == -1:
+                message = u"Le fichier contient des données incompatibles ou des lignes déjà existantes."
+                self.ui.statusbar.showMessage(message, 4000)
+
+    def open_excel(self):
+        # lancer le FileDialog
+        fDialog = QFileDialog(parent=self)
+        fDialog.setFileMode(3)
+        filename = fDialog.getOpenFileName(self, "Importer courbe Taux", filter="Fichiers (*.xls *.xlsx)")
+        return filename
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

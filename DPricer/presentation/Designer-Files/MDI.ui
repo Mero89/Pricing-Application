@@ -163,8 +163,6 @@
      <addaction name="actionOnglets"/>
      <addaction name="actionSousFenetres"/>
     </widget>
-    <addaction name="actionProfilUtilisateur"/>
-    <addaction name="separator"/>
     <addaction name="actionGeneral"/>
     <addaction name="menuDispositionDesFenetres"/>
    </widget>
@@ -183,7 +181,6 @@
       <string>Importer</string>
      </property>
      <addaction name="actionImporterActifExcel"/>
-     <addaction name="actionImporterActifCSV"/>
      <addaction name="separator"/>
      <addaction name="actionGenererFichierImport"/>
     </widget>
@@ -202,8 +199,6 @@
       <string>Importer</string>
      </property>
      <addaction name="actionExcelCourbe"/>
-     <addaction name="separator"/>
-     <addaction name="actionCSVCourbe"/>
     </widget>
     <addaction name="actionMettreAJour"/>
     <addaction name="menuImporterCourbe"/>
@@ -376,7 +371,7 @@
   </action>
   <action name="actionSousFenetres">
    <property name="text">
-    <string>Sous-fenêtres</string>
+    <string>Fenêtres</string>
    </property>
   </action>
  </widget>
