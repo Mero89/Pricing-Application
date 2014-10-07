@@ -176,33 +176,43 @@
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QFormLayout" name="formLayout_2">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="nouveauMotDePasseLabel">
             <property name="text">
              <string>Nouveau Mot de passe</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="1" column="1">
            <widget class="QLineEdit" name="nouveauMotDePasseLineEdit">
             <property name="echoMode">
              <enum>QLineEdit::Password</enum>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="vRifierMotDePasseLabel">
             <property name="text">
              <string>Vérifier mot de passe</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="vRifierMotDePasseLineEdit">
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="verifierMotDePasseLineEdit">
             <property name="echoMode">
              <enum>QLineEdit::Password</enum>
             </property>
            </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="ancienMotDePasseLabel">
+            <property name="text">
+             <string>Ancien Mot de passe</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="ancienMotDePasseLineEdit"/>
           </item>
          </layout>
         </item>
@@ -313,6 +323,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>nomLineEdit</tabstop>
+  <tabstop>prenomLineEdit</tabstop>
+  <tabstop>unameLineEdit</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>ancienMotDePasseLineEdit</tabstop>
+  <tabstop>nouveauMotDePasseLineEdit</tabstop>
+  <tabstop>verifierMotDePasseLineEdit</tabstop>
+  <tabstop>pushButton_2</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

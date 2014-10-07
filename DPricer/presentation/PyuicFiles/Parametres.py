@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/Parametres.ui'
 #
-# Created: Tue Oct  7 10:13:44 2014
+# Created: Tue Oct  7 10:54:25 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -90,18 +90,24 @@ class Ui_Parametres(object):
         self.formLayout_2.setObjectName(_fromUtf8("formLayout_2"))
         self.nouveauMotDePasseLabel = QtGui.QLabel(self.groupBox)
         self.nouveauMotDePasseLabel.setObjectName(_fromUtf8("nouveauMotDePasseLabel"))
-        self.formLayout_2.setWidget(0, QtGui.QFormLayout.LabelRole, self.nouveauMotDePasseLabel)
+        self.formLayout_2.setWidget(1, QtGui.QFormLayout.LabelRole, self.nouveauMotDePasseLabel)
         self.nouveauMotDePasseLineEdit = QtGui.QLineEdit(self.groupBox)
         self.nouveauMotDePasseLineEdit.setEchoMode(QtGui.QLineEdit.Password)
         self.nouveauMotDePasseLineEdit.setObjectName(_fromUtf8("nouveauMotDePasseLineEdit"))
-        self.formLayout_2.setWidget(0, QtGui.QFormLayout.FieldRole, self.nouveauMotDePasseLineEdit)
+        self.formLayout_2.setWidget(1, QtGui.QFormLayout.FieldRole, self.nouveauMotDePasseLineEdit)
         self.vRifierMotDePasseLabel = QtGui.QLabel(self.groupBox)
         self.vRifierMotDePasseLabel.setObjectName(_fromUtf8("vRifierMotDePasseLabel"))
-        self.formLayout_2.setWidget(1, QtGui.QFormLayout.LabelRole, self.vRifierMotDePasseLabel)
-        self.vRifierMotDePasseLineEdit = QtGui.QLineEdit(self.groupBox)
-        self.vRifierMotDePasseLineEdit.setEchoMode(QtGui.QLineEdit.Password)
-        self.vRifierMotDePasseLineEdit.setObjectName(_fromUtf8("vRifierMotDePasseLineEdit"))
-        self.formLayout_2.setWidget(1, QtGui.QFormLayout.FieldRole, self.vRifierMotDePasseLineEdit)
+        self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.vRifierMotDePasseLabel)
+        self.verifierMotDePasseLineEdit = QtGui.QLineEdit(self.groupBox)
+        self.verifierMotDePasseLineEdit.setEchoMode(QtGui.QLineEdit.Password)
+        self.verifierMotDePasseLineEdit.setObjectName(_fromUtf8("verifierMotDePasseLineEdit"))
+        self.formLayout_2.setWidget(2, QtGui.QFormLayout.FieldRole, self.verifierMotDePasseLineEdit)
+        self.ancienMotDePasseLabel = QtGui.QLabel(self.groupBox)
+        self.ancienMotDePasseLabel.setObjectName(_fromUtf8("ancienMotDePasseLabel"))
+        self.formLayout_2.setWidget(0, QtGui.QFormLayout.LabelRole, self.ancienMotDePasseLabel)
+        self.ancienMotDePasseLineEdit = QtGui.QLineEdit(self.groupBox)
+        self.ancienMotDePasseLineEdit.setObjectName(_fromUtf8("ancienMotDePasseLineEdit"))
+        self.formLayout_2.setWidget(0, QtGui.QFormLayout.FieldRole, self.ancienMotDePasseLineEdit)
         self.verticalLayout_3.addLayout(self.formLayout_2)
         spacerItem4 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem4)
@@ -133,6 +139,13 @@ class Ui_Parametres(object):
 
         self.retranslateUi(Parametres)
         QtCore.QMetaObject.connectSlotsByName(Parametres)
+        Parametres.setTabOrder(self.nomLineEdit, self.prenomLineEdit)
+        Parametres.setTabOrder(self.prenomLineEdit, self.unameLineEdit)
+        Parametres.setTabOrder(self.unameLineEdit, self.pushButton)
+        Parametres.setTabOrder(self.pushButton, self.ancienMotDePasseLineEdit)
+        Parametres.setTabOrder(self.ancienMotDePasseLineEdit, self.nouveauMotDePasseLineEdit)
+        Parametres.setTabOrder(self.nouveauMotDePasseLineEdit, self.verifierMotDePasseLineEdit)
+        Parametres.setTabOrder(self.verifierMotDePasseLineEdit, self.pushButton_2)
 
     def retranslateUi(self, Parametres):
         Parametres.setWindowTitle(_translate("Parametres", "Parametres", None))
@@ -144,5 +157,6 @@ class Ui_Parametres(object):
         self.groupBox.setTitle(_translate("Parametres", "Changer Mot de passe", None))
         self.nouveauMotDePasseLabel.setText(_translate("Parametres", "Nouveau Mot de passe", None))
         self.vRifierMotDePasseLabel.setText(_translate("Parametres", "Vérifier mot de passe", None))
+        self.ancienMotDePasseLabel.setText(_translate("Parametres", "Ancien Mot de passe", None))
         self.pushButton_2.setText(_translate("Parametres", "Changer mot de passe", None))
 

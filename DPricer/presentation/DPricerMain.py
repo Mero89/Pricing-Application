@@ -14,6 +14,7 @@ from GisementScreen import GisementScreen, AddAsset, UpdateAsset
 from LoginDialog import LoginDialog
 from MonPortefeuille import Portfolios, PortefeuilleDialog
 from CourbeTauxScreen import CourbeTaux
+from ParametresScreen import Parametre
 
 
 class MyClass(QMainWindow, Ui_MDIApp):
@@ -45,6 +46,16 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionSousFenetres.triggered.connect(self.set_windowview_mode)
         self.ui.actionExcelCourbe.triggered.connect(self.import_courbe_taux)
         self.ui.actionImporterActifExcel.triggered.connect(self.import_obligations)
+        self.ui.actionGeneral.triggered.connect(self.open_parametres)
+
+    # Ouvre l'écran des paramètres
+    def open_parametres(self):
+        ct = Parametre(parent=self)
+        if ct.title not in self.title_list():
+            self.ui.mdiArea.addSubWindow(ct)
+            ct.show()
+        else:
+            del ct
 
     # Ouvre l'écran d'ajout d'un actif
     @QtCore.pyqtSlot()

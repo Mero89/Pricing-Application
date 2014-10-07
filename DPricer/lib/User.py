@@ -30,10 +30,10 @@ class User(object):
         else:
             self.logged = False
 
-    def change_infos(self, mail=None, prenom=None, nom=None):
+    def change_infos(self, uname=None, prenom=None, nom=None):
         dico = dict()
-        if mail is not None:
-            dico['mail'] = mail
+        if uname is not None:
+            dico['uname'] = uname
         if prenom is not None:
             dico['prenom'] = prenom
         if nom is not None:
@@ -41,8 +41,23 @@ class User(object):
         self.session.query(UserMd).filter_by(id=self.uid).update(dico)
         try:
             self.session.commit()
+            return 1
         except:
             self.session.rollback()
+            return 0
+
+    def change_password(self, old_pass, new_pass):
+        mypass = self.session.query(UserMd).get(self.uid)
+        if old_pass == str(mypass.password):
+            self.session.query(UserMd).filter_by(id=self.uid).update({'password': new_pass})
+            self.session.commit()
+            return 1
+        else:
+            return 0
+
+    def get_infos(self):
+        infos = self.session.query(UserMd).get(self.uid)
+        return infos
 
     def user_portfolio(self):
         """
