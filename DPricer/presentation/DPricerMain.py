@@ -10,7 +10,7 @@ from PyQt4.QtGui import *
 from PyQt4 import QtCore
 ### Import App Screens and Dialogs ###
 from DPricer.presentation.PyuicFiles.MDI import Ui_MDIApp
-from GisementScreen import GisementScreen, AddAsset
+from GisementScreen import GisementScreen, AddAsset, UpdateAsset
 from LoginDialog import LoginDialog
 from MonPortefeuille import Portfolios, PortefeuilleDialog
 from CourbeTauxScreen import CourbeTaux
@@ -50,6 +50,15 @@ class MyClass(QMainWindow, Ui_MDIApp):
     @QtCore.pyqtSlot()
     def open_add_asset_screen(self):
         ct = AddAsset(parent=self)
+        if ct.title not in self.title_list():
+            self.ui.mdiArea.addSubWindow(ct)
+            ct.show()
+        else:
+            del ct
+
+    @QtCore.pyqtSlot(dict)
+    def update_asset_screen(self, data):
+        ct = UpdateAsset(data=data, parent=self)
         if ct.title not in self.title_list():
             self.ui.mdiArea.addSubWindow(ct)
             ct.show()

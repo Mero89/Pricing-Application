@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/AddAssetDialog.ui'
 #
-# Created: Sat Oct  4 17:52:04 2014
+# Created: Tue Oct  7 00:58:24 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,8 +26,7 @@ except AttributeError:
 class Ui_AddAsset(object):
     def setupUi(self, AddAsset):
         AddAsset.setObjectName(_fromUtf8("AddAsset"))
-        AddAsset.resize(674, 506)
-        AddAsset.setModal(False)
+        AddAsset.resize(547, 557)
         self.verticalLayout = QtGui.QVBoxLayout(AddAsset)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -42,8 +41,8 @@ class Ui_AddAsset(object):
         self.groupBoxInfo.setMinimumSize(QtCore.QSize(300, 0))
         self.groupBoxInfo.setMaximumSize(QtCore.QSize(830, 16777215))
         self.groupBoxInfo.setObjectName(_fromUtf8("groupBoxInfo"))
-        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.groupBoxInfo)
-        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.groupBoxInfo)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.formLayout_2 = QtGui.QFormLayout()
         self.formLayout_2.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
         self.formLayout_2.setFieldGrowthPolicy(QtGui.QFormLayout.ExpandingFieldsGrow)
@@ -185,21 +184,10 @@ class Ui_AddAsset(object):
         self.typeComboBox.addItem(_fromUtf8(""))
         self.typeComboBox.addItem(_fromUtf8(""))
         self.formLayout_2.setWidget(8, QtGui.QFormLayout.FieldRole, self.typeComboBox)
-        self.forcerLabel = QtGui.QLabel(self.groupBoxInfo)
-        self.forcerLabel.setObjectName(_fromUtf8("forcerLabel"))
-        self.formLayout_2.setWidget(9, QtGui.QFormLayout.LabelRole, self.forcerLabel)
-        self.forcerCheckBox = QtGui.QCheckBox(self.groupBoxInfo)
-        self.forcerCheckBox.setTristate(False)
-        self.forcerCheckBox.setObjectName(_fromUtf8("forcerCheckBox"))
-        self.formLayout_2.setWidget(9, QtGui.QFormLayout.FieldRole, self.forcerCheckBox)
-        self.horizontalLayout_3.addLayout(self.formLayout_2)
-        spacerItem = QtGui.QSpacerItem(80, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem)
-        self.horizontalLayout.addWidget(self.groupBoxInfo)
-        spacerItem1 = QtGui.QSpacerItem(90, 20, QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.buttonBox = QtGui.QDialogButtonBox(AddAsset)
+        self.verticalLayout_2.addLayout(self.formLayout_2)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem)
+        self.buttonBox = QtGui.QDialogButtonBox(self.groupBoxInfo)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -210,16 +198,16 @@ class Ui_AddAsset(object):
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.verticalLayout.addWidget(self.buttonBox)
+        self.verticalLayout_2.addWidget(self.buttonBox)
+        self.horizontalLayout.addWidget(self.groupBoxInfo)
+        self.verticalLayout.addLayout(self.horizontalLayout)
         self.labelSpread.setBuddy(self.doubleSpinBoxSpread)
 
         self.retranslateUi(AddAsset)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), AddAsset.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), AddAsset.reject)
         QtCore.QMetaObject.connectSlotsByName(AddAsset)
 
     def retranslateUi(self, AddAsset):
-        AddAsset.setWindowTitle(_translate("AddAsset", "Dialog", None))
+        AddAsset.setWindowTitle(_translate("AddAsset", "Ajouter actif", None))
         self.groupBoxInfo.setTitle(_translate("AddAsset", "Fournir les informations nécessaires", None))
         self.iSINLabel.setText(_translate("AddAsset", "ISIN", None))
         self.nomLabel.setText(_translate("AddAsset", "Nom", None))
@@ -239,5 +227,4 @@ class Ui_AddAsset(object):
         self.typeComboBox.setItemText(1, _translate("AddAsset", "Amortissable (AMC)", None))
         self.typeComboBox.setItemText(2, _translate("AddAsset", "Revisable (REV)", None))
         self.typeComboBox.setItemText(3, _translate("AddAsset", "Amortissable Révisable (AMCREV)", None))
-        self.forcerLabel.setText(_translate("AddAsset", "forcer", None))
 

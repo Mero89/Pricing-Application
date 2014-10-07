@@ -99,6 +99,12 @@
       <property name="frameShadow">
        <enum>QFrame::Sunken</enum>
       </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
       <property name="viewMode">
        <enum>QMdiArea::TabbedView</enum>
       </property>
@@ -166,11 +172,12 @@
     <addaction name="actionGeneral"/>
     <addaction name="menuDispositionDesFenetres"/>
    </widget>
-   <widget class="QMenu" name="menuOutils">
+   <widget class="QMenu" name="menuExtras">
     <property name="title">
-     <string>Outils</string>
+     <string>Extras</string>
     </property>
     <addaction name="actionCalculette"/>
+    <addaction name="actionSimulateur"/>
    </widget>
    <widget class="QMenu" name="menuBDD">
     <property name="title">
@@ -213,7 +220,7 @@
    <addaction name="menuPortefeuille"/>
    <addaction name="menuBDD"/>
    <addaction name="menuCourbe"/>
-   <addaction name="menuOutils"/>
+   <addaction name="menuExtras"/>
    <addaction name="menuParametres"/>
    <addaction name="menuAbout"/>
   </widget>
@@ -372,6 +379,11 @@
   <action name="actionSousFenetres">
    <property name="text">
     <string>Fenêtres</string>
+   </property>
+  </action>
+  <action name="actionSimulateur">
+   <property name="text">
+    <string>Simulateur</string>
    </property>
   </action>
  </widget>

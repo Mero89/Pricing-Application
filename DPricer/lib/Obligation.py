@@ -3,7 +3,7 @@ __author__ = 'F.Marouane'
 
 import calendar as cal
 import datetime as dt
-from Courbe import Courbe
+from DPricer.lib.Courbe import Courbe
 
 
 class Obligation(object):
@@ -38,7 +38,7 @@ class Obligation(object):
         self.mat_residuelle = (self.date_echeance - self.date_evaluation).days
         self.tx_actuariel = 0
         if tx_act is None and self.mat_residuelle > 0:
-            self.courbe = Courbe(self.date_evaluation)
+            self.courbe = Courbe.Courbe(self.date_evaluation)
             self.tx_actuariel = self.courbe.taux_lineaire(self.mat_residuelle)
         elif tx_act is not None:
             self.tx_actuariel = tx_act
@@ -93,7 +93,7 @@ class Obligation(object):
         p = self.echeancier()
         p.insert(0, self.date_evaluation)
         for i in range(len(p) - 1):
-            delta = abs((p[i] - p[i + 1]).days)
+            delta = abs((p[i+1] - p[i]).days)
             mod = divmod(delta, 365)
             if mod[1] == 0 or mod[1] == 1:
                 delta = mod[0]
@@ -128,19 +128,25 @@ class Obligation(object):
                 # Integre tous les cas pour calculer le prix de l'obligation
                 # en utilisant la méthode de l'echeancier et des coefficients de l'écheancier
                 coeff = self.coeff_echeancier()
+                ech = self.echeancier()
+                coeff[0] = (ech[0]-self.date_evaluation).days/366.
                 tx_act = self.tx_actuariel + self.spread
                 coupon = self.nominal * self.tx_facial
+                print coeff
                 # liste_actuariel = [pow(1+tx_act, -c) for c in coeff if c != 0]
                 liste_actuariel = list()
                 p = 0
+                # why corff - 1 ?
                 for i in range(len(coeff) - 1):
                     if coeff[i] != 0:
                         p += coeff[i]
-                        actu = pow(1 / (1 + tx_act), p)
+                        actu = 1 / pow((1 + tx_act), p)
                         # actu = pow(1/(1+tx_act), coeff[0]+i)
                         liste_actuariel.append(round(actu, 8))
                 liste_coupons = [coupon] * len(liste_actuariel)
+                # le premier coupon est différent
                 liste_coupons[0] = coupon * coeff[0]
+                print liste_coupons
                 prix = 0
                 if len(liste_coupons) == len(liste_actuariel):
                     dcf = list()
@@ -152,6 +158,7 @@ class Obligation(object):
                         in_fine = self.nominal * liste_actuariel[-1]
                         #print 'principal ==>', in_fine
                         dcf.append(in_fine)
+                        print dcf
                     prix = sum(dcf)
                 return round(prix, 2)
 
@@ -202,9 +209,12 @@ if __name__ == '__main__':
     date_emission = '03/03/2010'
     date_jouissance = '03/03/2010'
     d_ech = '03/03/2020'
-    date_eval = '3/6/2015'
+    date_eval = '3/3/2016'
     tx_act = 0.04
     obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, tx_act=tx_act)
     print obl.echeancier()
+    leap = [cal.isleap(el.year) for el in obl.echeancier()]
+    print leap
+
     # obl2 = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, tx_act)
-    print round(obl.prix(),2)
+    print obl.prix()

@@ -39,11 +39,23 @@ class GisementScreen(QWidget, Ui_Gisement):
         # parent's connect
         if self.parent is not None:
             self.ui.toolButtonAdd.clicked.connect(self.parent.open_add_asset_screen)
+            self.ui.toolButtonEdit.clicked.connect(self.edit_asset)
+            self.connect(self, QtCore.SIGNAL('modified'), self.parent.update_asset_screen)
 
     # Modifie un actif
     def edit_asset(self):
         row = self.ui.tableWidgetActifs.currentRow()
-
+        data = dict()
+        data['isin'] = self.ui.tableWidgetActifs.item(row, 0).text()
+        data['nom'] = self.ui.tableWidgetActifs.item(row, 1).text()
+        data['nominal'] = self.ui.tableWidgetActifs.item(row, 2).text()
+        data['taux_facial'] = str(self.ui.tableWidgetActifs.item(row, 3).text()).split('%')[0]
+        data['spread'] = str(self.ui.tableWidgetActifs.item(row, 4).text()).split('%')[0]
+        data['date_emission'] = self.ui.tableWidgetActifs.item(row, 5).text()
+        data['date_jouissance'] = self.ui.tableWidgetActifs.item(row, 6).text()
+        data['maturite'] = self.ui.tableWidgetActifs.item(row, 7).text()
+        data['type'] = str(self.ui.tableWidgetActifs.item(row, 8).text())
+        self.emit(QtCore.SIGNAL('modified'), data)
 
     # Supprime l'actif choisi
     def delete_asset(self):
@@ -161,6 +173,7 @@ class GisementScreen(QWidget, Ui_Gisement):
                 self.ui.tableWidgetActifs.setItem(idx, 13, dur)
                 self.ui.tableWidgetActifs.setItem(idx, 14, conv)
                 self.ui.tableWidgetActifs.setItem(idx, 15, tx_act)
+        self.ui.tableWidgetActifs.setRowCount(len(self.data))
 
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)
@@ -171,10 +184,102 @@ class GisementScreen(QWidget, Ui_Gisement):
             self.close()
 
 
-class AddAsset(QDialog, Ui_AddAsset):
+#### UPDATE ASSET ####
+class UpdateAsset(QWidget, Ui_AddAsset):
+    def __init__(self, data, parent=None):
+        super(Ui_AddAsset, self).__init__()
+        QWidget.__init__(self)
+        self.ui = Ui_AddAsset()
+        self.ui.setupUi(self)
+        self.parent = parent
+        self.title = 'Modifier Actif'
+        self.setWindowTitle(self.title)
+        self.choix = {'3': 'AMCREV', '0': 'N', '1': 'AMC', '2': 'REV'}
+        self.ui.buttonBox.accepted.connect(self.get_data)
+        self.ui.isinLineEdit.setReadOnly(1)
+        if data:
+            self.data = data
+            self.put_data(data)
+
+    def put_data(self, data):
+        """
+        affiche les données voulues à l'écran.
+        :param data: dict
+        :return:
+        """
+        indices_choix = {'AMCREV': '3', 'N': '0', 'AMC': '1', 'REV': '2'}
+        self.ui.isinLineEdit.setText(data['isin'])
+        self.ui.nomLineEdit.setText(data['nom'])
+        self.ui.nominalLineEdit.setText(data['nominal'])
+        self.ui.doubleSpinBoxTauxFacial.setValue(float(data['taux_facial']))
+        self.ui.doubleSpinBoxSpread.setValue(float(data['spread']))
+        self.ui.dateEditDateEmission.setDate(self.date_to_qdate(data['date_emission']))
+        self.ui.dateEditDateJouissance.setDate(self.date_to_qdate(data['date_jouissance']))
+        self.ui.dateEditDateEcheance.setDate(self.date_to_qdate(data['maturite']))
+        self.ui.typeComboBox.setCurrentIndex(int(indices_choix[data['type']]))
+
+    def get_data(self):
+        # extrait les données saisies
+        self.data['isin'] = str(self.ui.isinLineEdit.text())
+        self.data['nom'] = unicode(self.ui.nomLineEdit.text())
+        self.data['nominal'] = self.validate_float(self.ui.nominalLineEdit.text())
+        self.data['taux_facial'] = self.ui.doubleSpinBoxTauxFacial.value() / 100.
+        self.data['spread'] = self.ui.doubleSpinBoxSpread.value() / 100.
+        self.data['date_emission'] = self.convert_qdate(self.ui.dateEditDateEmission.date().getDate())
+        self.data['date_jouissance'] = self.convert_qdate(self.ui.dateEditDateJouissance.date().getDate())
+        self.data['maturite'] = self.convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
+        self.data['type'] = self.choix[str(self.ui.typeComboBox.currentIndex())]
+        # self.data['forcee'] = self.ui.forcerCheckBox.isChecked()
+        if self.data['maturite'] < dt.date.today():
+            self.data['echue'] = False
+        else:
+            self.data['echue'] = True
+        missing = list()
+        for key, value in self.data.items():
+            if not value and type(value) is not bool:
+                missing.append(key)
+        if len(missing) >= 1:
+            confirm = ConfirmDialog()
+            confirm.set_message('les champs suivants sont manquants:\n {}'.format(missing))
+            confirm.exec_()
+        else:
+            self.update_asset()
+
+    def update_asset(self):
+        d = self.data
+        session = AppModel().get_session()
+        session.query(ObligationMd).filter_by(isin=d['isin']).update(d)
+        try:
+            session.commit()
+            self.tell_status(u'Modifications enregistrées.')
+
+        except:
+            session.rollback()
+            self.tell_status(u'Une erreur est survenue lors de la modification.')
+
+    def validate_float(self, _num):
+        if _num == '':
+            return 0
+        else:
+            return float(_num)
+
+    def date_to_qdate(self, _sdate):
+        _date = dt.datetime.strptime(str(_sdate), '%Y-%m-%d')
+        _qdate = QtCore.QDate(_date.year, _date.month, _date.day)
+        return _qdate
+
+    def convert_qdate(self, _qdate):
+        return dt.date(_qdate[0], _qdate[1], _qdate[2])
+
+    def tell_status(self, status):
+        self.parent.ui.statusbar.showMessage(status, 3200)
+
+
+#### ADD ASSET CLASS ####
+class AddAsset(QWidget, Ui_AddAsset):
     def __init__(self, parent=None):
         super(Ui_AddAsset, self).__init__()
-        QDialog.__init__(self)
+        QWidget.__init__(self)
         self.ui = Ui_AddAsset()
         self.ui.setupUi(self)
         self.parent = parent
@@ -185,20 +290,21 @@ class AddAsset(QDialog, Ui_AddAsset):
         # self.ui.toolButtonAdd.clicked.connect(self.toolButtonAjouter)
         # self.ui.toolButtonRemove.clicked.connect(self.toolButtonSupprimer)
         self.ui.buttonBox.accepted.connect(self.get_data)
+        # self.ui.buttonBox.rejected.connnect(self.parent.remove)
 
     def get_data(self):
         # extrait les données saisies
         self.data['isin'] = str(self.ui.isinLineEdit.text())
         self.data['nom'] = unicode(self.ui.nomLineEdit.text())
         self.data['nominal'] = self.validate_float(self.ui.nominalLineEdit.text())
-        self.data['tx_facial'] = self.ui.doubleSpinBoxTauxFacial.value()/100.
+        self.data['taux_facial'] = self.ui.doubleSpinBoxTauxFacial.value()/100.
         self.data['spread'] = self.ui.doubleSpinBoxSpread.value()/100.
-        self.data['d_emission'] = self.convert_qdate(self.ui.dateEditDateEmission.date().getDate())
-        self.data['d_jouissance'] = self.convert_qdate(self.ui.dateEditDateJouissance.date().getDate())
-        self.data['d_echeance'] = self.convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
+        self.data['date_emission'] = self.convert_qdate(self.ui.dateEditDateEmission.date().getDate())
+        self.data['date_jouissance'] = self.convert_qdate(self.ui.dateEditDateJouissance.date().getDate())
+        self.data['maturite'] = self.convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
         self.data['type'] = self.choix[str(self.ui.typeComboBox.currentIndex())]
         # self.data['forcee'] = self.ui.forcerCheckBox.isChecked()
-        if self.data['d_echeance'] < dt.date.today():
+        if self.data['maturite'] < dt.date.today():
             self.data['echue'] = False
         else:
             self.data['echue'] = True
@@ -207,7 +313,7 @@ class AddAsset(QDialog, Ui_AddAsset):
             if not value and type(value) is not bool:
                 missing.append(key)
         if len(missing) >= 1:
-            confirm = ConfirmDialog(self)
+            confirm = ConfirmDialog()
             confirm.set_message('les champs suivants sont manquants:\n {}'.format(missing))
             confirm.exec_()
         else:
@@ -218,9 +324,9 @@ class AddAsset(QDialog, Ui_AddAsset):
         session = AppModel().get_session()
         # Enregistre les données saisies
         obl = ObligationMd(isin=d['isin'], nom=d['nom'], nominal=d['nominal'],
-                           taux_facial=d['tx_facial'], spread=d['spread'], date_emission=d['d_emission'],
-                           date_jouissance=d['d_jouissance'], forcee=False,
-                           maturite=d['d_echeance'], type=d['type'], echue=d['echue'])
+                           taux_facial=d['taux_facial'], spread=d['spread'], date_emission=d['date_emission'],
+                           date_jouissance=d['date_jouissance'], forcee=False,
+                           maturite=d['maturite'], type=d['type'], echue=d['echue'])
         if session.query(ObligationMd).get(obl.isin):
             confirm = ConfirmDialog(self)
             confirm.set_message(u"l'actif fourni existe déjà dans la base de données.")
@@ -240,6 +346,10 @@ class AddAsset(QDialog, Ui_AddAsset):
             return 0
         else:
             return float(_num)
+
+    def date_to_qdate(self, _date):
+        _qdate = QtCore.QDate(_date.year, _date.month, _date.day)
+        return _qdate
 
     def convert_qdate(self, _qdate):
         return dt.date(_qdate[0], _qdate[1], _qdate[2])
@@ -264,7 +374,7 @@ class AddAsset(QDialog, Ui_AddAsset):
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
-    # form = GisementScreen()
-    form = AddAsset()
+    form = GisementScreen()
+    # form = AddAsset()
     form.show()
     ap.exec_()

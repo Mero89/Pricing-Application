@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/Gisement.ui'
 #
-# Created: Fri Oct  3 11:11:48 2014
+# Created: Tue Oct  7 00:47:45 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -210,9 +210,9 @@ class Ui_Gisement(object):
         self.tableWidgetActifs.setHorizontalHeaderItem(15, item)
         self.tableWidgetActifs.horizontalHeader().setVisible(True)
         self.tableWidgetActifs.horizontalHeader().setStretchLastSection(True)
-        self.tableWidgetActifs.verticalHeader().setVisible(False)
+        self.tableWidgetActifs.verticalHeader().setVisible(True)
         self.tableWidgetActifs.verticalHeader().setDefaultSectionSize(22)
-        self.tableWidgetActifs.verticalHeader().setSortIndicatorShown(True)
+        self.tableWidgetActifs.verticalHeader().setSortIndicatorShown(False)
         self.tableWidgetActifs.verticalHeader().setStretchLastSection(False)
         self.verticalLayout_3.addWidget(self.tableWidgetActifs)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()

@@ -49,6 +49,7 @@ class Portfolios(QWidget, Ui_Portefeuilles):
             self.ui.tableWidgetPortefeuille.setItem(idx, 4, dur)
             self.ui.tableWidgetPortefeuille.resizeRowsToContents()
             self.ui.tableWidgetPortefeuille.resizeColumnsToContents()
+        self.ui.tableWidgetPortefeuille.setRowCount(len(liste_portefeuille))
 
     def asset_of_portefeuille(self, p_isin, date_eval='22/9/2014'):
         # (Obligation, Qt) <- Portefeuille.obligations
@@ -87,6 +88,7 @@ class Portfolios(QWidget, Ui_Portefeuilles):
             self.ui.tableWidgetActifs.setItem(idx, 6, dur)
             self.ui.tableWidgetActifs.resizeRowsToContents()
             self.ui.tableWidgetActifs.resizeColumnsToContents()
+        self.ui.tableWidgetActifs.setRowCount(len(data))
 
     def keyPressEvent(self, e):
         # define key event

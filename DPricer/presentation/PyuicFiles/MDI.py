@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/MDI.ui'
 #
-# Created: Sat Oct  4 17:32:46 2014
+# Created: Tue Oct  7 01:06:40 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -58,6 +58,8 @@ class Ui_MDIApp(object):
         self.mdiArea.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.mdiArea.setFrameShape(QtGui.QFrame.StyledPanel)
         self.mdiArea.setFrameShadow(QtGui.QFrame.Sunken)
+        self.mdiArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.mdiArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.mdiArea.setViewMode(QtGui.QMdiArea.TabbedView)
         self.mdiArea.setDocumentMode(False)
         self.mdiArea.setTabsClosable(True)
@@ -79,8 +81,8 @@ class Ui_MDIApp(object):
         self.menuParametres.setObjectName(_fromUtf8("menuParametres"))
         self.menuDispositionDesFenetres = QtGui.QMenu(self.menuParametres)
         self.menuDispositionDesFenetres.setObjectName(_fromUtf8("menuDispositionDesFenetres"))
-        self.menuOutils = QtGui.QMenu(self.menubar)
-        self.menuOutils.setObjectName(_fromUtf8("menuOutils"))
+        self.menuExtras = QtGui.QMenu(self.menubar)
+        self.menuExtras.setObjectName(_fromUtf8("menuExtras"))
         self.menuBDD = QtGui.QMenu(self.menubar)
         self.menuBDD.setObjectName(_fromUtf8("menuBDD"))
         self.menuImporter = QtGui.QMenu(self.menuBDD)
@@ -157,13 +159,16 @@ class Ui_MDIApp(object):
         self.actionOnglets.setObjectName(_fromUtf8("actionOnglets"))
         self.actionSousFenetres = QtGui.QAction(MDIApp)
         self.actionSousFenetres.setObjectName(_fromUtf8("actionSousFenetres"))
+        self.actionSimulateur = QtGui.QAction(MDIApp)
+        self.actionSimulateur.setObjectName(_fromUtf8("actionSimulateur"))
         self.menuPortefeuille.addAction(self.actionMonPortefeuille)
         self.menuPortefeuille.addAction(self.actionAjoutPortefeuille)
         self.menuDispositionDesFenetres.addAction(self.actionOnglets)
         self.menuDispositionDesFenetres.addAction(self.actionSousFenetres)
         self.menuParametres.addAction(self.actionGeneral)
         self.menuParametres.addAction(self.menuDispositionDesFenetres.menuAction())
-        self.menuOutils.addAction(self.actionCalculette)
+        self.menuExtras.addAction(self.actionCalculette)
+        self.menuExtras.addAction(self.actionSimulateur)
         self.menuImporter.addAction(self.actionImporterActifExcel)
         self.menuImporter.addSeparator()
         self.menuImporter.addAction(self.actionGenererFichierImport)
@@ -180,7 +185,7 @@ class Ui_MDIApp(object):
         self.menubar.addAction(self.menuPortefeuille.menuAction())
         self.menubar.addAction(self.menuBDD.menuAction())
         self.menubar.addAction(self.menuCourbe.menuAction())
-        self.menubar.addAction(self.menuOutils.menuAction())
+        self.menubar.addAction(self.menuExtras.menuAction())
         self.menubar.addAction(self.menuParametres.menuAction())
         self.menubar.addAction(self.menuAbout.menuAction())
 
@@ -194,7 +199,7 @@ class Ui_MDIApp(object):
         self.menuPortefeuille.setTitle(_translate("MDIApp", "Portefeuille", None))
         self.menuParametres.setTitle(_translate("MDIApp", "Paramètres", None))
         self.menuDispositionDesFenetres.setTitle(_translate("MDIApp", "Disposition des fenêtres", None))
-        self.menuOutils.setTitle(_translate("MDIApp", "Outils", None))
+        self.menuExtras.setTitle(_translate("MDIApp", "Extras", None))
         self.menuBDD.setTitle(_translate("MDIApp", "Actifs", None))
         self.menuImporter.setTitle(_translate("MDIApp", "Importer", None))
         self.menuCourbe.setTitle(_translate("MDIApp", "Courbe Taux", None))
@@ -226,5 +231,6 @@ class Ui_MDIApp(object):
         self.actionVisualiser.setText(_translate("MDIApp", "&Visualiser", None))
         self.actionGeneral.setText(_translate("MDIApp", "General", None))
         self.actionOnglets.setText(_translate("MDIApp", "Onglets", None))
-        self.actionSousFenetres.setText(_translate("MDIApp", "Sous-fenêtres", None))
+        self.actionSousFenetres.setText(_translate("MDIApp", "Fenêtres", None))
+        self.actionSimulateur.setText(_translate("MDIApp", "Simulateur", None))
 
