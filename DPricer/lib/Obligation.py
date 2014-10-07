@@ -38,7 +38,7 @@ class Obligation(object):
         self.mat_residuelle = (self.date_echeance - self.date_evaluation).days
         self.tx_actuariel = 0
         if tx_act is None and self.mat_residuelle > 0:
-            self.courbe = Courbe.Courbe(self.date_evaluation)
+            self.courbe = Courbe(self.date_evaluation)
             self.tx_actuariel = self.courbe.taux_lineaire(self.mat_residuelle)
         elif tx_act is not None:
             self.tx_actuariel = tx_act
@@ -132,7 +132,7 @@ class Obligation(object):
                 coeff[0] = (ech[0]-self.date_evaluation).days/366.
                 tx_act = self.tx_actuariel + self.spread
                 coupon = self.nominal * self.tx_facial
-                print coeff
+                # print coeff
                 # liste_actuariel = [pow(1+tx_act, -c) for c in coeff if c != 0]
                 liste_actuariel = list()
                 p = 0
@@ -146,7 +146,7 @@ class Obligation(object):
                 liste_coupons = [coupon] * len(liste_actuariel)
                 # le premier coupon est différent
                 liste_coupons[0] = coupon * coeff[0]
-                print liste_coupons
+                # print liste_coupons
                 prix = 0
                 if len(liste_coupons) == len(liste_actuariel):
                     dcf = list()
@@ -158,7 +158,7 @@ class Obligation(object):
                         in_fine = self.nominal * liste_actuariel[-1]
                         #print 'principal ==>', in_fine
                         dcf.append(in_fine)
-                        print dcf
+                        # print dcf
                     prix = sum(dcf)
                 return round(prix, 2)
 

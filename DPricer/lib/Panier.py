@@ -106,9 +106,9 @@ class Panier(object):
         # Si oblig Existe, on incrémente
         if pan is not None:
             qt = pan.quantite
-            if qt < quantite:
-                qt = 0
-            elif qt >= quantite:
+            if qt <= quantite:
+                self.delete_oblig_from_portefeuille(p_isin, isin)
+            elif qt > quantite:
                 qt -= quantite
             self.session.query(PanierMd).filter_by(p_isin=str(p_isin), isin=str(isin)).update({'quantite': qt})
         try:

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/MDI.ui'
 #
-# Created: Tue Oct  7 01:06:40 2014
+# Created: Tue Oct  7 14:03:39 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -51,7 +51,7 @@ class Ui_MDIApp(object):
         self.labelDates = QtGui.QLabel(self.centralwidget)
         self.labelDates.setObjectName(_fromUtf8("labelDates"))
         self.horizontalLayout.addWidget(self.labelDates)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.mdiArea = QtGui.QMdiArea(self.centralwidget)
@@ -161,8 +161,12 @@ class Ui_MDIApp(object):
         self.actionSousFenetres.setObjectName(_fromUtf8("actionSousFenetres"))
         self.actionSimulateur = QtGui.QAction(MDIApp)
         self.actionSimulateur.setObjectName(_fromUtf8("actionSimulateur"))
+        self.actionModifier_Portefeuille = QtGui.QAction(MDIApp)
+        self.actionModifier_Portefeuille.setObjectName(_fromUtf8("actionModifier_Portefeuille"))
         self.menuPortefeuille.addAction(self.actionMonPortefeuille)
         self.menuPortefeuille.addAction(self.actionAjoutPortefeuille)
+        self.menuPortefeuille.addSeparator()
+        self.menuPortefeuille.addAction(self.actionModifier_Portefeuille)
         self.menuDispositionDesFenetres.addAction(self.actionOnglets)
         self.menuDispositionDesFenetres.addAction(self.actionSousFenetres)
         self.menuParametres.addAction(self.actionGeneral)
@@ -222,7 +226,7 @@ class Ui_MDIApp(object):
         self.actionGisement.setText(_translate("MDIApp", "Gisement", None))
         self.actionAjoutObligation.setText(_translate("MDIApp", "Ajouter actif", None))
         self.actionMonPortefeuille.setText(_translate("MDIApp", "Mes Portefeuilles", None))
-        self.actionAjoutPortefeuille.setText(_translate("MDIApp", "Nouveau Portefeuille", None))
+        self.actionAjoutPortefeuille.setText(_translate("MDIApp", "Gérer Portefeuilles", None))
         self.actionImporterActifExcel.setText(_translate("MDIApp", "Excel", None))
         self.actionImporterActifCSV.setText(_translate("MDIApp", "CSV", None))
         self.actionAlertes.setText(_translate("MDIApp", "Alertes", None))
@@ -233,4 +237,5 @@ class Ui_MDIApp(object):
         self.actionOnglets.setText(_translate("MDIApp", "Onglets", None))
         self.actionSousFenetres.setText(_translate("MDIApp", "Fenêtres", None))
         self.actionSimulateur.setText(_translate("MDIApp", "Simulateur", None))
+        self.actionModifier_Portefeuille.setText(_translate("MDIApp", "Modifier la structure des Portefeuille", None))
 

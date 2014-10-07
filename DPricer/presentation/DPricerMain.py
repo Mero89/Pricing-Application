@@ -4,6 +4,7 @@ __author__ = 'F.Marouane'
 ### App Library modules
 from DPricer.lib.User import User
 from DPricer.data import Excel
+from DPricer.lib.YieldManager import YieldManager
 ### Library modules
 import sys
 from PyQt4.QtGui import *
@@ -15,6 +16,7 @@ from LoginDialog import LoginDialog
 from MonPortefeuille import Portfolios, PortefeuilleDialog
 from CourbeTauxScreen import CourbeTaux
 from ParametresScreen import Parametre
+from outils import Calculette
 
 
 class MyClass(QMainWindow, Ui_MDIApp):
@@ -47,25 +49,33 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionExcelCourbe.triggered.connect(self.import_courbe_taux)
         self.ui.actionImporterActifExcel.triggered.connect(self.import_obligations)
         self.ui.actionGeneral.triggered.connect(self.open_parametres)
+        self.ui.actionCalculette.triggered.connect(self.open_tools)
 
-    # Ouvre l'écran des paramètres
-    def open_parametres(self):
-        ct = Parametre(parent=self)
+    def load_screen(self, screen):
+        ct = screen(parent=self)
         if ct.title not in self.title_list():
             self.ui.mdiArea.addSubWindow(ct)
             ct.show()
         else:
             del ct
+
+    # Ouvre la calculette
+    def open_tools(self):
+        self.load_screen(Calculette)
+
+    # Met à jour la courbe de taux
+    def update_courbe(self):
+        YM = YieldManager()
+        YM.import_auto()
+
+    # Ouvre l'écran des paramètres
+    def open_parametres(self):
+        self.load_screen(Parametre)
 
     # Ouvre l'écran d'ajout d'un actif
     @QtCore.pyqtSlot()
     def open_add_asset_screen(self):
-        ct = AddAsset(parent=self)
-        if ct.title not in self.title_list():
-            self.ui.mdiArea.addSubWindow(ct)
-            ct.show()
-        else:
-            del ct
+        self.load_screen(AddAsset)
 
     @QtCore.pyqtSlot(dict)
     def update_asset_screen(self, data):
@@ -79,22 +89,12 @@ class MyClass(QMainWindow, Ui_MDIApp):
     # Ouvre l'écran des actifs
     @QtCore.pyqtSlot()
     def open_gisement_screen(self):
-        ct = GisementScreen(parent=self)
-        if ct.title not in self.title_list():
-            self.ui.mdiArea.addSubWindow(ct)
-            ct.show()
-        else:
-            del ct
+        self.load_screen(GisementScreen)
 
     # Ouvre l'écran de la courbe de taux
     @QtCore.pyqtSlot()
     def open_courbe_screen(self):
-        ct = CourbeTaux(parent=self)
-        if ct.title not in self.title_list():
-            self.ui.mdiArea.addSubWindow(ct)
-            ct.show()
-        else:
-            del ct
+        self.load_screen(CourbeTaux)
 
     # Ouvre le dialogue du portefeuille
     @QtCore.pyqtSlot()
@@ -109,7 +109,6 @@ class MyClass(QMainWindow, Ui_MDIApp):
         pf = Portfolios(parent=self)
         if pf.title not in self.title_list():
             self.ui.mdiArea.addSubWindow(pf)
-            pf.ui.pushButtonFermer.clicked.connect(self.ui.mdiArea.closeActiveSubWindow)
             pf.User = self.user
             pf.show()
             pf.affichePortefeuille()

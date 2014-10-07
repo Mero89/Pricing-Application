@@ -13,19 +13,21 @@ from DPricer.presentation.PyuicFiles.UI_CalculetteFinanciere import Ui_Form
 
 
 class Calculette(QWidget, Ui_Form):
-    def __init__(self):
+    def __init__(self, parent=None):
         super(Ui_Form, self).__init__()
         QWidget.__init__(self)
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.title = 'Outils'
         self.setWindowTitle(self.title)
+        self.parent = parent
         # Add some modifs to the form
         self.frequence = dict(Mensuelle=12,
                               Trimestrielle=4,
                               Semestrielle=2)
         self.ui.comboBoxFrequenceCoupon.addItems(self.frequence.keys())
-        self.connect(self.ui.pushButtonObligEval, SIGNAL('clicked()'), self, SLOT('evalue_obligation()'))
+        self.ui.pushButtonObligEval.clicked.connect(self.evalue_obligation)
+        self.ui.pushButtonVanEval.clicked.connect(self.evalue_van)
 
     def validate_float(self, _num):
         if _num == '':
@@ -52,7 +54,7 @@ class Calculette(QWidget, Ui_Form):
         date_mt = self.convert_qdate(self.ui.DateEditDateAnnuite.date().getDate())
         date_val = self.convert_qdate(self.ui.DateEditDateActualisation.date().getDate())
         van = VAN(annuite, tx_act, date_montant=date_mt, date_valo=date_val)
-        return van.evalue()
+        self.ui.lineEditVanEval.setText(str(van.evalue()))
 
     @pyqtSlot()
     def evalue_obligation(self):
@@ -68,17 +70,6 @@ class Calculette(QWidget, Ui_Form):
                          date_evaluation, spread, tx_act)
         prix = obl.prix()
         self.ui.evaluerLineEdit.setText(str(prix))
-
-    @pyqtSignature("")
-    def on_pushButtonVanEval_clicked(self):
-        van = self.evalue_van()
-        self.ui.lineEditVanEval.setText(str(van))
-
-    # @pyqtSlot()
-    # def on_pushButtonObligEval_clicked(self):
-    #     prix = self.evalue_obligation()
-    #     self.ui.evaluerLineEdit.setText(str(prix))
-
 
 if __name__ == '__main__':
 
