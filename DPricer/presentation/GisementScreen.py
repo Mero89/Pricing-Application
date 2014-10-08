@@ -13,7 +13,7 @@ from ConfirmDialog import ConfirmDialog
 
 
 class GisementScreen(QWidget, Ui_Gisement):
-    def __init__(self, parent=None ):
+    def __init__(self, parent=None):
         super(Ui_Gisement, self).__init__(parent)
         QWidget.__init__(self)
         self.parent = parent
@@ -29,7 +29,7 @@ class GisementScreen(QWidget, Ui_Gisement):
         self.filter_by_value()
         self.populate_completer()
         self.set_completer_value()
-        self.ui.tableWidgetActifs.resizeColumnsToContents()
+        # self.ui.tableWidgetActifs.resizeColumnsToContents()
 
     def connect_actions(self):
         self.ui.lineEditValeur.textChanged.connect(self.filter_by_value)
@@ -76,18 +76,20 @@ class GisementScreen(QWidget, Ui_Gisement):
             if rep:
                 # Suppression de la BDD
                 session = AppModel().get_session()
-                liste_assets = [session.query(ObligationMd).get(isin[1]) for isin in liste_isin]
-                for asset in liste_assets:
-                    session.delete(asset)
+                trash = [session.query(ObligationMd).get(isin[1]) for isin in liste_isin]
+                for garbage in trash:
+                    session.delete(garbage)
                 else:
                     try:
                         session.commit()
+                        self.tell_status(u"Actif(s) supprimé(s) avec succès.")
+                        [self.ui.tableWidgetActifs.removeRow(el[0]) for el in liste_isin]
                     except Exception as e:
                         session.rollback()
-                        self.tell_status("Suppression échouée.")
+                        self.tell_status(u"Suppression échouée.")
                         self.tell_status(e.message)
                 self.populate_completer()
-                self.tell_status("Actif(s) supprimé(s) avec succès.")
+
 
     # Configure l'auto-completion en fonction du critère choisi
     @QtCore.pyqtSlot()
@@ -252,10 +254,10 @@ class UpdateAsset(QWidget, Ui_AddAsset):
         try:
             session.commit()
             self.tell_status(u'Modifications enregistrées.')
-
-        except:
+        except Exception as e:
             session.rollback()
             self.tell_status(u'Une erreur est survenue lors de la modification.')
+            self.tell_status(e.message)
 
     def validate_float(self, _num):
         if _num == '':
@@ -354,23 +356,23 @@ class AddAsset(QWidget, Ui_AddAsset):
     def convert_qdate(self, _qdate):
         return dt.date(_qdate[0], _qdate[1], _qdate[2])
 
-    @QtCore.pyqtSlot()
-    def toolButtonAjouter(self):
-        num = self.ui.tableWidget.rowCount()
-        dd = QTableWidgetItem()
-        ff = QTableWidgetItem()
-        self.ui.tableWidget.insertRow(num)
-        self.ui.tableWidget.setItem(num, 0, dd)
-        self.ui.tableWidget.setItem(num, 1, ff)
-
-    @QtCore.pyqtSlot()
-    def toolButtonSupprimer(self):
-        itm = self.ui.tableWidget.currentItem()
-        idx = self.ui.tableWidget.indexFromItem(itm)
-        self.ui.tableWidget.removeRow(idx.row())
-
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)
+
+    # @QtCore.pyqtSlot()
+    # def toolButtonAjouter(self):
+    # num = self.ui.tableWidget.rowCount()
+    #     dd = QTableWidgetItem()
+    #     ff = QTableWidgetItem()
+    #     self.ui.tableWidget.insertRow(num)
+    #     self.ui.tableWidget.setItem(num, 0, dd)
+    #     self.ui.tableWidget.setItem(num, 1, ff)
+    #
+    # @QtCore.pyqtSlot()
+    # def toolButtonSupprimer(self):
+    #     itm = self.ui.tableWidget.currentItem()
+    #     idx = self.ui.tableWidget.indexFromItem(itm)
+    #     self.ui.tableWidget.removeRow(idx.row())
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

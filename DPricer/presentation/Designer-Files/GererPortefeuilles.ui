@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>679</width>
-    <height>536</height>
+    <width>701</width>
+    <height>418</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -272,8 +272,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>horizontalLayoutWidget_2</zorder>
-  <zorder>groupBoxGisement</zorder>
  </widget>
  <resources/>
  <connections/>

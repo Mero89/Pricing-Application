@@ -49,7 +49,7 @@ class Gestion(object):
             except:
                 self.session.rollback()
 
-    def delete_portofolio(self, uid, p_isin):
+    def remove_portofolio(self, uid, p_isin):
         # vérifie si le portefeuille est géré
         row = self.session.query(GestionMd).filter_by(uid=uid, p_isin=str(p_isin)).first()
         if row is not None:

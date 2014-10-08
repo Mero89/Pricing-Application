@@ -2,16 +2,20 @@
 __author__ = 'F.Marouane'
 
 import sys
-
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
+
 from DPricer.presentation.PyuicFiles.AddPFDialog import Ui_AddPFDialog
 from DPricer.presentation.PyuicFiles.Portefeuilles import Ui_Portefeuilles
 from DPricer.presentation.PyuicFiles.GererPortefeuilles import Ui_GererPortefeuilles
+from DPricer.presentation.PyuicFiles.PortefeuilleInput import Ui_PortefeuilleInput
+
 from DPricer.lib.Gestion import Gestion
 from DPricer.lib.User import User
+
 from DPricer.lib.Portefeuille import Portefeuille
 from DPricer.data.AppModel import AppModel, PortefeuilleMd, GestionMd
+from ConfirmDialog import ConfirmDialog
 
 
 class Portefeuilles(QWidget, Ui_Portefeuilles):
@@ -24,13 +28,13 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         self.title = 'Mes Portefeuilles'
         self.setWindowTitle(self.title)
         self.ui.tableWidgetPortefeuille.setAlternatingRowColors(True)
-        self.User = None
+        self.user = None
 
     @QtCore.pyqtSlot()
     def affichePortefeuille(self):
         self.ui.tableWidgetPortefeuille.itemSelectionChanged.connect(self.update_assets)
         g = Gestion()
-        pf = g.portefeuille_of_manager(uid=self.User.uid)
+        pf = g.portefeuille_of_manager(uid=self.user.uid)
         liste_portefeuille = [Portefeuille(el.p_isin, '22/9/2014') for el in pf]
         self.ui.tableWidgetPortefeuille.clearContents()
         cur_rows = self.ui.tableWidgetPortefeuille.rowCount()
@@ -49,7 +53,7 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
             self.ui.tableWidgetPortefeuille.setItem(idx, 3, sensi)
             self.ui.tableWidgetPortefeuille.setItem(idx, 4, dur)
             self.ui.tableWidgetPortefeuille.resizeRowsToContents()
-            self.ui.tableWidgetPortefeuille.resizeColumnsToContents()
+            # self.ui.tableWidgetPortefeuille.resizeColumnsToContents()
         self.ui.tableWidgetPortefeuille.setRowCount(len(liste_portefeuille))
 
     def asset_of_portefeuille(self, p_isin, date_eval='22/9/2014'):
@@ -88,7 +92,7 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
             self.ui.tableWidgetActifs.setItem(idx, 5, sensi)
             self.ui.tableWidgetActifs.setItem(idx, 6, dur)
             self.ui.tableWidgetActifs.resizeRowsToContents()
-            self.ui.tableWidgetActifs.resizeColumnsToContents()
+            # self.ui.tableWidgetActifs.resizeColumnsToContents()
         self.ui.tableWidgetActifs.setRowCount(len(data))
 
     def keyPressEvent(self, e):
@@ -165,32 +169,31 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         self.parent = parent
         self.title = u'Gérer les Portefeuilles'
         self.setWindowTitle(self.title)
-        self.User = User('mero','mero')
-        self.User.uid = 1
+        self.session = AppModel().get_session()
+        self.user = User('mero','mero')
+        self.user.uid = 1
         self.connect_actions()
         self.affiche_gisement_portefeuille()
         self.affiche_mes_portefeuille()
+        self.before = None
 
-    def get_data(self):
+    def get_row(self, table):
         """
         Extrait les données séléctionnées depuis une table.
         :return:
         """
-        pass
-
-    def set_data(self):
-        """
-        Fournit les informations
-        :return:
-        """
-        pass
+        data = dict()
+        row = table.currentRow()
+        data['p_isin'] = str(table.item(row, 0).text())
+        data['nom'] = unicode(table.item(row, 1).text())
+        return data
 
     def connect_actions(self):
         self.ui.toolButtonAdd.clicked.connect(self.new_portefeuille)
         self.ui.toolButtonRemove.clicked.connect(self.delete_portefeuille)
-        self.ui.toolButtonEdit.clicked.connect(self.update_portfeuille)
         self.ui.toolButtonAddToMyPortfolio.clicked.connect(self.add_to_my_portefeuille)
         self.ui.toolButtonRemoveFromMyPortfolio.clicked.connect(self.remove_from_my_portefeuille)
+        self.ui.toolButtonEdit.clicked.connect(self.update_portfeuille)
 
     def new_portefeuille(self):
         """
@@ -202,23 +205,53 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         if rep:
             self.affiche_gisement_portefeuille()
 
-
     def add_to_my_portefeuille(self):
         """
         Ajoute un portefeuille depuis le gisement au portefeuille du gestionnaire.
         :return:
         """
-        pass
+        g = Gestion()
+        selection = self.ui.tableWidgetGisementPortefeuille.selectedIndexes()
+        if len(selection) >= 1:
+            liste_portefeuille = [str(self.ui.tableWidgetGisementPortefeuille.itemFromIndex(el).text())
+                                  for el in selection if el.column() == 0]
+            [g.add_portofolio(self.user.uid, isin) for isin in liste_portefeuille]
+            self.affiche_mes_portefeuille()
 
     def remove_from_my_portefeuille(self):
         """
         Supprime un portefeuille de ceux initialement gérés.
         :return:
         """
-        pass
+        g = Gestion()
+        selection = self.ui.tableWidgetPortefeuilles.selectedIndexes()
+        if len(selection) >= 1:
+            liste_portefeuille = [(el.row(), str(self.ui.tableWidgetPortefeuilles.itemFromIndex(el).text()))
+                                  for el in selection if el.column() == 0]
+            [g.remove_portofolio(self.user.uid, isin[1]) for isin in liste_portefeuille]
+            [self.ui.tableWidgetPortefeuilles.removeRow(isin[0]) for isin in liste_portefeuille]
 
     def update_portfeuille(self):
-        pass
+        matable = self.ui.tableWidgetGisementPortefeuille
+        old_row = self.get_row(matable)
+        self.before = old_row
+        edit = EditPortefeuille(old_row, self)
+        edit.exec_()
+
+    @QtCore.pyqtSlot(dict)
+    def save_edit(self, data):
+        old = self.before
+        d = data
+        self.session.query(PortefeuilleMd).filter_by(p_isin=old['p_isin']).update(d)
+        try:
+            self.session.commit()
+            self.tell_status(u'Modification éffectuée avec succès.')
+        except Exception as e:
+            self.session.rollback()
+            self.tell_status(u'Une erreur est survenue lors de la modification.')
+            self.tell_status(e.message)
+        self.affiche_mes_portefeuille()
+        self.affiche_gisement_portefeuille()
 
     def delete_portefeuille(self):
         """
@@ -226,12 +259,27 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         :return:
         """
         selection = self.ui.tableWidgetGisementPortefeuille.selectedIndexes()
-        liste_portefeuille = list()
         if len(selection) >= 1:
-            for el in selection:
-                if el.column() == 0:
-                    liste_portefeuille.append(str(self.ui.tableWidgetGisementPortefeuille.itemFromIndex(el).text()))
-        print liste_portefeuille
+            liste_portefeuille = [(el.row(), str(self.ui.tableWidgetGisementPortefeuille.itemFromIndex(el).text()))
+                                   for el in selection if el.column() == 0]
+            confirm = ConfirmDialog(self)
+            if len(liste_portefeuille) == 1:
+                confirm.set_message(u"Vous êtes sur le point de supprimer le portefeuille sélectionné")
+            else:
+                confirm.set_message(u'Vous êtes sur le point de supprimer les portefeuilles sélectionnés')
+            rep = confirm.exec_()
+            if rep:
+                trash = [self.session.query(PortefeuilleMd).get(isin[1]) for isin in liste_portefeuille]
+                for garbage in trash:
+                    self.session.delete(garbage)
+                else:
+                    try:
+                        self.session.commit()
+                        self.tell_status(u"Portefeuilles(s) supprimé(s) avec succès.")
+                        [self.ui.tableWidgetGisementPortefeuille.removeRow(el[0]) for el in liste_portefeuille]
+                    except:
+                        self.session.rollback()
+                        self.tell_status(u"Suppression échouée.")
 
     def affiche_mes_portefeuille(self):
         """
@@ -239,7 +287,7 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         :return:
         """
         g = Gestion()
-        liste_portefeuille = g.portefeuille_of_manager(uid=self.User.uid)
+        liste_portefeuille = g.portefeuille_of_manager(uid=self.user.uid)
         if liste_portefeuille:
             self.populate_table_portefeuille(self.ui.tableWidgetPortefeuilles, liste_portefeuille)
 
@@ -248,8 +296,7 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         Affiche les potefeuilles du gisement.
         :return:
         """
-        session = AppModel().get_session()
-        gisement = session.query(PortefeuilleMd).all()
+        gisement = self.session.query(PortefeuilleMd).all()
         if gisement:
             self.populate_table_portefeuille(self.ui.tableWidgetGisementPortefeuille, gisement)
 
@@ -271,8 +318,36 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
             table.setItem(idx, 0, isin)
             table.setItem(idx, 1, nom)
         table.resizeRowsToContents()
-        table.resizeColumnsToContents()
+        # table.resizeColumnsToContents()
         table.setRowCount(len(pf_list))
+
+    def tell_status(self, status):
+        self.parent.ui.statusbar.showMessage(status, 3200)
+
+
+class EditPortefeuille(QDialog, Ui_PortefeuilleInput):
+    def __init__(self, data, parent=None):
+        super(Ui_PortefeuilleInput, self).__init__()
+        QDialog.__init__(self)
+        self.ui = Ui_PortefeuilleInput()
+        self.ui.setupUi(self)
+        self.old_data = data
+        self.new_data = dict()
+        self.parent = parent
+        self.set_data()
+        self.ui.buttonBox.accepted.connect(self.get_data)
+        self.ui.buttonBox.rejected.connect(self.close)
+        if self.parent:
+            self.connect(self, QtCore.SIGNAL('edited'), self.parent.save_edit)
+
+    def set_data(self):
+        self.ui.isinLineEdit.setText(self.old_data['p_isin'])
+        self.ui.nomDuPortefeuilleLineEdit.setText(self.old_data['nom'])
+
+    def get_data(self):
+        self.new_data['p_isin'] = str(self.ui.isinLineEdit.text())
+        self.new_data['nom'] = unicode(self.ui.nomDuPortefeuilleLineEdit.text())
+        self.emit(QtCore.SIGNAL('edited'), self.new_data)
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
