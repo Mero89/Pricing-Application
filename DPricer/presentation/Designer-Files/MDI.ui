@@ -156,7 +156,7 @@
      <string>Portefeuille</string>
     </property>
     <addaction name="actionMonPortefeuille"/>
-    <addaction name="actionAjoutPortefeuille"/>
+    <addaction name="actionGererPortefeuille"/>
     <addaction name="separator"/>
     <addaction name="actionModifierMesPortefeuilles"/>
    </widget>
@@ -333,7 +333,7 @@
     <string>Mes Portefeuilles</string>
    </property>
   </action>
-  <action name="actionAjoutPortefeuille">
+  <action name="actionGererPortefeuille">
    <property name="text">
     <string>Gérer Portefeuilles</string>
    </property>

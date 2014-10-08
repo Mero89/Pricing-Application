@@ -5,15 +5,16 @@ import sys
 
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
-
 from DPricer.presentation.PyuicFiles.AddPFDialog import Ui_AddPFDialog
 from DPricer.presentation.PyuicFiles.Portefeuilles import Ui_Portefeuilles
+from DPricer.presentation.PyuicFiles.GererPortefeuilles import Ui_GererPortefeuilles
 from DPricer.lib.Gestion import Gestion
+from DPricer.lib.User import User
 from DPricer.lib.Portefeuille import Portefeuille
 from DPricer.data.AppModel import AppModel, PortefeuilleMd, GestionMd
 
 
-class Portfolios(QWidget, Ui_Portefeuilles):
+class Portefeuilles(QWidget, Ui_Portefeuilles):
     def __init__(self, parent=None):
         super(Ui_Portefeuilles, self).__init__()
         QWidget.__init__(self)
@@ -154,8 +155,127 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)
 
+
+class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
+    def __init__(self, parent=None):
+        super(Ui_GererPortefeuilles, self).__init__()
+        QWidget.__init__(self)
+        self.ui = Ui_GererPortefeuilles()
+        self.ui.setupUi(self)
+        self.parent = parent
+        self.title = u'Gérer les Portefeuilles'
+        self.setWindowTitle(self.title)
+        self.User = User('mero','mero')
+        self.User.uid = 1
+        self.connect_actions()
+        self.affiche_gisement_portefeuille()
+        self.affiche_mes_portefeuille()
+
+    def get_data(self):
+        """
+        Extrait les données séléctionnées depuis une table.
+        :return:
+        """
+        pass
+
+    def set_data(self):
+        """
+        Fournit les informations
+        :return:
+        """
+        pass
+
+    def connect_actions(self):
+        self.ui.toolButtonAdd.clicked.connect(self.new_portefeuille)
+        self.ui.toolButtonRemove.clicked.connect(self.delete_portefeuille)
+        self.ui.toolButtonEdit.clicked.connect(self.update_portfeuille)
+        self.ui.toolButtonAddToMyPortfolio.clicked.connect(self.add_to_my_portefeuille)
+        self.ui.toolButtonRemoveFromMyPortfolio.clicked.connect(self.remove_from_my_portefeuille)
+
+    def new_portefeuille(self):
+        """
+        Ajoute un nouveau portefeuille.
+        :return:
+        """
+        P = PortefeuilleDialog(parent=self.parent)
+        rep = P.exec_()
+        if rep:
+            self.affiche_gisement_portefeuille()
+
+
+    def add_to_my_portefeuille(self):
+        """
+        Ajoute un portefeuille depuis le gisement au portefeuille du gestionnaire.
+        :return:
+        """
+        pass
+
+    def remove_from_my_portefeuille(self):
+        """
+        Supprime un portefeuille de ceux initialement gérés.
+        :return:
+        """
+        pass
+
+    def update_portfeuille(self):
+        pass
+
+    def delete_portefeuille(self):
+        """
+        Supprime un portefeuille de la base de données.
+        :return:
+        """
+        selection = self.ui.tableWidgetGisementPortefeuille.selectedIndexes()
+        liste_portefeuille = list()
+        if len(selection) >= 1:
+            for el in selection:
+                if el.column() == 0:
+                    liste_portefeuille.append(str(self.ui.tableWidgetGisementPortefeuille.itemFromIndex(el).text()))
+        print liste_portefeuille
+
+    def affiche_mes_portefeuille(self):
+        """
+        Affiche les portefeuilles du gestionnaire.
+        :return:
+        """
+        g = Gestion()
+        liste_portefeuille = g.portefeuille_of_manager(uid=self.User.uid)
+        if liste_portefeuille:
+            self.populate_table_portefeuille(self.ui.tableWidgetPortefeuilles, liste_portefeuille)
+
+    def affiche_gisement_portefeuille(self):
+        """
+        Affiche les potefeuilles du gisement.
+        :return:
+        """
+        session = AppModel().get_session()
+        gisement = session.query(PortefeuilleMd).all()
+        if gisement:
+            self.populate_table_portefeuille(self.ui.tableWidgetGisementPortefeuille, gisement)
+
+    def populate_table_portefeuille(self, table, pf_list):
+        """
+        Remplit une tableWidget [table] par les informations fournies dans [pf_list]
+        :param table:
+        :param pf_list:
+        :return:
+        """
+        table.clearContents()
+        num_rows = table.rowCount()
+        for el in pf_list:
+            idx = pf_list.index(el)
+            isin = QTableWidgetItem(str(el.p_isin))
+            nom = QTableWidgetItem(str(el.nom))
+            if idx + 1 >= num_rows:
+                table.insertRow(idx)
+            table.setItem(idx, 0, isin)
+            table.setItem(idx, 1, nom)
+        table.resizeRowsToContents()
+        table.resizeColumnsToContents()
+        table.setRowCount(len(pf_list))
+
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
-    form = Portfolios()
+    form = GererPortefeuille()
     form.show()
     ap.exec_()

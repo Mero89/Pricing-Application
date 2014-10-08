@@ -1,7 +1,7 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
 
-from ..data.AppModel import AppModel, GestionMd, PortefeuilleMd
+from DPricer.data.AppModel import AppModel, GestionMd, PortefeuilleMd
 
 
 class Gestion(object):
@@ -21,7 +21,7 @@ class Gestion(object):
         """
         Retourne la liste des portefeuilles gérés par le gestionnaire.
         :param uid:
-        :return:
+        :return [PortefeuilleMd]:
         """
         res = self.session.query(GestionMd).filter_by(uid=uid).all()
         liste_portefeuilles = [pf.p_isin for pf in res]

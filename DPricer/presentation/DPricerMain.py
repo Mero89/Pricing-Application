@@ -13,7 +13,7 @@ from PyQt4 import QtCore
 from DPricer.presentation.PyuicFiles.MDI import Ui_MDIApp
 from GisementScreen import GisementScreen, AddAsset, UpdateAsset
 from LoginDialog import LoginDialog
-from MonPortefeuille import Portfolios, PortefeuilleDialog
+from MonPortefeuille import Portefeuilles, GererPortefeuille
 from CourbeTauxScreen import CourbeTaux
 from ParametresScreen import Parametre
 from outils import Calculette
@@ -40,7 +40,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
 
     def connect_actions(self):
         self.ui.actionMonPortefeuille.triggered.connect(self.open_portefeuille_screen)
-        self.ui.actionAjoutPortefeuille.triggered.connect(self.open_portefeuille_dialog)
+        self.ui.actionGererPortefeuille.triggered.connect(self.open_portefeuille_dialog)
         self.ui.actionVisualiser.triggered.connect(self.open_courbe_screen)
         self.ui.actionGisement.triggered.connect(self.open_gisement_screen)
         self.ui.actionAjoutObligation.triggered.connect(self.open_add_asset_screen)
@@ -98,15 +98,13 @@ class MyClass(QMainWindow, Ui_MDIApp):
 
     # Ouvre le dialogue du portefeuille
     @QtCore.pyqtSlot()
-    def open_portefeuille_dialog(self):
-        pfdial = PortefeuilleDialog()
-        # self.ui.mdiArea.addSubWindow(pfdial)
-        pfdial.exec_()
+    def open_gerer_portefeuille(self):
+        self.load_screen(GererPortefeuille)
 
     # Ouvre l'écran du portefeuille
     @QtCore.pyqtSlot()
     def open_portefeuille_screen(self):
-        pf = Portfolios(parent=self)
+        pf = Portefeuilles(parent=self)
         if pf.title not in self.title_list():
             self.ui.mdiArea.addSubWindow(pf)
             pf.User = self.user
