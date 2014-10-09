@@ -55,7 +55,7 @@ class Panier(object):
         del liste_portefuille
         return liste_finale
 
-    def add_oblig_to_portefeuille(self, p_isin, isin, quantite=1):
+    def add_oblig_to_portefeuille(self, p_isin, isin):
         """
         Ajoute une obligation à un portefeuille avec la quantité spécifiée
         :param isin:
@@ -66,18 +66,17 @@ class Panier(object):
         # Si l'oblig n'existe pas
         if pan is None:
             # On ajoute une entrée
-            rw = PanierMd(isin=str(isin), p_isin=str(p_isin), quantite=quantite)
+            rw = PanierMd(isin=str(isin), p_isin=str(p_isin), quantite=1)
             self.session.add(rw)
-        # Si oblig Existe, on incrémente
-        elif pan is not None:
-            qt = pan.quantite
-            qt += quantite
-            self.session.query(PanierMd).filter_by(p_isin=str(p_isin), isin=str(isin)).update({'quantite' : qt})
-
-        try:
-            self.session.commit()
-        except:
-            self.session.rollback()
+            try:
+                self.session.commit()
+                # return 1
+            except Exception as e:
+                self.session.rollback()
+                print e.message
+                # return 0
+        else:
+            return 0
 
     def update_quantite(self, p_isin, isin, quantite):
         if quantite > 0:
@@ -131,7 +130,7 @@ class Panier(object):
 
 if __name__ == '__main__':
     pn = Panier()
-    pn.add_oblig_to_portefeuille('100200', '100503',9)
+    pn.add_oblig_to_portefeuille('100200', '100503')
     assets = pn.oblig_of_portefeuille('100200')
     for el in assets:
         print el

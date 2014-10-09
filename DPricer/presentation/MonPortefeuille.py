@@ -364,6 +364,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         self.user.uid = 1
         self.user_pf = None
         self.current_pf = None
+        self.oldvalue = None
         # setUp and show gisement screen
         self.gisement_screen = self.load_gisement_screen()
         self.gisement_screen.show()
@@ -374,6 +375,29 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         self.ui.toolButtonAddToMyPortfolio.clicked.connect(self.add_to_my_portefeuille)
         self.ui.toolButtonRemoveFromMyPortfolio.clicked.connect(self.delete_from_my_portefeuille)
         self.ui.comboBoxSelect.currentIndexChanged.connect(self.update_panier_screen)
+        self.ui.tableWidgetStructure.itemEntered.connect(self.edit_quantite)
+        self.ui.tableWidgetStructure.itemChanged.connect(self.update_quantite)
+
+    def update_quantite(self):
+        curr_row = self.ui.tableWidgetStructure.currentRow()
+        quant = self.ui.tableWidgetStructure.item(curr_row, 2)
+        isin = str(self.ui.tableWidgetStructure.item(curr_row, 0).text())
+        old_value = self.oldvalue
+        new_value = int(quant.text())
+        p = Panier()
+        rep = p.update_quantite(self.current_pf.p_isin, isin, new_value)
+        if rep == 0:
+            self.ui.tableWidgetStructure.clearFocus()
+            quant.setText(str(old_value))
+        else:
+            self.ui.tableWidgetStructure.clearFocus()
+
+    def edit_quantite(self):
+        curr_row = self.ui.tableWidgetStructure.currentRow()
+        quant = self.ui.tableWidgetStructure.item(curr_row, 2)
+        value = int(quant.text())
+        self.ui.tableWidgetStructure.editItem(quant)
+        self.oldvalue = value
 
     def set_data(self):
         self.populate_combo_box()
