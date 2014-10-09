@@ -34,10 +34,10 @@ class GisementScreen(QWidget, Ui_Gisement):
     def connect_actions(self):
         self.ui.lineEditValeur.textChanged.connect(self.filter_by_value)
         self.ui.comboBoxCritere.currentIndexChanged.connect(self.set_completer_value)
-        self.ui.toolButtonDelete.clicked.connect(self.delete_asset)
-        self.ui.toolButtonEdit.clicked.connect(self.edit_asset)
+        # self.ui.toolButtonEdit.clicked.connect(self.edit_asset)
         # parent's connect
         if self.parent is not None:
+            self.ui.toolButtonDelete.clicked.connect(self.delete_asset)
             self.ui.toolButtonAdd.clicked.connect(self.parent.open_add_asset_screen)
             self.ui.toolButtonEdit.clicked.connect(self.edit_asset)
             self.connect(self, QtCore.SIGNAL('modified'), self.parent.update_asset_screen)
@@ -87,7 +87,6 @@ class GisementScreen(QWidget, Ui_Gisement):
                     self.tell_status(u"Suppression échouée.")
                     self.tell_status(e.message)
                 self.populate_completer()
-
 
     # Configure l'auto-completion en fonction du critère choisi
     @QtCore.pyqtSlot()

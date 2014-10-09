@@ -36,7 +36,7 @@ class Panier(object):
         appartenant au portefeuille de code [p_isin]
         avec leur quantité dans le PF.
         :param p_isin:
-        :return obligations.isin[]:
+        :return [obligations.isin,Qt]:
         """
         liste_actifs = self.session.query(PanierMd).filter_by(p_isin=str(p_isin)).all()
         liste_finale = [[el.isin, el.quantite] for el in liste_actifs]

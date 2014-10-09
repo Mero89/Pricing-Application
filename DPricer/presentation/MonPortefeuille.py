@@ -9,13 +9,16 @@ from DPricer.presentation.PyuicFiles.AddPFDialog import Ui_AddPFDialog
 from DPricer.presentation.PyuicFiles.Portefeuilles import Ui_Portefeuilles
 from DPricer.presentation.PyuicFiles.GererPortefeuilles import Ui_GererPortefeuilles
 from DPricer.presentation.PyuicFiles.PortefeuilleInput import Ui_PortefeuilleInput
+from DPricer.presentation.PyuicFiles.StructurePortefeuille import Ui_StructurePortefeuille
 
 from DPricer.lib.Gestion import Gestion
+from DPricer.lib.Panier import Panier
 from DPricer.lib.User import User
 
 from DPricer.lib.Portefeuille import Portefeuille
-from DPricer.data.AppModel import AppModel, PortefeuilleMd, GestionMd
+from DPricer.data.AppModel import AppModel, PortefeuilleMd, GestionMd, ObligationMd
 from ConfirmDialog import ConfirmDialog
+from GisementScreen import GisementScreen
 
 
 class Portefeuilles(QWidget, Ui_Portefeuilles):
@@ -76,7 +79,7 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
             idx = data.index(el)
             isin = QTableWidgetItem(str(el[0].isin))
             # Qstring because of french letters, Nom, Description, etc...
-            nom = QTableWidgetItem(QtCore.QString(el[0].nom))
+            nom = QTableWidgetItem(unicode(el[0].nom))
             prix = QTableWidgetItem(str(round(el[0].prix(), 2)))
             sensi = QTableWidgetItem(str(round(el[0].sensibilite(), 4)))
             dur = QTableWidgetItem(str(round(el[0].duration(), 4)))
@@ -348,8 +351,124 @@ class EditPortefeuille(QDialog, Ui_PortefeuilleInput):
         self.new_data['nom'] = unicode(self.ui.nomDuPortefeuilleLineEdit.text())
         self.emit(QtCore.SIGNAL('edited'), self.new_data)
 
+
+class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
+    def __init__(self, parent=None):
+        super(Ui_StructurePortefeuille, self).__init__()
+        QWidget.__init__(self)
+        self.ui = Ui_StructurePortefeuille()
+        self.ui.setupUi(self)
+        self.parent = parent
+        self.session = AppModel().get_session()
+        self.user = User('mero', 'mero')
+        self.user.uid = 1
+        self.user_pf = None
+        # setUp and show gisement screen
+        self.gisement_screen = self.load_gisement_screen()
+        self.gisement_screen.show()
+        self.set_data()
+        self.connect_actions()
+
+    def connect_actions(self):
+        self.ui.toolButtonAddToMyPortfolio.clicked.connect(self.add_to_my_portefeuille)
+        self.ui.toolButtonRemoveFromMyPortfolio.clicked.connect(self.remove_from_my_portefeuille)
+        self.ui.comboBoxSelect.currentIndexChanged.connect(self.update_panier_screen)
+
+    def set_data(self):
+        self.populate_combo_box()
+        self.user_pf = self.mes_portefeuilles()
+        pass
+
+    def actifs_du_portefeuille(self):
+        """
+        Retourne la liste des Actifs avec leurs quantités respectives.
+        :return list((ObligationMd, Quantité)):
+        """
+        p = Panier()
+        nom = unicode(self.ui.comboBoxSelect.currentText())
+        p_isin = [el.p_isin for el in self.user_pf if el.nom == nom]
+        if len(p_isin) == 1:
+            liste_actifs = p.oblig_of_portefeuille(p_isin[0])
+        liste_actifs = [(self.session.query(ObligationMd).get(el[0]), el[1]) for el in liste_actifs]
+        return liste_actifs
+
+    def update_panier_screen(self):
+        data = self.actifs_du_portefeuille()
+        cur_rows = self.ui.tableWidgetStructure.rowCount()
+        for el in data:
+            idx = data.index(el)
+            isin = QTableWidgetItem(str(el[0].isin))
+            nom = QTableWidgetItem(unicode(el[0].nom))
+            quant = QTableWidgetItem(str(el[1]))
+            quant.setTextAlignment(QtCore.Qt.AlignHCenter)
+            if idx + 1 >= cur_rows:
+                self.ui.tableWidgetStructure.insertRow(idx)
+            self.ui.tableWidgetStructure.setItem(idx, 0, isin)
+            self.ui.tableWidgetStructure.setItem(idx, 1, nom)
+            self.ui.tableWidgetStructure.setItem(idx, 2, quant)
+        else:
+            self.ui.tableWidgetStructure.setRowCount(len(data))
+            self.ui.tableWidgetStructure.resizeColumnToContents(0)
+            self.ui.tableWidgetStructure.resizeColumnToContents(1)
+
+    def add_to_my_portefeuille(self):
+        """
+        Ajoute un portefeuille depuis le gisement au portefeuille du gestionnaire.
+        :return:
+        """
+        p = Panier()
+        selection = self.gisement_screen.tableWidgetActifs.selectedIndexes()
+        if len(selection) >= 1:
+            liste_actifs = [str(self.gisement_screen.tableWidgetActifs.itemFromIndex(el).text())
+                                  for el in selection if el.column() == 0]
+            [p.add_oblig_to_portefeuille(self.user.uid, isin) for isin in liste_actifs]
+            self.affiche_mes_portefeuille()
+
+    def remove_from_my_portefeuille(self):
+        """
+        Supprime un portefeuille de ceux initialement gérés.
+        :return:
+        """
+        g = Gestion()
+        selection = self.ui.tableWidgetPortefeuilles.selectedIndexes()
+        if len(selection) >= 1:
+            liste_portefeuille = [(el.row(), str(self.ui.tableWidgetPortefeuilles.itemFromIndex(el).text()))
+                                  for el in selection if el.column() == 0]
+            [g.remove_portofolio(self.user.uid, isin[1]) for isin in liste_portefeuille]
+            [self.ui.tableWidgetPortefeuilles.removeRow(isin[0]) for isin in liste_portefeuille]
+
+    def load_gisement_screen(self):
+        frame_layout = QVBoxLayout()
+        gp = GisementScreen()
+        # remove unwanted elements
+        gp.ui.verticalLayout_3.removeItem(gp.ui.horizontalLayout_2)
+        gp.ui.toolButtonDelete.hide()
+        gp.ui.toolButtonAdd.hide()
+        gp.ui.toolButtonEdit.hide()
+        # remove unwanted columns
+        for i in range(16, 9, -1):
+            gp.ui.tableWidgetActifs.removeColumn(i)
+        frame_layout.addWidget(gp)
+        self.ui.frame.setLayout(frame_layout)
+        return gp
+
+    def mes_portefeuilles(self):
+        g = Gestion()
+        mes_pf = g.portefeuille_of_manager(self.user.uid)
+        return mes_pf
+
+    def populate_combo_box(self):
+        mes_pf = self.mes_portefeuilles()
+        combo_list = QtCore.QStringList()
+        if mes_pf:
+            [combo_list.append(unicode(p.nom)) for p in mes_pf]
+            comp = QCompleter(combo_list)
+            comp.setCaseSensitivity(0)
+            self.ui.comboBoxSelect.setCompleter(comp)
+            self.ui.comboBoxSelect.addItems(combo_list)
+
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
-    form = GererPortefeuille()
+    form = StructurePortefeuilles()
     form.show()
     ap.exec_()

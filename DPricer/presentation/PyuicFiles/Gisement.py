@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/Gisement.ui'
 #
-# Created: Tue Oct  7 00:47:45 2014
+# Created: Thu Oct  9 15:58:34 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,12 @@ except AttributeError:
 class Ui_Gisement(object):
     def setupUi(self, Gisement):
         Gisement.setObjectName(_fromUtf8("Gisement"))
-        Gisement.resize(640, 480)
+        Gisement.resize(675, 510)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Gisement.sizePolicy().hasHeightForWidth())
+        Gisement.setSizePolicy(sizePolicy)
         self.verticalLayout = QtGui.QVBoxLayout(Gisement)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.groupBox = QtGui.QGroupBox(Gisement)
@@ -59,16 +64,16 @@ class Ui_Gisement(object):
         self.label.setObjectName(_fromUtf8("label"))
         self.horizontalLayout.addWidget(self.label)
         self.lineEditValeur = QtGui.QLineEdit(self.groupBox)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEditValeur.sizePolicy().hasHeightForWidth())
         self.lineEditValeur.setSizePolicy(sizePolicy)
-        self.lineEditValeur.setMinimumSize(QtCore.QSize(200, 0))
+        self.lineEditValeur.setMinimumSize(QtCore.QSize(100, 0))
         self.lineEditValeur.setMaximumSize(QtCore.QSize(200, 16777215))
         self.lineEditValeur.setObjectName(_fromUtf8("lineEditValeur"))
         self.horizontalLayout.addWidget(self.lineEditValeur)
-        spacerItem = QtGui.QSpacerItem(50, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(30, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.line = QtGui.QFrame(self.groupBox)
         self.line.setFrameShape(QtGui.QFrame.VLine)
@@ -84,8 +89,14 @@ class Ui_Gisement(object):
         self.labelCritere.setObjectName(_fromUtf8("labelCritere"))
         self.horizontalLayout.addWidget(self.labelCritere)
         self.comboBoxCritere = QtGui.QComboBox(self.groupBox)
-        self.comboBoxCritere.setMinimumSize(QtCore.QSize(200, 0))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBoxCritere.sizePolicy().hasHeightForWidth())
+        self.comboBoxCritere.setSizePolicy(sizePolicy)
+        self.comboBoxCritere.setMinimumSize(QtCore.QSize(100, 0))
         self.comboBoxCritere.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.comboBoxCritere.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.comboBoxCritere.setEditable(False)
         self.comboBoxCritere.setModelColumn(0)
         self.comboBoxCritere.setObjectName(_fromUtf8("comboBoxCritere"))
