@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/StructurePortefeuille.ui'
 #
-# Created: Thu Oct  9 15:48:33 2014
+# Created: Thu Oct  9 16:45:48 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -32,6 +32,7 @@ class Ui_StructurePortefeuille(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(StructurePortefeuille.sizePolicy().hasHeightForWidth())
         StructurePortefeuille.setSizePolicy(sizePolicy)
+        StructurePortefeuille.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.verticalLayout = QtGui.QVBoxLayout(StructurePortefeuille)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.formLayout = QtGui.QFormLayout()
@@ -69,7 +70,7 @@ class Ui_StructurePortefeuille(object):
         self.frame.setObjectName(_fromUtf8("frame"))
         self.horizontalLayout_2.addWidget(self.frame)
         self.verticalLayout_5 = QtGui.QVBoxLayout()
-        self.verticalLayout_5.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+        self.verticalLayout_5.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
         self.verticalLayout_5.setContentsMargins(6, -1, 4, -1)
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -80,27 +81,19 @@ class Ui_StructurePortefeuille(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.toolButtonAddToMyPortfolio.sizePolicy().hasHeightForWidth())
         self.toolButtonAddToMyPortfolio.setSizePolicy(sizePolicy)
+        self.toolButtonAddToMyPortfolio.setMaximumSize(QtCore.QSize(35, 16777215))
         self.toolButtonAddToMyPortfolio.setText(_fromUtf8(""))
         self.toolButtonAddToMyPortfolio.setPopupMode(QtGui.QToolButton.InstantPopup)
         self.toolButtonAddToMyPortfolio.setArrowType(QtCore.Qt.RightArrow)
         self.toolButtonAddToMyPortfolio.setObjectName(_fromUtf8("toolButtonAddToMyPortfolio"))
         self.verticalLayout_5.addWidget(self.toolButtonAddToMyPortfolio)
-        self.lineEdit = QtGui.QLineEdit(StructurePortefeuille)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
-        self.lineEdit.setSizePolicy(sizePolicy)
-        self.lineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.lineEdit.setFrame(True)
-        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
-        self.verticalLayout_5.addWidget(self.lineEdit)
         self.toolButtonRemoveFromMyPortfolio = QtGui.QToolButton(StructurePortefeuille)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.toolButtonRemoveFromMyPortfolio.sizePolicy().hasHeightForWidth())
         self.toolButtonRemoveFromMyPortfolio.setSizePolicy(sizePolicy)
+        self.toolButtonRemoveFromMyPortfolio.setMaximumSize(QtCore.QSize(35, 16777215))
         self.toolButtonRemoveFromMyPortfolio.setText(_fromUtf8(""))
         self.toolButtonRemoveFromMyPortfolio.setPopupMode(QtGui.QToolButton.InstantPopup)
         self.toolButtonRemoveFromMyPortfolio.setArrowType(QtCore.Qt.LeftArrow)
@@ -169,7 +162,7 @@ class Ui_StructurePortefeuille(object):
         self.tableWidgetStructure.horizontalHeader().setStretchLastSection(True)
         self.tableWidgetStructure.verticalHeader().setVisible(True)
         self.tableWidgetStructure.verticalHeader().setDefaultSectionSize(22)
-        self.tableWidgetStructure.verticalHeader().setSortIndicatorShown(True)
+        self.tableWidgetStructure.verticalHeader().setSortIndicatorShown(False)
         self.tableWidgetStructure.verticalHeader().setStretchLastSection(False)
         self.verticalLayout_2.addWidget(self.tableWidgetStructure)
         self.horizontalLayout_2.addWidget(self.groupBox_2)
@@ -181,7 +174,6 @@ class Ui_StructurePortefeuille(object):
     def retranslateUi(self, StructurePortefeuille):
         StructurePortefeuille.setWindowTitle(_translate("StructurePortefeuille", "Gérer structure portefeuille", None))
         self.sLectionnerLePortefeuilleModifierLabel.setText(_translate("StructurePortefeuille", "Sélectionner un portefeuille :", None))
-        self.lineEdit.setPlaceholderText(_translate("StructurePortefeuille", "Qté", None))
         self.groupBox_2.setTitle(_translate("StructurePortefeuille", "Structure Portefeuille", None))
         item = self.tableWidgetStructure.horizontalHeaderItem(0)
         item.setText(_translate("StructurePortefeuille", "ISIN", None))

@@ -270,7 +270,7 @@
            <number>0</number>
           </property>
           <property name="editTriggers">
-           <set>QAbstractItemView::NoEditTriggers</set>
+           <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
           </property>
           <property name="dragDropOverwriteMode">
            <bool>false</bool>
@@ -306,7 +306,7 @@
            <number>22</number>
           </attribute>
           <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-           <bool>true</bool>
+           <bool>false</bool>
           </attribute>
           <attribute name="verticalHeaderStretchLastSection">
            <bool>false</bool>

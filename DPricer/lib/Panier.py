@@ -79,6 +79,19 @@ class Panier(object):
         except:
             self.session.rollback()
 
+    def update_quantite(self, p_isin, isin, quantite):
+        if quantite > 0:
+            self.session.query(PanierMd).filter_by(p_isin=p_isin, isin=isin).update({'quantite':quantite})
+            try:
+                self.session.commit()
+                return 1
+            except Exception as e:
+                self.session.rollback()
+                print e.message
+                return 0
+        elif quantite == 0:
+            self.delete_oblig_from_portefeuille(p_isin, isin)
+
     def delete_oblig_from_portefeuille(self, p_isin, isin):
         """
         supprime définitivement l'actif du portefeuille

@@ -363,6 +363,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         self.user = User('mero', 'mero')
         self.user.uid = 1
         self.user_pf = None
+        self.current_pf = None
         # setUp and show gisement screen
         self.gisement_screen = self.load_gisement_screen()
         self.gisement_screen.show()
@@ -371,7 +372,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
 
     def connect_actions(self):
         self.ui.toolButtonAddToMyPortfolio.clicked.connect(self.add_to_my_portefeuille)
-        self.ui.toolButtonRemoveFromMyPortfolio.clicked.connect(self.remove_from_my_portefeuille)
+        self.ui.toolButtonRemoveFromMyPortfolio.clicked.connect(self.delete_from_my_portefeuille)
         self.ui.comboBoxSelect.currentIndexChanged.connect(self.update_panier_screen)
 
     def set_data(self):
@@ -389,6 +390,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         p_isin = [el.p_isin for el in self.user_pf if el.nom == nom]
         if len(p_isin) == 1:
             liste_actifs = p.oblig_of_portefeuille(p_isin[0])
+            self.current_pf = p_isin[0]
         liste_actifs = [(self.session.query(ObligationMd).get(el[0]), el[1]) for el in liste_actifs]
         return liste_actifs
 
@@ -413,29 +415,32 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
 
     def add_to_my_portefeuille(self):
         """
-        Ajoute un portefeuille depuis le gisement au portefeuille du gestionnaire.
+        Ajoute un actif depuis le gisement au portefeuille géré du gestionnaire.
         :return:
         """
         p = Panier()
-        selection = self.gisement_screen.tableWidgetActifs.selectedIndexes()
+        selection = self.gisement_screen.ui.tableWidgetActifs.selectedIndexes()
         if len(selection) >= 1:
-            liste_actifs = [str(self.gisement_screen.tableWidgetActifs.itemFromIndex(el).text())
+            liste_actifs = [str(self.gisement_screen.ui.tableWidgetActifs.itemFromIndex(el).text())
                                   for el in selection if el.column() == 0]
-            [p.add_oblig_to_portefeuille(self.user.uid, isin) for isin in liste_actifs]
-            self.affiche_mes_portefeuille()
+            if self.current_pf:
+                [p.add_oblig_to_portefeuille(self.current_pf, isin) for isin in liste_actifs]
+        self.gisement_screen.ui.tableWidgetActifs.clearSelection()
+        self.update_panier_screen()
 
-    def remove_from_my_portefeuille(self):
+    def delete_from_my_portefeuille(self):
         """
         Supprime un portefeuille de ceux initialement gérés.
         :return:
         """
-        g = Gestion()
-        selection = self.ui.tableWidgetPortefeuilles.selectedIndexes()
+        p = Panier()
+        selection = self.ui.tableWidgetStructure.selectedIndexes()
         if len(selection) >= 1:
-            liste_portefeuille = [(el.row(), str(self.ui.tableWidgetPortefeuilles.itemFromIndex(el).text()))
+            liste_actifs = [(el.row(), str(self.ui.tableWidgetStructure.itemFromIndex(el).text()))
                                   for el in selection if el.column() == 0]
-            [g.remove_portofolio(self.user.uid, isin[1]) for isin in liste_portefeuille]
-            [self.ui.tableWidgetPortefeuilles.removeRow(isin[0]) for isin in liste_portefeuille]
+            [p.delete_oblig_from_portefeuille(self.current_pf, isin[1]) for isin in liste_actifs]
+            [self.ui.tableWidgetStructure.removeRow(isin[0]) for isin in liste_actifs]
+            self.ui.tableWidgetStructure.clearSelection()
 
     def load_gisement_screen(self):
         frame_layout = QVBoxLayout()
@@ -466,6 +471,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
             comp.setCaseSensitivity(0)
             self.ui.comboBoxSelect.setCompleter(comp)
             self.ui.comboBoxSelect.addItems(combo_list)
+
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
