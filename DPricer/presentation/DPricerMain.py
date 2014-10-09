@@ -40,7 +40,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
 
     def connect_actions(self):
         self.ui.actionMonPortefeuille.triggered.connect(self.open_portefeuille_screen)
-        self.ui.actionGererPortefeuille.triggered.connect(self.open_portefeuille_dialog)
+        # self.ui.actionGererPortefeuille.triggered.connect(self.open_portefeuille_dialog)
         self.ui.actionVisualiser.triggered.connect(self.open_courbe_screen)
         self.ui.actionGisement.triggered.connect(self.open_gisement_screen)
         self.ui.actionAjoutObligation.triggered.connect(self.open_add_asset_screen)
@@ -50,6 +50,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionImporterActifExcel.triggered.connect(self.import_obligations)
         self.ui.actionGeneral.triggered.connect(self.open_parametres)
         self.ui.actionCalculette.triggered.connect(self.open_tools)
+        self.ui.actionGererPortefeuille.triggered.connect(self.open_gerer_portefeuille)
 
     def load_screen(self, screen):
         ct = screen(parent=self)

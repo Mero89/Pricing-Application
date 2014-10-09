@@ -131,11 +131,12 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
                         g_liste.append(GestionMd(uid=self.parent.user.uid, p_isin=str(isin)))
         session = AppModel().get_session()
         session.add_all(pf_liste)
+        session.commit()
         if self.parent is not None:
             session.add_all(g_liste)
         try:
             session.commit()
-            self.tell_status("Portefeuille ajouté avec succès.")
+            self.tell_status(u"Portefeuille ajouté avec succès.")
         except Exception as e:
             print e.message
             session.rollback()
@@ -270,16 +271,14 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
             rep = confirm.exec_()
             if rep:
                 trash = [self.session.query(PortefeuilleMd).get(isin[1]) for isin in liste_portefeuille]
-                for garbage in trash:
-                    self.session.delete(garbage)
-                else:
-                    try:
-                        self.session.commit()
-                        self.tell_status(u"Portefeuilles(s) supprimé(s) avec succès.")
-                        [self.ui.tableWidgetGisementPortefeuille.removeRow(el[0]) for el in liste_portefeuille]
-                    except:
-                        self.session.rollback()
-                        self.tell_status(u"Suppression échouée.")
+                self.session.delete_all(trash)
+                try:
+                    self.session.commit()
+                    self.tell_status(u"Portefeuilles(s) supprimé(s) avec succès.")
+                    [self.ui.tableWidgetGisementPortefeuille.removeRow(el[0]) for el in liste_portefeuille]
+                except:
+                    self.session.rollback()
+                    self.tell_status(u"Suppression échouée.")
 
     def affiche_mes_portefeuille(self):
         """

@@ -77,17 +77,15 @@ class GisementScreen(QWidget, Ui_Gisement):
                 # Suppression de la BDD
                 session = AppModel().get_session()
                 trash = [session.query(ObligationMd).get(isin[1]) for isin in liste_isin]
-                for garbage in trash:
-                    session.delete(garbage)
-                else:
-                    try:
-                        session.commit()
-                        self.tell_status(u"Actif(s) supprimé(s) avec succès.")
-                        [self.ui.tableWidgetActifs.removeRow(el[0]) for el in liste_isin]
-                    except Exception as e:
-                        session.rollback()
-                        self.tell_status(u"Suppression échouée.")
-                        self.tell_status(e.message)
+                session.delete_all(trash)
+                try:
+                    session.commit()
+                    self.tell_status(u"Actif(s) supprimé(s) avec succès.")
+                    [self.ui.tableWidgetActifs.removeRow(el[0]) for el in liste_isin]
+                except Exception as e:
+                    session.rollback()
+                    self.tell_status(u"Suppression échouée.")
+                    self.tell_status(e.message)
                 self.populate_completer()
 
 
