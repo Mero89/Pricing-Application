@@ -18,7 +18,7 @@ class Calculette(QWidget, Ui_Form):
         QWidget.__init__(self)
         self.ui = Ui_Form()
         self.ui.setupUi(self)
-        self.title = 'Outils'
+        self.title = u"Outils"
         self.setWindowTitle(self.title)
         self.parent = parent
         # Add some modifs to the form

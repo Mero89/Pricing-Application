@@ -13,7 +13,7 @@ from PyQt4 import QtCore
 from DPricer.presentation.PyuicFiles.MDI import Ui_MDIApp
 from GisementScreen import GisementScreen, AddAsset, UpdateAsset
 from LoginDialog import LoginDialog
-from MonPortefeuille import Portefeuilles, GererPortefeuille
+from MonPortefeuille import Portefeuilles, GererPortefeuille, StructurePortefeuilles
 from CourbeTauxScreen import CourbeTaux
 from ParametresScreen import Parametre
 from outils import Calculette
@@ -40,7 +40,6 @@ class MyClass(QMainWindow, Ui_MDIApp):
 
     def connect_actions(self):
         self.ui.actionMonPortefeuille.triggered.connect(self.open_portefeuille_screen)
-        # self.ui.actionGererPortefeuille.triggered.connect(self.open_portefeuille_dialog)
         self.ui.actionVisualiser.triggered.connect(self.open_courbe_screen)
         self.ui.actionGisement.triggered.connect(self.open_gisement_screen)
         self.ui.actionAjoutObligation.triggered.connect(self.open_add_asset_screen)
@@ -51,6 +50,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionGeneral.triggered.connect(self.open_parametres)
         self.ui.actionCalculette.triggered.connect(self.open_tools)
         self.ui.actionGererPortefeuille.triggered.connect(self.open_gerer_portefeuille)
+        self.ui.actionModifierMesPortefeuilles.triggered.connect(self.open_structure_portefeuille)
 
     def load_screen(self, screen):
         ct = screen(parent=self)
@@ -63,6 +63,10 @@ class MyClass(QMainWindow, Ui_MDIApp):
     # Ouvre la calculette
     def open_tools(self):
         self.load_screen(Calculette)
+
+    # Ouvre l'écran de structuration de portefeuille
+    def open_structure_portefeuille(self):
+        self.load_screen(StructurePortefeuilles)
 
     # Met à jour la courbe de taux
     def update_courbe(self):
@@ -78,6 +82,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
     def open_add_asset_screen(self):
         self.load_screen(AddAsset)
 
+    # Ouvre l'écran d'édition des actifs
     @QtCore.pyqtSlot(dict)
     def update_asset_screen(self, data):
         ct = UpdateAsset(data=data, parent=self)
@@ -108,7 +113,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
         pf = Portefeuilles(parent=self)
         if pf.title not in self.title_list():
             self.ui.mdiArea.addSubWindow(pf)
-            pf.User = self.user
+            pf.user = self.user
             pf.show()
             pf.affichePortefeuille()
         else:
@@ -119,7 +124,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
         retourne la liste des titres des sous-fenêtres
         :return:
         """
-        l = [el.windowTitle() for el in self.ui.mdiArea.subWindowList()]
+        l = [unicode(el.windowTitle()) for el in self.ui.mdiArea.subWindowList()]
         return l
 
     def set_windowview_mode(self):

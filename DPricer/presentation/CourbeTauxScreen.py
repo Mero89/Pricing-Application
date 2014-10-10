@@ -24,6 +24,7 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
         self.data = list()  # data est une liste contenant les Objets [CourbeMd]
         self.ui.dateEditFilter.setDate(QtCore.QDate(2014, 9, 22))
         self.ui.dateEditFilter.dateChanged.connect(self.filter_by_date)
+        self.ui.dateEditFilter.emit(QtCore.SIGNAL('dateChanged'))
 
     @QtCore.pyqtSlot()
     def filter_by_date(self):
@@ -35,7 +36,7 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
         else:
             self.ui.tableWidgetCourbe.clearContents()
             self.ui.lineEditTransaction.clear()
-            self.tell_status('Courbe non disponible')
+            self.tell_status(u'Courbe non disponible')
 
     def populate_table(self):
         self.ui.tableWidgetCourbe.clearContents()
@@ -57,7 +58,7 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
                 self.ui.tableWidgetCourbe.setItem(idx, 2, date_valeur)
                 self.ui.tableWidgetCourbe.setItem(idx, 3, date_echeance)
                 self.ui.tableWidgetCourbe.setItem(idx, 4, transaction)
-                self.ui.tableWidgetCourbe.resizeColumnsToContents()
+                self.ui.tableWidgetCourbe.resizeRowsToContents()
 
     def convert_qdate(self, _qdate):
         return dt.date(_qdate[0], _qdate[1], _qdate[2])

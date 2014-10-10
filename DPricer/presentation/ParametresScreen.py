@@ -14,8 +14,9 @@ class Parametre(QDialog, Ui_Parametres):
         QDialog.__init__(self)
         self.ui = Ui_Parametres()
         self.ui.setupUi(self)
-        title = u'Paramètres'
-        self.setWindowTitle(title)
+        self.title = u'Paramètres'
+        self.parent = parent
+        self.setWindowTitle(self.title)
         self.me = User('Mero', 'mero')
         self.me.uid = 2
         self.affiche_info_user()

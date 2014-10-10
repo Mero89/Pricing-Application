@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="visual">
+    <file>editPencil.png</file>
+    <file>refreshIcon.png</file>
+  </qresource>
+</RCC>
