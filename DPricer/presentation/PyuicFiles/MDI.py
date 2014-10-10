@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/MDI.ui'
 #
-# Created: Wed Oct  8 15:01:03 2014
+# Created: Fri Oct 10 12:22:21 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -163,6 +163,8 @@ class Ui_MDIApp(object):
         self.actionSimulateur.setObjectName(_fromUtf8("actionSimulateur"))
         self.actionModifierMesPortefeuilles = QtGui.QAction(MDIApp)
         self.actionModifierMesPortefeuilles.setObjectName(_fromUtf8("actionModifierMesPortefeuilles"))
+        self.actionPlein_cran = QtGui.QAction(MDIApp)
+        self.actionPlein_cran.setObjectName(_fromUtf8("actionPlein_cran"))
         self.menuPortefeuille.addAction(self.actionMonPortefeuille)
         self.menuPortefeuille.addAction(self.actionGererPortefeuille)
         self.menuPortefeuille.addSeparator()
@@ -171,6 +173,7 @@ class Ui_MDIApp(object):
         self.menuDispositionDesFenetres.addAction(self.actionSousFenetres)
         self.menuParametres.addAction(self.actionGeneral)
         self.menuParametres.addAction(self.menuDispositionDesFenetres.menuAction())
+        self.menuParametres.addAction(self.actionPlein_cran)
         self.menuExtras.addAction(self.actionCalculette)
         self.menuExtras.addAction(self.actionSimulateur)
         self.menuImporter.addAction(self.actionImporterActifExcel)
@@ -238,4 +241,5 @@ class Ui_MDIApp(object):
         self.actionSousFenetres.setText(_translate("MDIApp", "Fenêtres", None))
         self.actionSimulateur.setText(_translate("MDIApp", "Simulateur", None))
         self.actionModifierMesPortefeuilles.setText(_translate("MDIApp", "Modifier la structure de mes Portefeuilles", None))
+        self.actionPlein_cran.setText(_translate("MDIApp", "Plein écran", None))
 

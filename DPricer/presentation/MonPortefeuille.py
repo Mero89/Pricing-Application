@@ -374,6 +374,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         self.connect_actions()
         self.update_panier_screen()
         self.ui.comboBoxSelect.setFocus()
+        self.showMaximized()
 
     def connect_actions(self):
         self.ui.toolButtonAddToMyPortfolio.clicked.connect(self.add_to_my_portefeuille)
@@ -476,7 +477,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
 
     def load_gisement_screen(self):
         frame_layout = QVBoxLayout()
-        gp = GisementScreen(self.parent)
+        gp = GisementScreen(self.ui.frame)
         # remove unwanted elements
         gp.ui.verticalLayout_3.removeItem(gp.ui.horizontalLayout_2)
         gp.ui.toolButtonDelete.hide()

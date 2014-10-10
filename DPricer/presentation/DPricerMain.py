@@ -37,6 +37,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
         cur_day = QtCore.QDate().currentDate().toString()
         self.ui.labelDates.setText(cur_day)
         self.connect_actions()
+        self.showMaximized()
 
     def connect_actions(self):
         self.ui.actionMonPortefeuille.triggered.connect(self.open_portefeuille_screen)
@@ -51,6 +52,15 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionCalculette.triggered.connect(self.open_tools)
         self.ui.actionGererPortefeuille.triggered.connect(self.open_gerer_portefeuille)
         self.ui.actionModifierMesPortefeuilles.triggered.connect(self.open_structure_portefeuille)
+        self.ui.actionPlein_cran.triggered.connect(self.toggle_fullscreen)
+
+    def toggle_fullscreen(self):
+        if self.isFullScreen():
+            self.showMaximized()
+            self.ui.actionPlein_cran.setText(u'Plein écran')
+        else:
+            self.showFullScreen()
+            self.ui.actionPlein_cran.setText(u'Quitter Plein écran')
 
     def load_screen(self, screen):
         ct = screen(parent=self)
@@ -135,7 +145,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_W:
-            self.filenew()
+            self.close_current_window()
             # Comment to commit
 
     def import_courbe_taux(self):
@@ -174,6 +184,8 @@ class MyClass(QMainWindow, Ui_MDIApp):
         filename = fDialog.getOpenFileName(self, "Importer courbe Taux", filter="Fichiers (*.xls *.xlsx)")
         return filename
 
+    def close_current_window(self):
+        self.ui.mdiArea.closeActiveSubWindow()
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
     form = MyClass()

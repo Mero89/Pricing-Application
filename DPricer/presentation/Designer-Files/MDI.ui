@@ -173,6 +173,7 @@
     </widget>
     <addaction name="actionGeneral"/>
     <addaction name="menuDispositionDesFenetres"/>
+    <addaction name="actionPlein_cran"/>
    </widget>
    <widget class="QMenu" name="menuExtras">
     <property name="title">
@@ -391,6 +392,11 @@
   <action name="actionModifierMesPortefeuilles">
    <property name="text">
     <string>Modifier la structure de mes Portefeuilles</string>
+   </property>
+  </action>
+  <action name="actionPlein_cran">
+   <property name="text">
+    <string>Plein écran</string>
    </property>
   </action>
  </widget>

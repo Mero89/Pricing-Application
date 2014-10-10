@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'PycharmProjects/DPricer/test/Portefeuilles.ui'
+# Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/Portefeuilles.ui'
 #
-# Created: Mon Sep 29 09:26:03 2014
+# Created: Fri Oct 10 12:04:06 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -111,7 +111,7 @@ class Ui_Portefeuilles(object):
         self.tableWidgetPortefeuille.setHorizontalHeaderItem(5, item)
         self.tableWidgetPortefeuille.horizontalHeader().setVisible(True)
         self.tableWidgetPortefeuille.horizontalHeader().setStretchLastSection(True)
-        self.tableWidgetPortefeuille.verticalHeader().setVisible(False)
+        self.tableWidgetPortefeuille.verticalHeader().setVisible(True)
         self.tableWidgetPortefeuille.verticalHeader().setDefaultSectionSize(22)
         self.tableWidgetPortefeuille.verticalHeader().setMinimumSectionSize(16)
         self.tableWidgetPortefeuille.verticalHeader().setSortIndicatorShown(True)
@@ -209,27 +209,19 @@ class Ui_Portefeuilles(object):
         self.tableWidgetActifs.setHorizontalHeaderItem(7, item)
         self.tableWidgetActifs.horizontalHeader().setVisible(True)
         self.tableWidgetActifs.horizontalHeader().setStretchLastSection(True)
-        self.tableWidgetActifs.verticalHeader().setVisible(False)
+        self.tableWidgetActifs.verticalHeader().setVisible(True)
         self.tableWidgetActifs.verticalHeader().setDefaultSectionSize(22)
         self.tableWidgetActifs.verticalHeader().setSortIndicatorShown(True)
         self.tableWidgetActifs.verticalHeader().setStretchLastSection(False)
         self.verticalLayout_3.addWidget(self.tableWidgetActifs)
         self.horizontalLayout.addWidget(self.groupBox_2)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
-        self.pushButtonFermer = QtGui.QPushButton(Portefeuilles)
-        self.pushButtonFermer.setObjectName(_fromUtf8("pushButtonFermer"))
-        self.horizontalLayout_2.addWidget(self.pushButtonFermer)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(Portefeuilles)
         QtCore.QMetaObject.connectSlotsByName(Portefeuilles)
 
     def retranslateUi(self, Portefeuilles):
-        Portefeuilles.setWindowTitle(_translate("Portefeuilles", "Mes Portefeuiles", None))
+        Portefeuilles.setWindowTitle(_translate("Portefeuilles", "Mes Portefeuilles", None))
         self.groupBox.setTitle(_translate("Portefeuilles", "Mes portefeuilles", None))
         item = self.tableWidgetPortefeuille.horizontalHeaderItem(0)
         item.setText(_translate("Portefeuilles", "ISIN", None))
@@ -260,5 +252,4 @@ class Ui_Portefeuilles(object):
         item.setText(_translate("Portefeuilles", "Duration", None))
         item = self.tableWidgetActifs.horizontalHeaderItem(7)
         item.setText(_translate("Portefeuilles", "Convexité", None))
-        self.pushButtonFermer.setText(_translate("Portefeuilles", "Fermer", None))
 

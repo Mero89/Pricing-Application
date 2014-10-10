@@ -36,7 +36,7 @@ class GisementScreen(QWidget, Ui_Gisement):
         self.ui.comboBoxCritere.currentIndexChanged.connect(self.set_completer_value)
         # self.ui.toolButtonEdit.clicked.connect(self.edit_asset)
         # parent's connect
-        if self.parent is not None:
+        if self.parent is not None and type(self.parent) is not QFrame:
             self.ui.toolButtonDelete.clicked.connect(self.delete_asset)
             self.ui.toolButtonAdd.clicked.connect(self.parent.open_add_asset_screen)
             self.ui.toolButtonEdit.clicked.connect(self.edit_asset)

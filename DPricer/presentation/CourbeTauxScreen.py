@@ -24,7 +24,7 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
         self.data = list()  # data est une liste contenant les Objets [CourbeMd]
         self.ui.dateEditFilter.setDate(QtCore.QDate(2014, 9, 22))
         self.ui.dateEditFilter.dateChanged.connect(self.filter_by_date)
-        self.ui.dateEditFilter.emit(QtCore.SIGNAL('dateChanged'))
+        self.filter_by_date()
 
     @QtCore.pyqtSlot()
     def filter_by_date(self):

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/StructurePortefeuille.ui'
 #
-# Created: Fri Oct 10 11:47:43 2014
+# Created: Fri Oct 10 12:09:01 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_StructurePortefeuille(object):
     def setupUi(self, StructurePortefeuille):
         StructurePortefeuille.setObjectName(_fromUtf8("StructurePortefeuille"))
-        StructurePortefeuille.resize(863, 552)
+        StructurePortefeuille.resize(790, 552)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -34,7 +34,6 @@ class Ui_StructurePortefeuille(object):
         StructurePortefeuille.setSizePolicy(sizePolicy)
         StructurePortefeuille.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.verticalLayout = QtGui.QVBoxLayout(StructurePortefeuille)
-        self.verticalLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.FieldsStayAtSizeHint)
@@ -162,9 +161,9 @@ class Ui_StructurePortefeuille(object):
         font.setWeight(75)
         item.setFont(font)
         self.tableWidgetStructure.setHorizontalHeaderItem(2, item)
-        self.tableWidgetStructure.horizontalHeader().setVisible(True)
+        self.tableWidgetStructure.horizontalHeader().setVisible(False)
         self.tableWidgetStructure.horizontalHeader().setStretchLastSection(True)
-        self.tableWidgetStructure.verticalHeader().setVisible(True)
+        self.tableWidgetStructure.verticalHeader().setVisible(False)
         self.tableWidgetStructure.verticalHeader().setDefaultSectionSize(22)
         self.tableWidgetStructure.verticalHeader().setSortIndicatorShown(False)
         self.tableWidgetStructure.verticalHeader().setStretchLastSection(False)
