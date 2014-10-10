@@ -40,7 +40,7 @@ class YieldManager(object):
             TR.join()
             # Vérifie le fichier téléchargé
             try:
-                test = xl.read_excel(filename)
+                test = xl.read_courbe_bam(filename)
             except IOError:
                 pass
             if test != list():  # Stop

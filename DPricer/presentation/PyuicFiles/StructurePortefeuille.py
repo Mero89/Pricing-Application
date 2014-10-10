@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/StructurePortefeuille.ui'
 #
-# Created: Fri Oct 10 12:09:01 2014
+# Created: Fri Oct 10 15:13:47 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -162,10 +162,11 @@ class Ui_StructurePortefeuille(object):
         item.setFont(font)
         self.tableWidgetStructure.setHorizontalHeaderItem(2, item)
         self.tableWidgetStructure.horizontalHeader().setVisible(False)
+        self.tableWidgetStructure.horizontalHeader().setSortIndicatorShown(True)
         self.tableWidgetStructure.horizontalHeader().setStretchLastSection(True)
         self.tableWidgetStructure.verticalHeader().setVisible(False)
         self.tableWidgetStructure.verticalHeader().setDefaultSectionSize(22)
-        self.tableWidgetStructure.verticalHeader().setSortIndicatorShown(False)
+        self.tableWidgetStructure.verticalHeader().setSortIndicatorShown(True)
         self.tableWidgetStructure.verticalHeader().setStretchLastSection(False)
         self.verticalLayout_2.addWidget(self.tableWidgetStructure)
         self.horizontalLayout_2.addWidget(self.groupBox_2)
