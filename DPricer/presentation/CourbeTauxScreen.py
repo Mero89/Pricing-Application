@@ -38,6 +38,23 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
             self.ui.lineEditTransaction.clear()
             self.tell_status(u'Courbe non disponible')
 
+    def set_headers(self, h_list):
+        self.ui.tableWidgetCourbe.setColumnCount(len(h_list))
+        header_list = QtCore.QStringList(h_list)
+        self.ui.tableWidgetCourbe.setHorizontalHeaderLabels(header_list)
+
+    def insert_row(self, data, row_pos):
+        for el in data:
+            idx = data.index(el)
+            item = QTableWidgetItem(str(el))
+            self.ui.tableWidgetCourbe.setItem(row_pos, idx, item)
+
+    def insert_data(self, data):
+        for el in data:
+            rw_idx = data.index(el)
+            self.ui.tableWidgetCourbe.insertRow(rw_idx)
+            self.insert_row(el, rw_idx)
+
     def populate_table(self):
         self.ui.tableWidgetCourbe.clearContents()
         cur_rows = self.ui.tableWidgetCourbe.rowCount()

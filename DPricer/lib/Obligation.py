@@ -6,10 +6,119 @@ import datetime as dt
 from DPricer.lib.Courbe import Courbe
 
 
+class Coupon(object):
+    """
+    Représente une classe Coupon.
+    """
+
+    def __init__(self, date_coupon, tx_facial, nominal):
+        if date_coupon is not None:
+            self.date_coupon = self.validate_date(date_coupon)
+        self.taux_facial = float(tx_facial)
+        self.nominal = float(nominal)
+        self.coupon = self.nominal * self.taux_facial
+        if cal.isleap(self.date_coupon.year):
+            self.base = 366
+        else:
+            self.base = 365
+
+    def __str__(self):
+        return 'date coupon: {d}, coupon: {c}'.format(d=self.date_coupon, c=self.coupon)
+
+    def __repr__(self):
+        return '{d}::{c}'.format(d=self.date_coupon, c=self.coupon)
+
+    def __sub__(self, other):
+        if type(other) is Coupon:
+            return self.date_coupon - other.date_coupon
+
+    def get_coupon(self, d_coupon):
+        if d_coupon == self.date_coupon:
+            return self.coupon
+
+    def validate_date(self, _date):
+        if type(_date) is str:
+            return dt.datetime.strptime(_date, '%d/%m/%Y').date()
+        else:
+            return _date
+
+
+class Echeancier(object):
+    """
+    Classe représentant un échéancier.
+    l'échéancier génère un echeancier à partir des dates de début
+    et de fin suivant une périodicité désirée.
+    echelle => a : An, m: Mois, d: jours
+    """
+
+    def __init__(self, debut, fin, periode, echelle='a'):
+        self.debut = self.validate_date(debut)
+        self.fin = self.validate_date(fin)
+        self.periode = periode
+        self.echelle = echelle
+
+    def echeancier(self, flag=1):
+        return self.digest(self.debut, self.fin, self.periode, flag)
+
+    def coupons(self, tx_facial=0, nominal=0):
+        ech = self.echeancier()
+        coupons = list()
+        for i in range(1, len(ech)):
+            coupons.append(Coupon(ech[i], tx_facial, nominal))
+        return coupons
+
+    def digest(self, start, end, periode, flag=1):
+        echeancier = list()
+        st = start
+        e = end
+        if flag == 1:
+            p = periode
+            while st < e:
+                echeancier.append(st)
+                st = self.incremente(st, p, self.echelle)
+            else:
+                echeancier.append(e)
+            return echeancier
+        elif flag == -1:
+            p = -periode
+            while st < e:
+                echeancier.append(e)
+                e = self.incremente(e, p, self.echelle)
+            else:
+                echeancier.append(st)
+            return echeancier
+
+    def incremente(self, _date, periode, echelle='a'):
+        """
+        incrémente une date par la périodicité choisie.
+        """
+        if type(periode) is int:
+            if echelle == 'a':
+                return _date.replace(year=_date.year + periode)
+            elif echelle == 'm':
+                s = divmod(_date.month + periode, 12)
+                if s[1] >= 1:
+                    return _date.replace(month=s[1], year=_date.year +s[0])
+                elif s[1] == 0 and s[0] > 1:
+                    return _date.replace(year=_date.year + s[0])
+                elif s[1] == 0 and s[0] == 1:
+                    return _date.replace(month=12)
+            elif echelle == 'd':
+                delta = dt.timedelta(days= periode)
+                return _date + delta
+
+    def validate_date(self, _date):
+        if type(_date) is str:
+            return dt.datetime.strptime(_date, '%d/%m/%Y').date()
+        else:
+            return _date
+
+
 class Obligation(object):
     """
     Classe représentant une Obligation.
     """
+
     def __init__(self, nominal, tx_f, d_em, d_j, d_ech, d_eval=None, spread=0, tx_act=None, nom='', le_type='',
                  isin=''):
         # si Date evaluation n'est pas definie, elle prend la valeur d'aujourd'hui
@@ -42,6 +151,8 @@ class Obligation(object):
             self.tx_actuariel = self.courbe.taux_lineaire(self.mat_residuelle)
         elif tx_act is not None:
             self.tx_actuariel = tx_act
+        self.coupons = list()
+        self.e = Echeancier(self.date_jouissance.replace(year=self.date_jouissance+1), self.date_echeance, 1)
 
     def is_atypique_droite(self):
         de = self.date_echeance
@@ -55,45 +166,22 @@ class Obligation(object):
         if self.date_emission != self.date_jouissance:
             return True
 
-    def echeancier(self):
-        echeancier = list()
-        # Si prochain coupon est la date de jouissance
-        if self.date_evaluation <= self.date_jouissance:
-            temp = self.date_jouissance
-            while temp <= self.date_echeance:
-                new_year = temp.year + 1
-                temp = temp.replace(year=new_year)
-                if temp > self.date_echeance:
-                    if echeancier[-1] != self.date_echeance:
-                        echeancier.append(self.date_echeance)
-                else:
-                    echeancier.append(temp)
-            return echeancier
-        if self.date_evaluation >= self.date_jouissance:
-            temp = self.date_jouissance.replace(year=self.date_evaluation.year)
-            if temp > self.date_evaluation:
-                echeancier.append(temp)
-            while temp <= self.date_echeance:
-                new_year = temp.year + 1
-                temp = temp.replace(year=new_year)
-                if temp > self.date_echeance:
-                    if echeancier[-1] != self.date_echeance:
-                        echeancier.append(self.date_echeance)
-                else:
-                    echeancier.append(temp)
-            return echeancier
-
     def no_more_atypique(self):
         year_j = self.date_jouissance.year
-        if self.is_atypique_gauche() and self.date_evaluation >= self.date_jouissance.replace(year=year_j+1):
+        if self.is_atypique_gauche() and self.date_evaluation >= self.date_jouissance.replace(year=year_j + 1):
             return True
+
+    def echeancier(self):
+        return e.echeancier()
+        pass
 
     def coeff_echeancier(self):
         coeff_echeancier = list()
         p = self.echeancier()
+        # p = self.vie()
         p.insert(0, self.date_evaluation)
         for i in range(len(p) - 1):
-            delta = abs((p[i+1] - p[i]).days)
+            delta = abs((p[i + 1] - p[i]).days)
             mod = divmod(delta, 365)
             if mod[1] == 0 or mod[1] == 1:
                 delta = mod[0]
@@ -127,40 +215,29 @@ class Obligation(object):
             elif self.mat_residuelle > 365 and self.maturite_initiale > 365:
                 # Integre tous les cas pour calculer le prix de l'obligation
                 # en utilisant la méthode de l'echeancier et des coefficients de l'écheancier
-                coeff = self.coeff_echeancier()
-                ech = self.echeancier()
-                coeff[0] = (ech[0]-self.date_evaluation).days/366.
-                tx_act = self.tx_actuariel + self.spread
-                coupon = self.nominal * self.tx_facial
-                # print coeff
-                # liste_actuariel = [pow(1+tx_act, -c) for c in coeff if c != 0]
-                liste_actuariel = list()
-                p = 0
-                # why corff - 1 ?
-                for i in range(len(coeff) - 1):
-                    if coeff[i] != 0:
-                        p += coeff[i]
-                        actu = 1 / pow((1 + tx_act), p)
-                        # actu = pow(1/(1+tx_act), coeff[0]+i)
-                        liste_actuariel.append(round(actu, 8))
-                liste_coupons = [coupon] * len(liste_actuariel)
-                # le premier coupon est différent
-                liste_coupons[0] = coupon * coeff[0]
-                # print liste_coupons
-                prix = 0
-                if len(liste_coupons) == len(liste_actuariel):
-                    dcf = list()
-                    for i in range(len(liste_coupons)):
-                        dcf.append(liste_actuariel[i] * liste_coupons[i])
-                        # print 'prix ==>', liste_coupons[i]*act
-                    else:
-                        # print 'total avt principal ==>',prix
-                        in_fine = self.nominal * liste_actuariel[-1]
-                        #print 'principal ==>', in_fine
-                        dcf.append(in_fine)
-                        # print dcf
-                    prix = sum(dcf)
-                return round(prix, 2)
+               pass
+
+    def prix_long(self):
+        """
+        calcule le prx de l'oblig suivant ma nouvelle méthode.
+        :return:
+        """
+        ob_vie = self.vie()
+        nv_coupons = list()
+        tx_act = self.tx_actuariel
+        d_eval = self.date_evaluation
+        liste_actuarielle = list()
+        if self.coupons:
+            ob_coupons = list(self.coupons)
+        for i in range(len(ob_coupons) - 1):
+            temp_coupon = ob_coupons[i+1] * (ob_coupons[i+1].date_coupon - ob_coupons[i].date_coupon).days / float(
+                ob_coupons[i].base)
+            ob_coupons[i].coupon = temp_coupon
+        for i in range(len(ob_coupons)):
+            puiss = (ob_coupons[1].date_coupon - d_eval).days / float(self.baseA)
+            coeff_actu = pow(1/(1+tx_act), puiss)
+            liste_actuarielle.append(coeff_actu)
+            # Produit Scalaire entre vecteur d'actualisation et vecteur de coupons
 
     def getParams(self):
         return self.__dict__
@@ -204,17 +281,20 @@ def print_list(mylist):
         print el
 
 if __name__ == '__main__':
+    # prix = 101752 MAD, ISIN = 100581
     nom = 100000
-    tx_fac = 0.04
-    date_emission = '03/03/2010'
-    date_jouissance = '03/03/2010'
-    d_ech = '03/03/2020'
-    date_eval = '3/3/2016'
-    tx_act = 0.04
-    obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, tx_act=tx_act)
-    print obl.echeancier()
-    leap = [cal.isleap(el.year) for el in obl.echeancier()]
-    print leap
-
+    tx_fac = .0416
+    date_emission = '18/06/2014'
+    date_jouissance = '20/06/2014'
+    d_ech = '20/06/2016'
+    date_eval = '2/10/2014'
+    # tx_act = 0.04
+    spread = .0060
+    obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval)
+    # obl.vie()
     # obl2 = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, tx_act)
-    print obl.prix()
+    # print obl.prix()
+    # print obl.vie()
+    # print obl.coupons
+    e = Echeancier(date_emission, d_ech, 24, echelle='m')
+    print e.echeancier()
