@@ -26,6 +26,8 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
         self.ui.dateEditFilter.setDate(QtCore.QDate(2014, 9, 22))
         self.ui.dateEditFilter.dateChanged.connect(self.filter_by_date)
         self.filter_by_date()
+        headers = [u'transactions', u"date d'écheance", u"date valeur", u"taux pondéré", u"Maturités résiduelles"]
+        TU.set_headers(self.ui.tableWidgetCourbe, headers)
 
     @QtCore.pyqtSlot()
     def filter_by_date(self):
