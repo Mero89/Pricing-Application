@@ -147,7 +147,9 @@ class GisementScreen(QWidget, Ui_Gisement):
                 echue = QTableWidgetItem(str(el.echue))
                 forcee = QTableWidgetItem(str(el.forcee))
                 obl = Obligation(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
-                                 d_eval='22/9/2014', spread=el.spread)
+                                 d_eval='2/10/2014', spread=el.spread)
+                # ligne modifiée
+                # prix = QTableWidgetItem(str(obl.m_prix()) + ' MAD')
                 prix = QTableWidgetItem(str(obl.prix()) + ' MAD')
                 sensi = QTableWidgetItem(str(obl.sensibilite()))
                 dur = QTableWidgetItem(str(obl.duration()))

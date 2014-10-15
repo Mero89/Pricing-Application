@@ -63,7 +63,7 @@ class Echeancier(object):
     def coupons(self, tx_facial=0, nominal=0):
         ech = self.echeancier()
         coupons = list()
-        for i in range(1, len(ech)):
+        for i in range(len(ech)):
             coupons.append(Coupon(ech[i], tx_facial, nominal))
         return coupons
 
@@ -121,6 +121,7 @@ class Obligation(object):
 
     def __init__(self, nominal, tx_f, d_em, d_j, d_ech, d_eval=None, spread=0, tx_act=None, nom='', le_type='',
                  isin=''):
+        # threading.Thread.__init__(self)
         # si Date evaluation n'est pas definie, elle prend la valeur d'aujourd'hui
         self.base = 360
         self.baseA = 365
@@ -151,8 +152,10 @@ class Obligation(object):
             self.tx_actuariel = self.courbe.taux_lineaire(self.mat_residuelle)
         elif tx_act is not None:
             self.tx_actuariel = tx_act
-        self.coupons = list()
-        self.e = Echeancier(self.date_jouissance.replace(year=self.date_jouissance+1), self.date_echeance, 1)
+        self.e = Echeancier(self.date_jouissance.replace(year=self.date_jouissance.year+1), self.date_echeance, 1)
+
+    # def run(self):
+    #     return self.prix()
 
     def is_atypique_droite(self):
         de = self.date_echeance
@@ -172,13 +175,13 @@ class Obligation(object):
             return True
 
     def echeancier(self):
-        return e.echeancier()
+        return self.e.echeancier()
         pass
 
-    def coeff_echeancier(self):
+    def coeff_actuariels(self):
+        ech = self.e.echeancier()
         coeff_echeancier = list()
-        p = self.echeancier()
-        # p = self.vie()
+        p = [el for el in ech if el > self.date_evaluation]
         p.insert(0, self.date_evaluation)
         for i in range(len(p) - 1):
             delta = abs((p[i + 1] - p[i]).days)
@@ -188,7 +191,29 @@ class Obligation(object):
             if mod[1] > 1:
                 delta = float(delta) / self.baseA
             coeff_echeancier.append(delta)
-        return coeff_echeancier
+        p = 0
+        coeff_act = list()
+        for i in range(len(coeff_echeancier)):
+            p += coeff_echeancier[i]
+            coeff = pow(1 / (1 + self.tx_actuariel + self.spread), p)
+            coeff_act.append(coeff)
+        return coeff_act
+
+    def coupons(self):
+        cps = self.e.coupons(self.tx_facial, self.nominal)
+        cps.insert(0, Coupon(self.date_emission, 0, 0))
+        cps_restants = [el for el in cps if el.date_coupon > self.date_evaluation]
+        before = cps[cps.index(cps_restants[0])-1]
+        cps_restants.insert(0, before)
+        for i in range(1, len(cps_restants)):
+            coeff = (cps_restants[i] - cps_restants[i-1]).days/float(cps_restants[i].base)
+            cps_restants[i].coupon *= coeff
+        return cps_restants[1:]
+
+    # def m_prix(self):
+    #     p = Pool(processes=4)
+    #     result = p.apply_async(self.prix)
+    #     return result.get()
 
     def prix(self):
         if self.date_echeance <= dt.date.today():
@@ -215,29 +240,15 @@ class Obligation(object):
             elif self.mat_residuelle > 365 and self.maturite_initiale > 365:
                 # Integre tous les cas pour calculer le prix de l'obligation
                 # en utilisant la méthode de l'echeancier et des coefficients de l'écheancier
-               pass
-
-    def prix_long(self):
-        """
-        calcule le prx de l'oblig suivant ma nouvelle méthode.
-        :return:
-        """
-        ob_vie = self.vie()
-        nv_coupons = list()
-        tx_act = self.tx_actuariel
-        d_eval = self.date_evaluation
-        liste_actuarielle = list()
-        if self.coupons:
-            ob_coupons = list(self.coupons)
-        for i in range(len(ob_coupons) - 1):
-            temp_coupon = ob_coupons[i+1] * (ob_coupons[i+1].date_coupon - ob_coupons[i].date_coupon).days / float(
-                ob_coupons[i].base)
-            ob_coupons[i].coupon = temp_coupon
-        for i in range(len(ob_coupons)):
-            puiss = (ob_coupons[1].date_coupon - d_eval).days / float(self.baseA)
-            coeff_actu = pow(1/(1+tx_act), puiss)
-            liste_actuarielle.append(coeff_actu)
-            # Produit Scalaire entre vecteur d'actualisation et vecteur de coupons
+                coeff_act = self.coeff_actuariels()
+                coupons = self.coupons()
+                tableau = zip(coeff_act, coupons)
+                px = 0
+                for el in tableau:
+                    px += el[0]*el[1].coupon
+                else:
+                    px += self.nominal * coeff_act[-1]
+                return px
 
     def getParams(self):
         return self.__dict__
@@ -285,16 +296,13 @@ if __name__ == '__main__':
     nom = 100000
     tx_fac = .0416
     date_emission = '18/06/2014'
-    date_jouissance = '20/06/2014'
-    d_ech = '20/06/2016'
+    date_jouissance = '18/06/2014'
+    d_ech = '20/06/2017'
     date_eval = '2/10/2014'
     # tx_act = 0.04
     spread = .0060
-    obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval)
-    # obl.vie()
-    # obl2 = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, tx_act)
-    # print obl.prix()
-    # print obl.vie()
-    # print obl.coupons
-    e = Echeancier(date_emission, d_ech, 24, echelle='m')
-    print e.echeancier()
+    obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval,spread=spread)
+    print obl.coeff_actuariels()
+    for el in obl.coupons():
+        print el
+    print obl.prix()

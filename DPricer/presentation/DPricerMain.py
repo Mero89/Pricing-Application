@@ -1,4 +1,6 @@
 # coding=utf-8
+import os
+
 __author__ = 'F.Marouane'
 
 ### App Library modules
