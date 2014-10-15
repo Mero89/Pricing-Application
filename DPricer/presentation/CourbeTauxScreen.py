@@ -9,6 +9,7 @@ from PyQt4 import QtCore
 
 from DPricer.presentation.PyuicFiles.CourbeTaux import Ui_CourbeTaux
 from DPricer.data.AppModel import CourbeMd, AppModel
+import TableUtils as TU
 
 
 class CourbeTaux(QDialog, Ui_CourbeTaux):
@@ -38,44 +39,18 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
             self.ui.lineEditTransaction.clear()
             self.tell_status(u'Courbe non disponible')
 
-    def set_headers(self, h_list):
-        self.ui.tableWidgetCourbe.setColumnCount(len(h_list))
-        header_list = QtCore.QStringList(h_list)
-        self.ui.tableWidgetCourbe.setHorizontalHeaderLabels(header_list)
-
-    def insert_row(self, data, row_pos):
-        for el in data:
-            idx = data.index(el)
-            item = QTableWidgetItem(str(el))
-            self.ui.tableWidgetCourbe.setItem(row_pos, idx, item)
-
-    def insert_data(self, data):
-        for el in data:
-            rw_idx = data.index(el)
-            self.ui.tableWidgetCourbe.insertRow(rw_idx)
-            self.insert_row(el, rw_idx)
-
     def populate_table(self):
         self.ui.tableWidgetCourbe.clearContents()
-        cur_rows = self.ui.tableWidgetCourbe.rowCount()
+        keys = ['transactions', 'date_echeance', 'date_valeur', 'taux_pondere']
         if self.data:
+            self.ui.tableWidgetCourbe.setRowCount(len(self.data))
             # populate table
             for el in self.data:
-                idx = self.data.index(el)
+                row = self.data.index(el)
                 mat_residuelle = QTableWidgetItem(str((el.date_echeance - el.date_valeur).days))
-                taux = QTableWidgetItem(str(el.taux_pondere*100)+' %')
-                date_valeur = QTableWidgetItem(str(el.date_valeur.strftime('%d/%m/%Y')))
-                date_echeance = QTableWidgetItem(str(el.date_echeance.strftime('%d/%m/%Y')))
-                transaction = QTableWidgetItem(str(el.transactions))
-                if idx + 1 >= cur_rows:
-                    self.ui.tableWidgetCourbe.insertRow(idx)
-                    self.ui.tableWidgetCourbe.setRowHeight(idx, 30)
-                self.ui.tableWidgetCourbe.setItem(idx, 0, mat_residuelle)
-                self.ui.tableWidgetCourbe.setItem(idx, 1, taux)
-                self.ui.tableWidgetCourbe.setItem(idx, 2, date_valeur)
-                self.ui.tableWidgetCourbe.setItem(idx, 3, date_echeance)
-                self.ui.tableWidgetCourbe.setItem(idx, 4, transaction)
-                self.ui.tableWidgetCourbe.resizeRowsToContents()
+                self.ui.tableWidgetCourbe.setRowHeight(row, 30)
+                TU.put_row(self.ui.tableWidgetCourbe, row, keys, el)
+                self.ui.tableWidgetCourbe.setItem(row, len(keys), mat_residuelle)
 
     def convert_qdate(self, _qdate):
         return dt.date(_qdate[0], _qdate[1], _qdate[2])

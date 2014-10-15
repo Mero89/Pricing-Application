@@ -5,6 +5,7 @@ import sys
 import datetime as dt
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
+import TableUtils as TU
 from DPricer.presentation.PyuicFiles.AddAssetDialog import Ui_AddAsset
 from DPricer.presentation.PyuicFiles.Gisement import Ui_Gisement
 from DPricer.data.AppModel import ObligationMd, AppModel
@@ -130,51 +131,21 @@ class GisementScreen(QWidget, Ui_Gisement):
     # Remplit la table
     def populate_table(self):
         self.ui.tableWidgetActifs.clearContents()
-        cur_rows = self.ui.tableWidgetActifs.rowCount()
+        keys = ['isin', 'nom', 'nominal', 'taux_facial', 'spread', 'date_emission', 'date_jouissance', 'maturite',
+                'type', 'echue', 'forcee']
         if self.data:
+            self.ui.tableWidgetActifs.setRowCount(len(self.data))
             # populate table
             for el in self.data:
-                idx = self.data.index(el)
-                isin = QTableWidgetItem(el.isin)
-                nom = QTableWidgetItem(el.nom)
-                nominal = QTableWidgetItem(str(el.nominal))
-                tx_facial = QTableWidgetItem(str(el.taux_facial * 100) + ' %')
-                spread = QTableWidgetItem(str(el.spread * 100) + ' %')
-                d_em = QTableWidgetItem(str(el.date_emission))
-                d_j = QTableWidgetItem(str(el.date_jouissance))
-                d_ech = QTableWidgetItem(str(el.maturite))
-                ttype = QTableWidgetItem(str(el.type))
-                echue = QTableWidgetItem(str(el.echue))
-                forcee = QTableWidgetItem(str(el.forcee))
+                row = self.data.index(el)
                 obl = Obligation(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
                                  d_eval='2/10/2014', spread=el.spread)
-                # ligne modifiée
-                # prix = QTableWidgetItem(str(obl.m_prix()) + ' MAD')
-                prix = QTableWidgetItem(str(obl.prix()) + ' MAD')
-                sensi = QTableWidgetItem(str(obl.sensibilite()))
-                dur = QTableWidgetItem(str(obl.duration()))
-                conv = QTableWidgetItem(str('Not Implemented'))
-                tx_act = QTableWidgetItem(str(round((obl.tx_actuariel + obl.spread) * 100, 6)) + ' %')
-                if idx + 1 >= cur_rows:
-                    self.ui.tableWidgetActifs.insertRow(idx)
-                    self.ui.tableWidgetActifs.setRowHeight(idx, 25)
-                self.ui.tableWidgetActifs.setItem(idx, 0, isin)
-                self.ui.tableWidgetActifs.setItem(idx, 1, nom)
-                self.ui.tableWidgetActifs.setItem(idx, 2, nominal)
-                self.ui.tableWidgetActifs.setItem(idx, 3, tx_facial)
-                self.ui.tableWidgetActifs.setItem(idx, 4, spread)
-                self.ui.tableWidgetActifs.setItem(idx, 5, d_em)
-                self.ui.tableWidgetActifs.setItem(idx, 6, d_j)
-                self.ui.tableWidgetActifs.setItem(idx, 7, d_ech)
-                self.ui.tableWidgetActifs.setItem(idx, 8, ttype)
-                self.ui.tableWidgetActifs.setItem(idx, 9, echue)
-                self.ui.tableWidgetActifs.setItem(idx, 10, forcee)
-                self.ui.tableWidgetActifs.setItem(idx, 11, prix)
-                self.ui.tableWidgetActifs.setItem(idx, 12, sensi)
-                self.ui.tableWidgetActifs.setItem(idx, 13, dur)
-                self.ui.tableWidgetActifs.setItem(idx, 14, conv)
-                self.ui.tableWidgetActifs.setItem(idx, 15, tx_act)
-        self.ui.tableWidgetActifs.setRowCount(len(self.data))
+                calcul = [obl.prix(), obl.sensibilite(), obl.duration(), 'Not Implemented', obl.tx_actuariel +
+                          obl.spread]
+                # self.ui.tableWidgetActifs.insertRow(row)
+                self.ui.tableWidgetActifs.setRowHeight(row, 27)
+                TU.put_row(self.ui.tableWidgetActifs, row, keys, el)
+                TU.insert_row(self.ui.tableWidgetActifs, calcul, row, offset=len(keys))
 
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)

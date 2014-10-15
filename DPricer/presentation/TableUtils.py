@@ -14,7 +14,7 @@ def set_headers(table, h_list):
 def insert_row(table, data, row_pos, offset=0):
     for el in data:
         idx = data.index(el)
-        item = QTableWidgetItem(str(el))
+        item = QTableWidgetItem(unicode(el))
         table.setItem(row_pos, idx + offset, item)
 
 
@@ -26,7 +26,7 @@ def insert_data(table, data, offset=0):
 
 
 def put_row(table, row_pos, keys, db_elmt):
-    table.insertRow(row_pos)
+    # table.insertRow(row_pos)
     col_pos = 0
     db_dico = dict(db_elmt.__dict__)
     for el in keys:
