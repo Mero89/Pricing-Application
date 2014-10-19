@@ -15,6 +15,7 @@ from DPricer.lib.Gestion import Gestion
 from DPricer.lib.Panier import Panier
 from DPricer.lib.User import User
 from DPricer.lib.Controller import DateEval
+import DPricer.presentation.TableUtils as TU
 from DPricer.lib.Portefeuille import Portefeuille
 from DPricer.data.AppModel import AppModel, PortefeuilleMd, GestionMd, ObligationMd
 from ConfirmDialog import ConfirmDialog
@@ -32,7 +33,7 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         self.title = 'Mes Portefeuilles'
         self.setWindowTitle(self.title)
         self.ui.tableWidgetPortefeuille.setAlternatingRowColors(True)
-        self.user = None
+        self.user = User()
 
     @QtCore.pyqtSlot()
     def affichePortefeuille(self):
@@ -41,24 +42,16 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         pf = g.portefeuille_of_manager(uid=self.user.uid)
         liste_portefeuille = [Portefeuille(el.p_isin, self.date_eval) for el in pf]
         self.ui.tableWidgetPortefeuille.clearContents()
-        cur_rows = self.ui.tableWidgetPortefeuille.rowCount()
+        self.ui.tableWidgetPortefeuille.setRowCount(len(liste_portefeuille))
         for el in liste_portefeuille:
             idx = liste_portefeuille.index(el)
-            isin = QTableWidgetItem(str(el.p_isin))
-            nom = QTableWidgetItem(str(el.nom))
-            prix = QTableWidgetItem(str(round(el.prix(),2)))
-            sensi = QTableWidgetItem(str(round(el.sensibilite(),4)))
-            dur = QTableWidgetItem(str(round(el.duration(),4)))
-            if idx +1 >= cur_rows:
-                self.ui.tableWidgetPortefeuille.insertRow(idx)
-            self.ui.tableWidgetPortefeuille.setItem(idx, 0, isin)
-            self.ui.tableWidgetPortefeuille.setItem(idx, 1, nom)
-            self.ui.tableWidgetPortefeuille.setItem(idx, 2, prix)
-            self.ui.tableWidgetPortefeuille.setItem(idx, 3, sensi)
-            self.ui.tableWidgetPortefeuille.setItem(idx, 4, dur)
-            self.ui.tableWidgetPortefeuille.resizeRowsToContents()
-            # self.ui.tableWidgetPortefeuille.resizeColumnsToContents()
-        self.ui.tableWidgetPortefeuille.setRowCount(len(liste_portefeuille))
+            row = (str(el.p_isin), str(el.nom), round(el.prix(), 2), round(el.sensibilite(), 4),
+                   round(el.duration, 4))
+            self.ui.tableWidgetPortefeuille.insertRow(idx)
+            TU.insert_row(self.ui.tableWidgetPortefeuille, row, idx)
+
+        self.ui.tableWidgetPortefeuille.resizeRowsToContents()
+
 
     def asset_of_portefeuille(self, p_isin, date_eval=None):
         # (Obligation, Qt) <- Portefeuille.obligations
@@ -79,29 +72,17 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         cur_item = self.ui.tableWidgetPortefeuille.currentItem()
         p_isin = self.ui.tableWidgetPortefeuille.item(cur_item.row(), 0).text()
         data = self.asset_of_portefeuille(p_isin)
-        cur_rows = self.ui.tableWidgetActifs.rowCount()
+        self.ui.tableWidgetActifs.setRowCount(len(data))
         for el in data:
             idx = data.index(el)
-            isin = QTableWidgetItem(str(el[0].isin))
             # Qstring because of french letters, Nom, Description, etc...
-            nom = QTableWidgetItem(unicode(el[0].nom))
-            prix = QTableWidgetItem(str(round(el[0].prix(), 2)))
-            sensi = QTableWidgetItem(str(round(el[0].sensibilite(), 4)))
-            dur = QTableWidgetItem(str(round(el[0].duration(), 4)))
-            quant = QTableWidgetItem(str(el[1]))
-            poids = QTableWidgetItem(str(round(el[2], 4)))
-            if idx + 1 >= cur_rows:
-                self.ui.tableWidgetActifs.insertRow(idx)
-            self.ui.tableWidgetActifs.setItem(idx, 0, isin)
-            self.ui.tableWidgetActifs.setItem(idx, 1, nom)
-            self.ui.tableWidgetActifs.setItem(idx, 2, quant)
-            self.ui.tableWidgetActifs.setItem(idx, 3, poids)
-            self.ui.tableWidgetActifs.setItem(idx, 4, prix)
-            self.ui.tableWidgetActifs.setItem(idx, 5, sensi)
-            self.ui.tableWidgetActifs.setItem(idx, 6, dur)
-            self.ui.tableWidgetActifs.resizeRowsToContents()
+            row = (str(el[0].isin), unicode(el[0].nom), round(el[0].prix(), 2), round(el[0].sensibilite(), 4),
+                   round(el[0].duration, 4), str(el[1]), round(el[2], 4))
+            self.ui.tableWidgetActifs.insertRow(idx)
+            TU.insert_row(self.ui.tableWidgetActifs, row, idx)
+        self.ui.tableWidgetActifs.resizeRowsToContents()
             # self.ui.tableWidgetActifs.resizeColumnsToContents()
-        self.ui.tableWidgetActifs.setRowCount(len(data))
+
 
     def keyPressEvent(self, e):
         # define key event
@@ -434,20 +415,19 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
 
     def update_panier_screen(self):
         data = self.actifs_du_portefeuille()
-        cur_rows = self.ui.tableWidgetStructure.rowCount()
+        self.ui.tableWidgetStructure.setRowCount(len(data))
         for el in data:
             idx = data.index(el)
             isin = QTableWidgetItem(str(el[0].isin))
             nom = QTableWidgetItem(unicode(el[0].nom))
             quant = QTableWidgetItem(str(el[1]))
             quant.setTextAlignment(QtCore.Qt.AlignHCenter)
-            if idx + 1 >= cur_rows:
-                self.ui.tableWidgetStructure.insertRow(idx)
+
+            self.ui.tableWidgetStructure.insertRow(idx)
             self.ui.tableWidgetStructure.setItem(idx, 0, isin)
             self.ui.tableWidgetStructure.setItem(idx, 1, nom)
             self.ui.tableWidgetStructure.setItem(idx, 2, quant)
         else:
-            self.ui.tableWidgetStructure.setRowCount(len(data))
             self.ui.tableWidgetStructure.resizeColumnToContents(0)
             self.ui.tableWidgetStructure.resizeColumnToContents(1)
 

@@ -17,9 +17,15 @@ class UniqueUser(type):
 class User(object):
     __metaclass__ = UniqueUser
     __number_of_checks__ = 0
-    def __init__(self, uname, password):
-        self.uname = unicode(uname)
-        self.password = unicode(password)
+
+    def __init__(self, uname=None, password=None):
+        try:
+            self.uname = unicode(uname)
+            self.password = unicode(password)
+        except (TypeError, ValueError):
+            self.uname = u''
+            self.password = u''
+            pass
         self.nom = u''
         self.prenom = u''
         self.logged = False

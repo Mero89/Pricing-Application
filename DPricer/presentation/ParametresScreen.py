@@ -17,8 +17,7 @@ class Parametre(QDialog, Ui_Parametres):
         self.title = u'Paramètres'
         self.parent = parent
         self.setWindowTitle(self.title)
-        self.me = User('Mero', 'mero')
-        self.me.uid = 2
+        self.me = User()
         self.affiche_info_user()
         self.ui.pushButton.clicked.connect(self.change_infos)
         self.ui.pushButton_2.clicked.connect(self.change_password)
@@ -40,8 +39,8 @@ class Parametre(QDialog, Ui_Parametres):
             self.tell_status(u'Modifications echouées.')
 
     def change_password(self):
-        old_pass = str(self.ui.ancienMotDePasseLineEdit.text())
-        nw_pass = str(self.ui.nouveauMotDePasseLineEdit.text())
+        old_pass = unicode(self.ui.ancienMotDePasseLineEdit.text())
+        nw_pass = unicode(self.ui.nouveauMotDePasseLineEdit.text())
         if self.pass_matching():
             stat = self.me.change_password(old_pass, nw_pass)
             if stat:
@@ -66,6 +65,7 @@ class Parametre(QDialog, Ui_Parametres):
     def tell_status(self, status):
         # self.parent.ui.statusbar.showMessage(status, 3200)
         pass
+
     def keyPressEvent(self, e):
         # define key event
         if e.key() == QtCore.Qt.Key_W:

@@ -32,8 +32,8 @@ class MyClass(QMainWindow, Ui_MDIApp):
         # log = LoginDialog()
         # log.accepted.connect(self.stats)
         # log.exec_()
-        self.user = User('uname', 'password')
-        self.user.uid = 1
+        self.user = User('Mero', 'mero')
+        self.user.check()
         # self.user = log.user
         nom = 'FAKIR'
         prenom = 'Marouane'
