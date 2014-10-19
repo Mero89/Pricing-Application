@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/CourbeTaux.ui'
 #
-# Created: Fri Oct  3 11:12:42 2014
+# Created: Fri Oct 17 18:14:01 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,10 +26,11 @@ except AttributeError:
 class Ui_CourbeTaux(object):
     def setupUi(self, CourbeTaux):
         CourbeTaux.setObjectName(_fromUtf8("CourbeTaux"))
-        CourbeTaux.resize(666, 545)
-        CourbeTaux.setMaximumSize(QtCore.QSize(800, 550))
-        self.verticalLayout = QtGui.QVBoxLayout(CourbeTaux)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        CourbeTaux.resize(674, 550)
+        CourbeTaux.setMaximumSize(QtCore.QSize(1678976, 123456))
+        CourbeTaux.setFocusPolicy(QtCore.Qt.ClickFocus)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(CourbeTaux)
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.groupBox = QtGui.QGroupBox(CourbeTaux)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -145,7 +146,46 @@ class Ui_CourbeTaux(object):
         self.tableWidgetCourbe.verticalHeader().setSortIndicatorShown(True)
         self.tableWidgetCourbe.verticalHeader().setStretchLastSection(False)
         self.verticalLayout_2.addWidget(self.tableWidgetCourbe)
-        self.verticalLayout.addWidget(self.groupBox)
+        self.horizontalLayout_2.addWidget(self.groupBox)
+        self.groupBox_2 = QtGui.QGroupBox(CourbeTaux)
+        self.groupBox_2.setTitle(_fromUtf8(""))
+        self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.groupBox_2)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.formLayout = QtGui.QFormLayout()
+        self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.FieldsStayAtSizeHint)
+        self.formLayout.setObjectName(_fromUtf8("formLayout"))
+        self.saisirMaturitLabel = QtGui.QLabel(self.groupBox_2)
+        self.saisirMaturitLabel.setObjectName(_fromUtf8("saisirMaturitLabel"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.saisirMaturitLabel)
+        self.maturiteLineEdit = QtGui.QLineEdit(self.groupBox_2)
+        self.maturiteLineEdit.setMinimumSize(QtCore.QSize(40, 0))
+        self.maturiteLineEdit.setObjectName(_fromUtf8("maturiteLineEdit"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.maturiteLineEdit)
+        self.tauxDActualisationLabel = QtGui.QLabel(self.groupBox_2)
+        self.tauxDActualisationLabel.setObjectName(_fromUtf8("tauxDActualisationLabel"))
+        self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.tauxDActualisationLabel)
+        self.tauxLineEdit = QtGui.QLineEdit(self.groupBox_2)
+        self.tauxLineEdit.setMinimumSize(QtCore.QSize(40, 0))
+        self.tauxLineEdit.setReadOnly(True)
+        self.tauxLineEdit.setObjectName(_fromUtf8("tauxLineEdit"))
+        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.tauxLineEdit)
+        self.interpolationSplineLabel = QtGui.QLabel(self.groupBox_2)
+        self.interpolationSplineLabel.setObjectName(_fromUtf8("interpolationSplineLabel"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.interpolationSplineLabel)
+        self.splineCheckBox = QtGui.QCheckBox(self.groupBox_2)
+        self.splineCheckBox.setObjectName(_fromUtf8("splineCheckBox"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.splineCheckBox)
+        self.verticalLayout.addLayout(self.formLayout)
+        self.line_2 = QtGui.QFrame(self.groupBox_2)
+        self.line_2.setFrameShape(QtGui.QFrame.HLine)
+        self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_2.setObjectName(_fromUtf8("line_2"))
+        self.verticalLayout.addWidget(self.line_2)
+        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem2)
+        self.horizontalLayout_2.addWidget(self.groupBox_2)
+        self.saisirMaturitLabel.setBuddy(self.maturiteLineEdit)
 
         self.retranslateUi(CourbeTaux)
         QtCore.QMetaObject.connectSlotsByName(CourbeTaux)
@@ -166,4 +206,8 @@ class Ui_CourbeTaux(object):
         item.setText(_translate("CourbeTaux", "Date Echeance", None))
         item = self.tableWidgetCourbe.horizontalHeaderItem(4)
         item.setText(_translate("CourbeTaux", "Transactions", None))
+        self.saisirMaturitLabel.setText(_translate("CourbeTaux", "Saisir &maturité", None))
+        self.maturiteLineEdit.setPlaceholderText(_translate("CourbeTaux", "jours", None))
+        self.tauxDActualisationLabel.setText(_translate("CourbeTaux", "Taux d\'actualisation", None))
+        self.interpolationSplineLabel.setText(_translate("CourbeTaux", "Interpolation Spline", None))
 

@@ -7,8 +7,10 @@ __author__ = 'F.Marouane'
 from DPricer.lib.User import User
 from DPricer.data import Excel
 from DPricer.lib.YieldManager import YieldManager
+from DPricer.lib.Controller import DateEval
 ### Library modules
 import sys
+import datetime as dt
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 ### Import App Screens and Dialogs ###
@@ -36,8 +38,11 @@ class MyClass(QMainWindow, Ui_MDIApp):
         nom = 'FAKIR'
         prenom = 'Marouane'
         self.ui.labelUser.setText(nom + ' ' + prenom)
-        cur_day = QtCore.QDate().currentDate().toString()
-        self.ui.labelDates.setText(cur_day)
+        self.date_eval = DateEval()
+        qday = QtCore.QDate().currentDate()
+        self.ui.dateEvalEdit.setDate(self.date_eval.last_valid_date(self.date_eval.default))
+        self.ui.labelDates.setText(qday.toString())
+        self.current_day = self.date_eval.default
         self.connect_actions()
         self.showMaximized()
 
@@ -55,6 +60,13 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionGererPortefeuille.triggered.connect(self.open_gerer_portefeuille)
         self.ui.actionModifierMesPortefeuilles.triggered.connect(self.open_structure_portefeuille)
         self.ui.actionPlein_cran.triggered.connect(self.toggle_fullscreen)
+        self.ui.dateEvalEdit.dateChanged.connect(self.change_date_eval)
+
+    @QtCore.pyqtSlot(QtCore.QDate)
+    def change_date_eval(self, value):
+        new_date = self.convert_qdate(value)
+        self.date_eval.change_date(new_date)
+        self.ui.dateEvalEdit.setDate(self.date_eval.get_qdate())
 
     def toggle_fullscreen(self):
         if self.isFullScreen():
@@ -188,6 +200,10 @@ class MyClass(QMainWindow, Ui_MDIApp):
 
     def close_current_window(self):
         self.ui.mdiArea.closeActiveSubWindow()
+
+    def convert_qdate(self, _qdate):
+        return dt.date(_qdate[0], _qdate[1], _qdate[2])
+
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
     form = MyClass()

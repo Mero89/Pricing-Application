@@ -1,9 +1,11 @@
 ﻿# coding=utf-8
+
 __author__ = 'F.Marouane'
 
 import calendar as cal
 import datetime as dt
 from DPricer.lib.Courbe import Courbe
+from DPricer.data.AppModel import AppModel, EcheancierMd, ObligationMd
 
 
 class Coupon(object):
@@ -11,12 +13,17 @@ class Coupon(object):
     Représente une classe Coupon.
     """
 
-    def __init__(self, date_coupon, tx_facial, nominal):
+    def __init__(self, date_coupon, tx_facial=None, nominal=None, amortissement=None, coupon=None):
         if date_coupon is not None:
             self.date_coupon = self.validate_date(date_coupon)
         self.taux_facial = float(tx_facial)
         self.nominal = float(nominal)
-        self.coupon = self.nominal * self.taux_facial
+        if amortissement is not None:
+            self.coupon = amortissement
+        elif coupon is not None:
+            self.coupon = coupon
+        else:
+            self.coupon = self.nominal * self.taux_facial
         if cal.isleap(self.date_coupon.year):
             self.base = 366
         else:
@@ -114,6 +121,58 @@ class Echeancier(object):
             return _date
 
 
+class EcheancierDB(object):
+    """
+    Classe qui gère les échéanciers forcés par l'utilisateur et qui sont stockés dans la BDD.
+    """
+    def __init__(self, isin=None):
+        self.session = AppModel().get_session()
+        self.echeancier_to_add = None
+        self.isin = isin
+        self.coupons = None
+        if isin is not None:
+            self.coupons = self.load_echeancier(self.isin)
+
+
+    def load_echeancier(self, isin):
+        session = AppModel().get_session()
+        self.coupons = session.query(EcheancierMd).filter_by(isin=str(isin)).all()
+        echeancier = [el.date_coupon for el in self.db]
+        return echeancier
+
+    def add_coupon(self, isin, date_coupon, coupon=None, amortissement=None):
+        cpon = EcheancierMd(isin=str(isin), date_coupon=date_coupon, coupon=coupon, amortissement=amortissement)
+        try:
+            self.echeancier_to_add.append(cpon)
+        except AttributeError:
+            self.echeancier_to_add = list()
+            self.echeancier_to_add.append(cpon)
+
+    def add_echeancier(self):
+        session = AppModel().get_session()
+        session.add_all(self.echeancier_to_add)
+        session.commit()
+
+    def update_coupon(self, isin, date_coupon, cpon):
+        """
+        Where cpon is a dictionary.
+        cpon = {isin:
+                date_coupon:
+                coupon:
+                amortissement:}
+        """
+        session = AppModel().get_session()
+        session.query(EcheancierMd).filter_by(isin=str(isin), date_coupon=date_coupon).update(cpon)
+        session.commit()
+
+    def delete_echeancier(self, isin):
+        self.session.query(EcheancierMd).filter_by(isin=str(isin)).delete()
+        try:
+            self.session.commit()
+        except:
+            self.session.rollback()
+
+
 class Obligation(object):
     """
     Classe représentant une Obligation.
@@ -154,8 +213,6 @@ class Obligation(object):
             self.tx_actuariel = tx_act
         self.e = Echeancier(self.date_jouissance.replace(year=self.date_jouissance.year+1), self.date_echeance, 1)
 
-    # def run(self):
-    #     return self.prix()
 
     def is_atypique_droite(self):
         de = self.date_echeance
@@ -178,7 +235,7 @@ class Obligation(object):
         return self.e.echeancier()
         pass
 
-    def coeff_actuariels(self):
+    def coeff_echeancier(self):
         ech = self.e.echeancier()
         coeff_echeancier = list()
         p = [el for el in ech if el > self.date_evaluation]
@@ -191,11 +248,15 @@ class Obligation(object):
             if mod[1] > 1:
                 delta = float(delta) / self.baseA
             coeff_echeancier.append(delta)
+        return coeff_echeancier
+
+    def coeff_actuariels(self, taux=0, spread=0):
+        coeff_echeancier = self.coeff_echeancier()
         p = 0
         coeff_act = list()
         for i in range(len(coeff_echeancier)):
             p += coeff_echeancier[i]
-            coeff = pow(1 / (1 + self.tx_actuariel + self.spread), p)
+            coeff = pow(1 / (1 + taux + spread), p)
             coeff_act.append(coeff)
         return coeff_act
 
@@ -209,11 +270,6 @@ class Obligation(object):
             coeff = (cps_restants[i] - cps_restants[i-1]).days/float(cps_restants[i].base)
             cps_restants[i].coupon *= coeff
         return cps_restants[1:]
-
-    # def m_prix(self):
-    #     p = Pool(processes=4)
-    #     result = p.apply_async(self.prix)
-    #     return result.get()
 
     def prix(self):
         if self.date_echeance <= dt.date.today():
@@ -240,7 +296,7 @@ class Obligation(object):
             elif self.mat_residuelle > 365 and self.maturite_initiale > 365:
                 # Integre tous les cas pour calculer le prix de l'obligation
                 # en utilisant la méthode de l'echeancier et des coefficients de l'écheancier
-                coeff_act = self.coeff_actuariels()
+                coeff_act = self.coeff_actuariels(self.tx_actuariel, self.spread)
                 coupons = self.coupons()
                 tableau = zip(coeff_act, coupons)
                 px = 0
@@ -291,18 +347,29 @@ def print_list(mylist):
     for el in mylist:
         print el
 
+def test_echeancier():
+    e = EcheancierDB()
+    e.delete_echeancier(100504)
+    # ech = e.load_echeancier()
+    # dico = dict(isin='100504', date_coupon=dt.date.today()-dt.timedelta(weeks=35), coupon=44444.)
+    # dico2 = dict(isin='100504', date_coupon=dt.date.today()+dt.timedelta(weeks=15), coupon=55555.)
+    # l = [dico, dico2]
+    # print e.update_echeancier(100504,l)
+
+
 if __name__ == '__main__':
     # prix = 101752 MAD, ISIN = 100581
     nom = 100000
     tx_fac = .0416
     date_emission = '18/06/2014'
-    date_jouissance = '18/06/2014'
+    date_jouissance = '20/06/2014'
     d_ech = '20/06/2017'
     date_eval = '2/10/2014'
     # tx_act = 0.04
     spread = .0060
-    obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval,spread=spread)
-    print obl.coeff_actuariels()
-    for el in obl.coupons():
-        print el
-    print obl.prix()
+    # obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval,spread=spread)
+    # print obl.coeff_actuariels()
+    # for el in obl.coupons():
+    #     print el
+    # print obl.prix()
+    test_echeancier()

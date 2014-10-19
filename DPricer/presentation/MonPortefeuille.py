@@ -14,7 +14,7 @@ from DPricer.presentation.PyuicFiles.StructurePortefeuille import Ui_StructurePo
 from DPricer.lib.Gestion import Gestion
 from DPricer.lib.Panier import Panier
 from DPricer.lib.User import User
-
+from DPricer.lib.Controller import DateEval
 from DPricer.lib.Portefeuille import Portefeuille
 from DPricer.data.AppModel import AppModel, PortefeuilleMd, GestionMd, ObligationMd
 from ConfirmDialog import ConfirmDialog
@@ -28,6 +28,7 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         self.ui = Ui_Portefeuilles()
         self.ui.setupUi(self)
         self.parent = parent
+        self.date_eval = DateEval().date_eval
         self.title = 'Mes Portefeuilles'
         self.setWindowTitle(self.title)
         self.ui.tableWidgetPortefeuille.setAlternatingRowColors(True)
@@ -38,7 +39,7 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         self.ui.tableWidgetPortefeuille.itemSelectionChanged.connect(self.update_assets)
         g = Gestion()
         pf = g.portefeuille_of_manager(uid=self.user.uid)
-        liste_portefeuille = [Portefeuille(el.p_isin, '22/9/2014') for el in pf]
+        liste_portefeuille = [Portefeuille(el.p_isin, self.date_eval) for el in pf]
         self.ui.tableWidgetPortefeuille.clearContents()
         cur_rows = self.ui.tableWidgetPortefeuille.rowCount()
         for el in liste_portefeuille:
@@ -59,9 +60,13 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
             # self.ui.tableWidgetPortefeuille.resizeColumnsToContents()
         self.ui.tableWidgetPortefeuille.setRowCount(len(liste_portefeuille))
 
-    def asset_of_portefeuille(self, p_isin, date_eval='22/9/2014'):
+    def asset_of_portefeuille(self, p_isin, date_eval=None):
         # (Obligation, Qt) <- Portefeuille.obligations
         # ponderation <- Portefeuille.ponderation(isin)
+        if date_eval is None:
+            date_eval = self.date_eval
+        else:
+            date_eval = date_eval
         pf = Portefeuille(str(p_isin), date_eval)
         assets = pf.obligations
         # ==> [..., [Obligation ,Qt, Poids], ....]

@@ -25,7 +25,7 @@ class Courbe(CourbeMd):
             self.date_du_jour = date_du_jour
         if cal.isleap(self.date_du_jour.year):
             self.baseA = 366
-        res = self.req.filter_by(date_req=self.date_du_jour)
+        res = self.req.filter_by(date_req=self.date_du_jour).all()
         self.date_de_transaction = res[0].date_transaction
         self.liste_taux = [c.taux_pondere for c in res]
         self.liste_maturite = [abs((c.date_echeance - c.date_valeur).days) for c in res]
@@ -172,6 +172,7 @@ class Courbe(CourbeMd):
         return dico
 
     def zero_coupon(self):
+        # liste initialisée par le taux zero-coupon 1 an
         zc1 = self.taux_lineaire(365)
         liste_zc = [zc1]
         annee = self.date_de_transaction.year

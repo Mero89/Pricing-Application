@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/MDI.ui'
 #
-# Created: Fri Oct 10 12:22:21 2014
+# Created: Fri Oct 17 18:41:02 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,13 +46,33 @@ class Ui_MDIApp(object):
         self.labelUser.setLineWidth(0)
         self.labelUser.setObjectName(_fromUtf8("labelUser"))
         self.horizontalLayout.addWidget(self.labelUser)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.line = QtGui.QFrame(self.centralwidget)
+        self.line.setFrameShape(QtGui.QFrame.VLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName(_fromUtf8("line"))
+        self.horizontalLayout.addWidget(self.line)
         self.labelDates = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Cochin"))
+        font.setBold(True)
+        font.setWeight(75)
+        self.labelDates.setFont(font)
         self.labelDates.setObjectName(_fromUtf8("labelDates"))
         self.horizontalLayout.addWidget(self.labelDates)
-        spacerItem1 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
+        self.dateEvalEdit = QtGui.QDateEdit(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.dateEvalEdit.setFont(font)
+        self.dateEvalEdit.setButtonSymbols(QtGui.QAbstractSpinBox.UpDownArrows)
+        self.dateEvalEdit.setSpecialValueText(_fromUtf8(""))
+        self.dateEvalEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2014, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEvalEdit.setCalendarPopup(True)
+        self.dateEvalEdit.setObjectName(_fromUtf8("dateEvalEdit"))
+        self.horizontalLayout.addWidget(self.dateEvalEdit)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.mdiArea = QtGui.QMdiArea(self.centralwidget)
         self.mdiArea.setMaximumSize(QtCore.QSize(16777215, 16777215))
@@ -203,6 +223,7 @@ class Ui_MDIApp(object):
         MDIApp.setWindowTitle(_translate("MDIApp", "MainWindow", None))
         self.labelUser.setText(_translate("MDIApp", "TextLabel", None))
         self.labelDates.setText(_translate("MDIApp", "TextLabel", None))
+        self.dateEvalEdit.setDisplayFormat(_translate("MDIApp", "dd/MM/yyyy", None))
         self.menuPortefeuille.setTitle(_translate("MDIApp", "Portefeuille", None))
         self.menuParametres.setTitle(_translate("MDIApp", "Paramètres", None))
         self.menuDispositionDesFenetres.setTitle(_translate("MDIApp", "Disposition des fenêtres", None))

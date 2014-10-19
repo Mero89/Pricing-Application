@@ -3,14 +3,18 @@ __author__ = 'F.Marouane'
 
 import sys
 import datetime as dt
+
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
+
 import TableUtils as TU
 from DPricer.presentation.PyuicFiles.AddAssetDialog import Ui_AddAsset
 from DPricer.presentation.PyuicFiles.Gisement import Ui_Gisement
+from ConfirmDialog import ConfirmDialog
+from DPricer.lib.Controller import DateEval
 from DPricer.data.AppModel import ObligationMd, AppModel
 from DPricer.lib.Obligation import Obligation
-from ConfirmDialog import ConfirmDialog
+from DPricer.lib.ObligationAMC import ObligationAMC
 
 
 class GisementScreen(QWidget, Ui_Gisement):
@@ -20,6 +24,7 @@ class GisementScreen(QWidget, Ui_Gisement):
         self.parent = parent
         self.ui = Ui_Gisement()
         self.ui.setupUi(self)
+        self.date_eval = DateEval().date_eval
         self.title = 'Gisement Obligataire'
         self.setWindowTitle(self.title)
         self.session = AppModel().get_session()
@@ -42,6 +47,11 @@ class GisementScreen(QWidget, Ui_Gisement):
             self.ui.toolButtonAdd.clicked.connect(self.parent.open_add_asset_screen)
             self.ui.toolButtonEdit.clicked.connect(self.edit_asset)
             self.connect(self, QtCore.SIGNAL('modified'), self.parent.update_asset_screen)
+            self.parent.ui.dateEvalEdit.dateChanged.connect(self.update_date)
+
+    def update_date(self):
+        self.date_eval = self.convert_qdate(self.parent.ui.dateEvalEdit.date().getDate())
+        self.populate_table()
 
     # Modifie un actif
     def edit_asset(self):
@@ -128,6 +138,9 @@ class GisementScreen(QWidget, Ui_Gisement):
         self.isin_list = [el.isin for el in self.data]
         self.nom_list = [el.nom for el in self.data]
 
+    def convert_qdate(self, _qdate):
+        return dt.date(_qdate[0], _qdate[1], _qdate[2])
+
     # Remplit la table
     def populate_table(self):
         self.ui.tableWidgetActifs.clearContents()
@@ -138,11 +151,20 @@ class GisementScreen(QWidget, Ui_Gisement):
             # populate table
             for el in self.data:
                 row = self.data.index(el)
-                obl = Obligation(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
-                                 d_eval='2/10/2014', spread=el.spread)
+                # if el.type == 'N':
+                #     obl = Obligation(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
+                #                      d_eval='2/10/2014', spread=el.spread)
+                # elif el.type == 'AMC':
+                #     obl = ObligationAMC(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
+                #                         d_eval='2/10/2014', spread=el.spread)
+                if el.type == 'N':
+                    obl = Obligation(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
+                                     d_eval=self.date_eval, spread=el.spread)
+                elif el.type == 'AMC':
+                    obl = ObligationAMC(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
+                                        d_eval=self.date_eval, spread=el.spread)
                 calcul = [obl.prix(), obl.sensibilite(), obl.duration(), 'Not Implemented', obl.tx_actuariel +
                           obl.spread]
-                # self.ui.tableWidgetActifs.insertRow(row)
                 self.ui.tableWidgetActifs.setRowHeight(row, 27)
                 TU.put_row(self.ui.tableWidgetActifs, row, keys, el)
                 TU.insert_row(self.ui.tableWidgetActifs, calcul, row, offset=len(keys))
@@ -258,7 +280,7 @@ class AddAsset(QWidget, Ui_AddAsset):
         self.title = 'Ajouter Actif'
         self.setWindowTitle(self.title)
         self.data = dict()
-        self.choix = {'3':'AMCREV','0':'N', '1':'AMC','2':'REV'}
+        self.choix = dict({'3': 'AMCREV', '0': 'N', '1': 'AMC', '2': 'REV'})
         # self.ui.toolButtonAdd.clicked.connect(self.toolButtonAjouter)
         # self.ui.toolButtonRemove.clicked.connect(self.toolButtonSupprimer)
         self.ui.buttonBox.accepted.connect(self.get_data)

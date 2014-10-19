@@ -29,12 +29,11 @@ class LoginDialog(QDialog, Ui_Login):
 
     @QtCore.pyqtSlot()
     def check_user(self):
-        usr = str(self.ui.userNameLineEdit.text())
-        pwd = str(self.ui.motDePasseLineEdit.text())
-        U = User(uname=usr, password=pwd)
-        U.check()
-        self.user = U
-        if not U.logged:
+        usr = unicode(self.ui.userNameLineEdit.text())
+        pwd = unicode(self.ui.motDePasseLineEdit.text())
+        self.user = User(uname=usr, password=pwd)
+        self.user.check()
+        if not self.user.logged:
             exit()
 
     def keyPressEvent(self, e):

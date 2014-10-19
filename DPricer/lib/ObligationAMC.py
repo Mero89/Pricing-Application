@@ -12,7 +12,7 @@ class ObligationAMC(Obligation):
         Obligation.__init__(self, nominal, tx_f, d_em, d_j, d_ech, d_eval, spread)
         self.forcee = forcee
         self.amortissement = self.montant_amortissement()
-        self.principal = len(self.echeancier()) * self.amortissement
+        self.principal = len(self.coeff_actuariels()) * self.amortissement
         self.zc_dico = self.courbe.zc_dico()
 
     def montant_amortissement(self):
@@ -35,19 +35,17 @@ class ObligationAMC(Obligation):
         Dans ce cas la Fonction prix() serait simplement
         'return' sum(Tableau[0])
         NB => Modifier aussi la Sensibilité
-        """  #
+        """
         montant_restant = copy.deepcopy(self.principal)
         ech = self.coeff_echeancier()
-        print ech
         ordre = 0
         px = 0
-        ee = self.echeancier()
         index = 0
         for i in ech:
             ordre += i
             tx_zc = self.interp_zc(ordre)
             next_coupon = self.amortissement + montant_restant * self.tx_facial
-            print 'Montant Coupon: {} au: {} actualisé au taux: {}'.format(next_coupon, ee[index], tx_zc)
+            # print 'Montant Coupon: {} au: {} actualisé au taux: {}'.format(next_coupon, index, tx_zc)
             van = next_coupon * pow(1 + tx_zc+sensi + self.spread, -ordre)
             montant_restant -= self.amortissement
             index += 1
@@ -60,9 +58,9 @@ class ObligationAMC(Obligation):
         i = Interpol(liste_tx, liste_coeff)
         return i.i_lineaire(coeff)
 
-    def sensibilite(self):
+    def sensibilite(self, sensi=.001):
         real_price = self.prix()
-        new_price = self.prix(sensi=.01)
+        new_price = self.prix(sensi)
         r = abs(new_price - real_price) / real_price
         return round(r * 100, 4)
 
@@ -84,13 +82,12 @@ if __name__ == '__main__':
     obl = ObligationAMC(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, spread)
     print obl.montant_amortissement()
     ec = obl.echeancier()
-    ce = obl.coeff_echeancier()
-    cc = obl.courbe
-    print cc.zc_dico()
+    # print ec
+    next = [e for e in ec if e> obl.date_evaluation]
+    print next
+    ce = obl.coeff_actuariels()
+    # cc = obl.courbe
+    # print cc.zc_dico()
+    print len(ce) == len(next)
     px = obl.prix()
     print round(px, 3)
-    # print 'principal restant ==> ', obl.principal
-    # print 'point minimal==> ', obl.courbe.point_minimal
-    # print obl.prix()/obl.principal
-    # print obl.sensibilite()
-    # print round(obl.prix(),2)

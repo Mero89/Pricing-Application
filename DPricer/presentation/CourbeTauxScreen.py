@@ -9,6 +9,8 @@ from PyQt4 import QtCore
 
 from DPricer.presentation.PyuicFiles.CourbeTaux import Ui_CourbeTaux
 from DPricer.data.AppModel import CourbeMd, AppModel
+from DPricer.lib.Courbe import Courbe
+from DPricer.lib.Controller import DateEval
 import TableUtils as TU
 
 
@@ -23,10 +25,12 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
         self.setWindowTitle(self.title)
         self.session = AppModel().get_session()
         self.data = list()  # data est une liste contenant les Objets [CourbeMd]
-        self.ui.dateEditFilter.setDate(QtCore.QDate(2014, 9, 22))
+        self.date_eval = DateEval()
+        self.ui.dateEditFilter.setDate(self.date_eval.get_qdate())
         self.ui.dateEditFilter.dateChanged.connect(self.filter_by_date)
+        self.ui.maturiteLineEdit.editingFinished.connect(self.calcul_maturite)
         self.filter_by_date()
-        headers = [u'transactions', u"date d'écheance", u"date valeur", u"taux pondéré", u"Maturités résiduelles"]
+        headers = [u'transactions', u"date d'échéance", u"date valeur", u"taux pondéré", u"Maturités résiduelles"]
         TU.set_headers(self.ui.tableWidgetCourbe, headers)
 
     @QtCore.pyqtSlot()
@@ -59,6 +63,17 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
 
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)
+
+    def calcul_maturite(self):
+        cc = Courbe(self.convert_qdate(self.ui.dateEditFilter.date().getDate()))
+        value = self.ui.maturiteLineEdit.text()
+        if value:
+            maturite = int(value)
+            if self.ui.splineCheckBox.checkState():
+                taux = cc.taux_spline(maturite)
+            else:
+                taux = cc.taux_lineaire(maturite)
+            self.ui.tauxLineEdit.setText(str(round(taux * 100, 4))+ ' %')
 
     def keyPressEvent(self, e):
         # define key event
