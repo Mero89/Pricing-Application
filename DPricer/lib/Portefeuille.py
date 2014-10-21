@@ -1,10 +1,11 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
 
+import datetime as dt
+
 from DPricer.data.AppModel import AppModel, PortefeuilleMd, ObligationMd
 from Panier import Panier
 from Obligation import Obligation
-import datetime as dt
 
 
 class Portefeuille(object):
@@ -40,8 +41,8 @@ class Portefeuille(object):
         :return:
         """
         o = self.session.query(ObligationMd).get(str(isin))
-        oblig = Obligation(o.nominal, o.taux_facial, o.date_emission, o.date_jouissance, o.maturite, d_eval=self.date_eval,
-                           spread=o.spread, nom=o.nom, le_type=o.type, isin=o.isin)
+        oblig = Obligation(o.nominal, o.taux_facial, o.date_emission, o.date_jouissance, o.maturite,
+                           d_eval=self.date_eval, spread=o.spread, nom=o.nom, le_type=o.type, isin=o.isin)
         del o
         return oblig
 

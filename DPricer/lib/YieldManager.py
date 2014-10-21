@@ -3,8 +3,9 @@ __author__ = 'F.Marouane'
 
 import os
 import datetime as dt
-import DPricer.data.BamImport as bi
-import DPricer.data.Excel as xl
+
+import DPricer.data.BamImport as Bi
+import DPricer.data.Excel as Xl
 from DPricer import configure as cfg
 
 
@@ -26,7 +27,10 @@ class YieldManager(object):
         self.last_date_from_auto_import = None
 
     def import_auto(self, _date=None):
-        """ importe un fichier depuis la BAM """
+        """
+        importe un fichier depuis la BAM
+        :param _date: datetime.date
+        """
         global date_req
         if _date is None:
             date_req = self._date
@@ -40,27 +44,36 @@ class YieldManager(object):
             # nom du fichier téléchargé
             filename = cfg.repo_path + '/' + cfg.filename.format(j=j, m=m, a=a)
             # Telecharge le fichier demandé
-            TR = bi.ThreadRetrieve(jour=j, mois=m, an=a)
-            TR.start()
-            TR.join()
+            tr = Bi.ThreadRetrieve(jour=j, mois=m, an=a)
+            tr.start()
+            tr.join()
             # Vérifie le fichier téléchargé
             try:
-                test = xl.read_courbe_bam(filename)
+                test = Xl.read_courbe_bam(filename)
             except IOError:
                 pass
             if test != list():  # Stop
-                xl.commit_courbe_bam(filename, _date)
+                Xl.commit_courbe_bam(filename, _date)
                 self.last_date_from_auto_import = date_req
                 break
             date_req -= delta
 
     @staticmethod
     def import_manuel(excel_path):
-        """ importe un fichier manuellement"""
-        xl.commit_excel(excel_path)
+        """
+        importe un fichier manuellement
+        :param excel_path: str
+        :return:
+        """
+        Xl.commit_courbe_bam(excel_path)
 
     def multi_import_auto(self, s_date, e_date):
-        """importe plusieurs coubes de taux"""
+        """
+        importe plusieurs coubes de taux
+        :param s_date: datetime.date
+        :param e_date: datetime.date
+        :return:
+        """
         step = dt.timedelta(days=1)
         flag = e_date
         if e_date > dt.date.today():
@@ -75,7 +88,7 @@ class YieldManager(object):
     def clean_repository():
         """ Vide le dossier des fichiers Excel """
         repo_path = cfg.repo_path
-        xcl_list = xl.list_excel_files(repo_path)
+        xcl_list = Xl.list_excel_files(repo_path)
         for elm in xcl_list:
             full_path = os.path.join(repo_path, elm)
             os.remove(full_path)

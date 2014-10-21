@@ -2,17 +2,19 @@
 __author__ = 'F.Marouane'
 
 """
-    Ce fichier ne contient que des 'first-class functions',
-    des fonctions pouvant etre appellées de nulle-part concept typique de python.
-    Le fichier Controller contient les fonctions qui vont assurer le contrôles de données
-    et des actions depuis l'interface graphique.
+Ce fichier ne contient que des 'first-class functions',
+des fonctions pouvant etre appellées de nulle-part concept typique de python.
+Le fichier Controller contient les fonctions qui vont assurer le contrôle
+de données et des actions depuis l'interface graphique.
 """
+
+import datetime as dt
+
+from PyQt4 import QtCore
 
 from DPricer.lib.Gestion import Gestion
 from DPricer.lib.Portefeuille import Portefeuille
 from DPricer.data.AppModel import AppModel, ObligationMd, CourbeMd
-import datetime as dt
-from PyQt4 import QtCore
 
 
 class Unique(type):
@@ -146,9 +148,10 @@ def ajouter_obligation(isin, nm, nominal, tx_f, d_em, d_j, d_ech, spread=0, type
     session = md.get_session()
     ex = session.query(ObligationMd).filter_by(isin=str(isin)).first()
     if ex is None:
-        obl = ObligationMd(isin=str(isin), nom=str(nm), nominal=nominal,
-                           taux_facial=tx_f, date_emission=validate_date(d_em),
-                           date_jouissance=validate_date(d_j), maturite=validate_date(d_ech),\
+        obl = ObligationMd(isin=str(isin), nom=str(nm), nominal=nominal,\
+                           taux_facial=tx_f, date_emission=validate_date(d_em),\
+                           date_jouissance=validate_date(d_j),\
+                           maturite=validate_date(d_ech),\
                            spread=spread, type=type_)
         session.add(obl)
         session.commit()
@@ -179,8 +182,3 @@ def table_portefeuille(uid):
     p_isins = Gestion().portefeuille_of_manager(uid)
     pf = [Portefeuille(el) for el in p_isins]
     return pf
-
-
-if __name__ == '__main__':
-    ajouter_obligation(8888888, 'MERO Oblig', 22222, .045, '22/7/1989',
-                           '22/7/1990', '10/10/2010', 55, 'AMC')

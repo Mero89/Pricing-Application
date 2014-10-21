@@ -74,7 +74,7 @@ class AppModel(object):
 
 class CourbeMd(DeferredReflection, Base):
     """
-        Classe de la table Courbe.
+    Classe de la table Courbe.
     """
     __tablename__ = 'courbe'
     __table_args__ = {'schema': target_schema}

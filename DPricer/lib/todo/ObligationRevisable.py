@@ -5,5 +5,8 @@ from DPricer.lib.Obligation import Obligation
 
 
 class ObligationRevisable(Obligation):
+    """
+    Obligation Révisable
+    """
 
     pass

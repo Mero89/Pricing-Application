@@ -4,6 +4,7 @@ __author__ = 'F.Marouane'
 
 import calendar as cal
 import datetime as dt
+
 from DPricer.lib.Courbe import Courbe
 from DPricer.data.AppModel import AppModel, EcheancierMd
 
@@ -30,21 +31,36 @@ class Coupon(object):
             self.base = 365
 
     def __str__(self):
+        """
+        Affiche les infos nécessaires.
+        """
         return 'date coupon: {d}, coupon: {c}'.format(d=self.date_coupon, c=self.coupon)
 
     def __repr__(self):
+        """
+        Affichage spécial
+        """
         return '{d}::{c}'.format(d=self.date_coupon, c=self.coupon)
 
     def __sub__(self, other):
+        """
+        la Différence de deux coupons renvoie la différence des dates.
+        """
         if type(other) is Coupon:
             return self.date_coupon - other.date_coupon
 
     def get_coupon(self, d_coupon):
+        """
+        Retourne le coupon associé à la date.
+        """
         if d_coupon == self.date_coupon:
             return self.coupon
 
     @staticmethod
     def validate_date(_date):
+        """
+        Valide une date.
+        """
         if type(_date) is str:
             return dt.datetime.strptime(_date, '%d/%m/%Y').date()
         else:
@@ -99,7 +115,9 @@ class Echeancier(object):
     @staticmethod
     def incremente(_date, periode, echelle='a'):
         """
-        incrémente une date par la périodicité choisie.
+        :param _date: datetime.date
+        :param periode: int
+        :param echelle: str
         """
         if type(periode) is int:
             if echelle == 'a':
@@ -118,6 +136,10 @@ class Echeancier(object):
 
     @staticmethod
     def validate_date(_date):
+        """
+        Valide une date
+        :param _date: datetime.date
+        """
         if type(_date) is str:
             return dt.datetime.strptime(_date, '%d/%m/%Y').date()
         else:
@@ -129,6 +151,11 @@ class EcheancierDB(object):
     Classe qui gère les échéanciers forcés par l'utilisateur et qui sont stockés dans la BDD.
     """
     def __init__(self, isin=None):
+        """
+        Instancie un objet Echeancier depuis la base de données.
+        :param isin: str
+        :return:
+        """
         self.session = AppModel().get_session()
         self.echeancier_to_add = None
         self.isin = isin
@@ -137,12 +164,25 @@ class EcheancierDB(object):
             self.coupons = self.load_echeancier(self.isin)
 
     def load_echeancier(self, isin):
+        """
+        Charge l'echeancier de l'actif désigné par [isin]
+        :param isin: str
+        :return: list
+        """
         session = AppModel().get_session()
         self.coupons = session.query(EcheancierMd).filter_by(isin=str(isin)).all()
         echeancier = [el.date_coupon for el in self.coupons]
         return echeancier
 
     def add_coupon(self, isin, date_coupon, coupon=None, amortissement=None):
+        """
+        Ajoute un coupon à l'echeancier de l'actif designé par isin.
+        :param isin: str
+        :param date_coupon: datetime.date
+        :param coupon: float
+        :param amortissement: float
+        :return:
+        """
         cpon = EcheancierMd(isin=str(isin), date_coupon=date_coupon, coupon=coupon, amortissement=amortissement)
         try:
             self.echeancier_to_add.append(cpon)
@@ -151,6 +191,10 @@ class EcheancierDB(object):
             self.echeancier_to_add.append(cpon)
 
     def add_echeancier(self):
+        """
+        Insère l'échéancier après avoir ajouté les coupons.
+        :return:
+        """
         session = AppModel().get_session()
         session.add_all(self.echeancier_to_add)
         session.commit()
@@ -163,12 +207,19 @@ class EcheancierDB(object):
                 date_coupon:
                 coupon:
                 amortissement:}
+        :param isin: str
+        :param date_coupon: datetime.date
+        :param cpon: dict
         """
         session = AppModel().get_session()
         session.query(EcheancierMd).filter_by(isin=str(isin), date_coupon=date_coupon).update(cpon)
         session.commit()
 
     def delete_echeancier(self, isin):
+        """
+        Supprime l'échéancier de l'actif [isin]
+        :param isin: str
+        """
         self.session.query(EcheancierMd).filter_by(isin=str(isin)).delete()
         try:
             self.session.commit()
@@ -309,9 +360,17 @@ class Obligation(object):
                 return px
 
     def get_params(self):
+        """
+        Retourne les attributs de la classe.
+        :return: dict
+        """
         return self.__dict__
 
     def sensibilite(self):
+        """
+        Calcule la sensibilité de l'actif.
+        :return: float
+        """
         real_price = self.prix()
         if self.tx_actuariel is not None and self.tx_actuariel != 0:
             self.tx_actuariel += .01
@@ -345,22 +404,6 @@ class Obligation(object):
             return number
         else:
             return float(number)
-
-
-def print_list(mylist):
-    for el in mylist:
-        print el
-
-
-def test_echeancier():
-    e = EcheancierDB()
-    e.delete_echeancier(100504)
-    # ech = e.load_echeancier()
-    # dico = dict(isin='100504', date_coupon=dt.date.today()-dt.timedelta(weeks=35), coupon=44444.)
-    # dico2 = dict(isin='100504', date_coupon=dt.date.today()+dt.timedelta(weeks=15), coupon=55555.)
-    # l = [dico, dico2]
-    # print e.update_echeancier(100504,l)
-
 
 if __name__ == '__main__':
     # prix = 101752 MAD, ISIN = 100581

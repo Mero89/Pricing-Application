@@ -2,6 +2,7 @@
 __author__ = 'F.Marouane'
 
 import copy
+
 from Interpolation import Interpol
 from Obligation import Obligation
 
@@ -12,6 +13,17 @@ class ObligationAMC(Obligation):
     Le pricing d'une oblig Amortissable se base sur la courbe Zero-Coupon.
     """
     def __init__(self, nominal, tx_f, d_em, d_j, d_ech, d_eval=None, spread=0, forcee=False):
+        """
+        :type nominal: float
+        :type tx_f: float
+        :type d_em: datetime.date
+        :type d_j: datetime.date
+        :type d_ech: datetime.date
+        :type d_eval: datetime.date
+        :type spread: float
+        :type forcee: bool
+        :return:
+        """
         Obligation.__init__(self, nominal, tx_f, d_em, d_j, d_ech, d_eval, spread)
         self.forcee = forcee
         self.amortissement = self.montant_amortissement()
@@ -38,6 +50,7 @@ class ObligationAMC(Obligation):
         Dans ce cas la Fonction prix() serait simplement
         'return' sum(Tableau[0])
         NB => Modifier aussi la Sensibilité
+        :type sensi: float
         """
         montant_restant = copy.deepcopy(self.principal)
         ech = self.coeff_echeancier()

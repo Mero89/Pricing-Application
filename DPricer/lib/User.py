@@ -111,8 +111,3 @@ class User(object):
         g = Gestion()
         pf_list = g.portefeuille_of_manager(self.uid)
         return pf_list
-
-
-if __name__ == '__main__':
-    u = User('Mero', 'mero')
-    u.check()

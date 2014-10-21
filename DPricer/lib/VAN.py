@@ -5,7 +5,15 @@ class VAN(object):
     """
     Classe pour calculer la valeur Actuelle Nette d'un flux futur.
     """
-    def __init__(self, montant, taux_actualisation, date_valo, date_montant,periode=0):
+    def __init__(self, montant, taux_actualisation, date_valo, date_montant, periode=0):
+        """
+        :param montant:
+        :param taux_actualisation:
+        :param date_valo:
+        :param date_montant:
+        :param periode:
+        :return:
+        """
         self.montant = montant
         self.tx_actualisation = taux_actualisation
         self.date_valo = date_valo
@@ -45,7 +53,7 @@ class VAN(object):
         elif self.is_valide():
             if self.is_actuariel():
                 diff = float((self.date_montant - self.date_valo).days)
-                value = self.montant * pow(1+self.tx_actualisation,-diff/self.base)
+                value = self.montant * pow(1+self.tx_actualisation, -diff/self.base)
                 return value
             elif not self.is_actuariel():
                 diff = float((self.date_montant - self.date_valo).days)

@@ -86,7 +86,7 @@ class Panier(object):
         :return:
         """
         if quantite > 0:
-            self.session.query(PanierMd).filter_by(p_isin=p_isin, isin=isin).update({'quantite':quantite})
+            self.session.query(PanierMd).filter_by(p_isin=p_isin, isin=isin).update({'quantite': quantite})
             try:
                 self.session.commit()
                 return 1
@@ -133,10 +133,3 @@ class Panier(object):
             self.session.commit()
         except (TypeError, ValueError):
             self.session.rollback()
-
-if __name__ == '__main__':
-    pn = Panier()
-    pn.add_oblig_to_portefeuille('100200', '100503')
-    assets = pn.oblig_of_portefeuille('100200')
-    for el in assets:
-        print el

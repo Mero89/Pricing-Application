@@ -39,6 +39,12 @@ class Gestion(object):
         return liste_managers
 
     def add_portofolio(self, uid, p_isin):
+        """
+        Associe un Portefeuille [p_isin] à un utilisateur [uid]
+        :param uid:
+        :param p_isin:
+        :return:
+        """
         # vérifie si le portefeuille n'est pas déjà géré
         check = self.session.query(GestionMd).filter_by(uid=uid, p_isin=str(p_isin)).first()
         if check is None:
@@ -50,6 +56,13 @@ class Gestion(object):
                 self.session.rollback()
 
     def remove_portofolio(self, uid, p_isin):
+        """
+        Dissocie la gestion du portefeuille [p_isin]
+        du gestionnaire [uid]
+        :param uid: int
+        :param p_isin: str
+        :return:
+        """
         # vérifie si le portefeuille est géré
         row = self.session.query(GestionMd).filter_by(uid=uid, p_isin=str(p_isin)).first()
         if row is not None:

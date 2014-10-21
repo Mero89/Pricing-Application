@@ -2,14 +2,17 @@
 __author__ = 'F.Marouane'
 
 import calendar as cal
-from DPricer.data.AppModel import AppModel, CourbeMd
-from Interpolation import Interpol
 import datetime
 import copy
 
+from DPricer.data.AppModel import AppModel, CourbeMd
+from Interpolation import Interpol
+
 
 class Courbe(CourbeMd):
-
+    """
+    Classe Courbe
+    """
     def __init__(self, date_du_jour):
         """
         initialise la courbe selon le jour recherché
@@ -35,6 +38,11 @@ class Courbe(CourbeMd):
         md.close_session()
 
     def taux_lineaire(self, maturite):
+        """
+        Retourne le taux désiré par interpolation linéaire.
+        :type maturite: int
+        :return:
+        """
         # retourne une liste de doublets < à la maturite cible.
         # Doublets => (taux, maturités)
         if maturite < self.point_minimal[1]:
@@ -150,6 +158,8 @@ class Courbe(CourbeMd):
         """
         n: représente la maturité que nous cherchons
         ex: n=300 avec borne inf = 250 et borne sup = 400
+        :param tx_act: float
+        :param maturite_a_convertir: int
         """
         n = maturite_a_convertir
         b = pow((1 + tx_act), (float(n) / self.baseA)) - 1
@@ -158,12 +168,22 @@ class Courbe(CourbeMd):
         return tx_monetaire
 
     def get_liste_taux(self):
+        """
+        :return: float
+        """
         return self.liste_taux
 
     def get_liste_maturite(self):
+        """
+        :return: list
+        """
         return self.liste_maturite
 
     def zc_dico(self):
+        """
+        Retourne une liste de zéro-coupons
+        :return: list
+        """
         head = [(self.monetaire_actuel(el[0], el[1]), el[1] / 365.) for el in self.liste_dico if el[1] < 365]
         zc_dico = self.zero_coupon()
         tx1jour = self.monetaire_actuel(self.point_minimal[0], 1)
@@ -187,7 +207,8 @@ class Courbe(CourbeMd):
         else:
             return zip(liste_zc, range(1, 22))
 
-    def price(self, tf, ta, p):
+    @staticmethod
+    def price(tf, ta, p):
         px = []
         for i in range(1, p):
             px.append(tf / pow((1 + ta), i))
@@ -195,35 +216,13 @@ class Courbe(CourbeMd):
             px.append((1 + tf) / pow(1 + ta, p))
         return sum(px)
 
-    def price_zc(self, tf, zc_list):
+    @staticmethod
+    def price_zc(tf, zc_list):
         px = []
         en_list = list(enumerate(zc_list, 1))
         for zc in en_list:
             px.append(tf / pow((1 + zc[1]), zc[0]))
         return sum(px)
-
-    def tenors(self):
-        # genere les tenors fixes
-        pass
-
-
-def test_monetaire_actuel():
-    dd = datetime.date.today()
-    cc = Courbe(date_du_jour=dd)
-    tx = .03072
-    mat = 222
-    res = cc.monetaire_actuel(tx, mat)
-    print 'Monétaire => Actuariel', res
-
-
-def test_actuel_monetaire():
-    dd = datetime.date.today()
-    cc = Courbe(date_du_jour=dd)
-    tx = .03142385
-    mat = 103
-    res = cc.actuel_monetaire(tx, mat)
-    print 'Actuariel => Monétaire', res
-
 
 if __name__ == '__main__':
     d = datetime.date(2014, 8, 22)
