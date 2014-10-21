@@ -8,6 +8,10 @@ import datetime as dt
 
 
 class Portefeuille(object):
+    """
+    La classe Portefeuille permet de pricer un Portefeuille ainsi
+    que tous les actifs contenus dans ce dernier.
+    """
     def __init__(self, p_isin, d_eval=None):
         md = AppModel()
         if d_eval is not None:
@@ -28,7 +32,6 @@ class Portefeuille(object):
         """
         a = Panier().oblig_of_portefeuille(self.p_isin)
         return a
-        del a
 
     def oblig_from_isin(self, isin):
         """
@@ -58,7 +61,6 @@ class Portefeuille(object):
         """
         prix_global = sum([obl[0].prix() * obl[1] for obl in self.obligations])
         return prix_global
-        del prix_global
 
     def sensibilite(self):
         """
@@ -86,23 +88,27 @@ class Portefeuille(object):
         else:
             return dur
 
-    def validate_date(self, _date):
+    @staticmethod
+    def validate_date(_date):
         if type(_date) is str:
             return dt.datetime.strptime(_date, '%d/%m/%Y').date()
         else:
             return _date
 
     def ponderation(self, isin):
+        """
+        calcule la pondération de la valeur d'un actif dans le potefeuille.
+        :param isin:
+        :return:
+        """
         qt = Panier().quantite(self.p_isin, isin)
         obl = self.oblig_from_isin(isin)
         val = obl.prix() * qt
         return float(val/self.total)
-        del qt
-        del val
 
 
 if __name__ == '__main__':
-    p = Portefeuille(100200,'1/9/2014')
+    p = Portefeuille(100200, '1/9/2014')
     l = p.duration()
     s = p.sensibilite()
     print l

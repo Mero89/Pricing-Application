@@ -6,6 +6,13 @@ import os
 
 
 def create_template(path, filename='Template.xls'):
+    """
+    Exporte le modèle d'importation des actifs.
+    Le modèles est sous format Excel.
+    :param path: str
+    :param filename: str
+    :return:
+    """
     w = xlwt.Workbook(encoding='utf-8')
     s = w.add_sheet('Exemple')
     row = s.row(0)

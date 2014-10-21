@@ -2,12 +2,15 @@
 __author__ = 'F.Marouane'
 
 import copy
-import datetime as dt
 from Interpolation import Interpol
 from Obligation import Obligation
 
 
 class ObligationAMC(Obligation):
+    """
+    Représente une Obligatin Amortissable.
+    Le pricing d'une oblig Amortissable se base sur la courbe Zero-Coupon.
+    """
     def __init__(self, nominal, tx_f, d_em, d_j, d_ech, d_eval=None, spread=0, forcee=False):
         Obligation.__init__(self, nominal, tx_f, d_em, d_j, d_ech, d_eval, spread)
         self.forcee = forcee
@@ -53,18 +56,32 @@ class ObligationAMC(Obligation):
         return px
 
     def interp_zc(self, coeff):
+        """
+        Retourne la valeur interpolée.
+        :type coeff: float
+        :return: float
+        """
         liste_coeff = [el[1] for el in self.zc_dico]
         liste_tx = [el[0] for el in self.zc_dico]
         i = Interpol(liste_tx, liste_coeff)
         return i.i_lineaire(coeff)
 
     def sensibilite(self, sensi=.001):
+        """
+        Calcule la sensibilité de l'actif.
+        :type sensi: float
+        :return: float
+        """
         real_price = self.prix()
         new_price = self.prix(sensi)
         r = abs(new_price - real_price) / real_price
         return round(r * 100, 4)
 
     def duration(self):
+        """
+        Calcule la duration de l'actif.
+        :return: float
+        """
         # Duration se calcule depuis la sensibilité => Duration =Sensi*(1+Tr)
         dur = self.sensibilite() * (1 + self.tx_actuariel + self.spread)
         return round(dur, 4)
@@ -79,15 +96,4 @@ if __name__ == '__main__':
     spread = 0.002
     # prix: 54306.09
     # obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech)
-    obl = ObligationAMC(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, spread)
-    print obl.montant_amortissement()
-    ec = obl.echeancier()
-    # print ec
-    next = [e for e in ec if e> obl.date_evaluation]
-    print next
-    ce = obl.coeff_actuariels()
-    # cc = obl.courbe
-    # print cc.zc_dico()
-    print len(ce) == len(next)
-    px = obl.prix()
-    print round(px, 3)
+    # obl = ObligationAMC(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, spread)

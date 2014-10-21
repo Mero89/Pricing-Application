@@ -40,13 +40,13 @@ class Gestion(object):
 
     def add_portofolio(self, uid, p_isin):
         # vérifie si le portefeuille n'est pas déjà géré
-        check = self.session.query(GestionMd).filter_by(uid=uid,p_isin=str(p_isin)).first()
+        check = self.session.query(GestionMd).filter_by(uid=uid, p_isin=str(p_isin)).first()
         if check is None:
             row = GestionMd(uid=uid, p_isin=str(p_isin))
             self.session.add(row)
             try:
                 self.session.commit()
-            except:
+            except (TypeError, ValueError):
                 self.session.rollback()
 
     def remove_portofolio(self, uid, p_isin):
@@ -56,7 +56,7 @@ class Gestion(object):
             self.session.delete(row)
             try:
                 self.session.commit()
-            except:
+            except (TypeError, ValueError):
                 self.session.rollback()
 
 if __name__ == '__main__':

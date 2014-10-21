@@ -22,13 +22,12 @@ class Panier(object):
         """
         Retourne la quantité de l'actif de code [ISIN] dans le portefeuille
         de code [P_ISIN].
-        :param p_isin:
-        :param isin:
-        :return:
+        :param p_isin: str
+        :param isin: str
+        :return: int
         """
         res = self.session.query(PanierMd).filter_by(p_isin=str(p_isin), isin=str(isin)).first()
         return res.quantite
-        del res
 
     def oblig_of_portefeuille(self, p_isin):
         """
@@ -79,6 +78,13 @@ class Panier(object):
             return 0
 
     def update_quantite(self, p_isin, isin, quantite):
+        """
+        Met à jour la quantité de l'actif dans le portefeuille.
+        :param p_isin:
+        :param isin:
+        :param quantite:
+        :return:
+        """
         if quantite > 0:
             self.session.query(PanierMd).filter_by(p_isin=p_isin, isin=isin).update({'quantite':quantite})
             try:
@@ -103,13 +109,13 @@ class Panier(object):
             self.session.delete(pan)
             try:
                 self.session.commit()
-            except:
+            except (TypeError, ValueError):
                 self.session.rollback()
 
     def remove_oblig_from_portefeuille(self, p_isin, isin, quantite):
         """
         Déduis 'N' d'obligations du portefeuille
-        :param p_sisin:
+        :param p_isin:
         :param isin:
         :param quantite:
         :return:
@@ -125,7 +131,7 @@ class Panier(object):
             self.session.query(PanierMd).filter_by(p_isin=str(p_isin), isin=str(isin)).update({'quantite': qt})
         try:
             self.session.commit()
-        except:
+        except (TypeError, ValueError):
             self.session.rollback()
 
 if __name__ == '__main__':

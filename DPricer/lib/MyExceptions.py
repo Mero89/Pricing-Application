@@ -1,8 +1,10 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
 
-# Ce module implémente l'ensemble des Exceptions nécessaires et significatives
-# pour notre Application
+"""
+Ce module implémente l'ensemble des Exceptions nécessaires et significatives
+pour notre Application
+"""
 
 
 class ObligationAlreadyExists(Exception):

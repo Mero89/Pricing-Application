@@ -19,6 +19,11 @@ class Singleton(type):
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
+        """
+        Retourne le Meme objet si celui-ci hérite du singleton.
+        :type args: list
+        :type kwargs: dict
+        """
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
@@ -38,8 +43,8 @@ class AppModel(object):
             pass
         self.engine = sqlalchemy.create_engine(cfg.pg_dbstring)
         DeferredReflection.prepare(self.engine)
-        Session = sessionmaker(bind=self.engine)
-        self.session = Session()
+        session_maker = sessionmaker(bind=self.engine)
+        self.session = session_maker()
 
     def get_engine(self):
         """
@@ -63,8 +68,8 @@ class AppModel(object):
         """
         retourne un nouvel objet session.
         """
-        Session = sessionmaker(bind=self.engine)
-        return Session()
+        session_maker = sessionmaker(bind=self.engine)
+        return session_maker()
 
 
 class CourbeMd(DeferredReflection, Base):
@@ -81,6 +86,9 @@ class ObligationMd(DeferredReflection, Base):
     """
     __tablename__ = 'obligations'
     __table_args__ = {'schema': target_schema}
+
+    def get_name(self):
+        return self.nom
 
 
 class EcheancierMd(DeferredReflection, Base):

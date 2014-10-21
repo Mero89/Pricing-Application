@@ -5,7 +5,7 @@ __author__ = 'F.Marouane'
 import calendar as cal
 import datetime as dt
 from DPricer.lib.Courbe import Courbe
-from DPricer.data.AppModel import AppModel, EcheancierMd, ObligationMd
+from DPricer.data.AppModel import AppModel, EcheancierMd
 
 
 class Coupon(object):
@@ -43,7 +43,8 @@ class Coupon(object):
         if d_coupon == self.date_coupon:
             return self.coupon
 
-    def validate_date(self, _date):
+    @staticmethod
+    def validate_date(_date):
         if type(_date) is str:
             return dt.datetime.strptime(_date, '%d/%m/%Y').date()
         else:
@@ -95,7 +96,8 @@ class Echeancier(object):
                 echeancier.append(st)
             return echeancier
 
-    def incremente(self, _date, periode, echelle='a'):
+    @staticmethod
+    def incremente(_date, periode, echelle='a'):
         """
         incrémente une date par la périodicité choisie.
         """
@@ -105,7 +107,7 @@ class Echeancier(object):
             elif echelle == 'm':
                 s = divmod(_date.month + periode, 12)
                 if s[1] >= 1:
-                    return _date.replace(month=s[1], year=_date.year +s[0])
+                    return _date.replace(month=s[1], year=_date.year + s[0])
                 elif s[1] == 0 and s[0] > 1:
                     return _date.replace(year=_date.year + s[0])
                 elif s[1] == 0 and s[0] == 1:
@@ -114,7 +116,8 @@ class Echeancier(object):
                 delta = dt.timedelta(days=periode)
                 return _date + delta
 
-    def validate_date(self, _date):
+    @staticmethod
+    def validate_date(_date):
         if type(_date) is str:
             return dt.datetime.strptime(_date, '%d/%m/%Y').date()
         else:
@@ -152,7 +155,8 @@ class EcheancierDB(object):
         session.add_all(self.echeancier_to_add)
         session.commit()
 
-    def update_coupon(self, isin, date_coupon, cpon):
+    @staticmethod
+    def update_coupon(isin, date_coupon, cpon):
         """
         Where cpon is a dictionary.
         cpon = {isin:
@@ -168,7 +172,7 @@ class EcheancierDB(object):
         self.session.query(EcheancierMd).filter_by(isin=str(isin)).delete()
         try:
             self.session.commit()
-        except:
+        except (TypeError, ValueError):
             self.session.rollback()
 
 
@@ -211,7 +215,6 @@ class Obligation(object):
         elif tx_act is not None:
             self.tx_actuariel = tx_act
         self.e = Echeancier(self.date_jouissance.replace(year=self.date_jouissance.year+1), self.date_echeance, 1)
-
 
     def is_atypique_droite(self):
         de = self.date_echeance
@@ -305,7 +308,7 @@ class Obligation(object):
                     px += self.nominal * coeff_act[-1]
                 return px
 
-    def getParams(self):
+    def get_params(self):
         return self.__dict__
 
     def sensibilite(self):
@@ -327,13 +330,15 @@ class Obligation(object):
         dur = self.sensibilite() * (1 + self.tx_actuariel + self.spread)
         return round(dur, 4)
 
-    def validate_date(self, _date):
+    @staticmethod
+    def validate_date(_date):
         if type(_date) is str:
             return dt.datetime.strptime(_date, '%d/%m/%Y').date()
         else:
             return _date
 
-    def validate_float(self, number):
+    @staticmethod
+    def validate_float(number):
         if number is None or number == '':
             return 0
         if isinstance(number, float):
@@ -345,6 +350,7 @@ class Obligation(object):
 def print_list(mylist):
     for el in mylist:
         print el
+
 
 def test_echeancier():
     e = EcheancierDB()
@@ -369,7 +375,7 @@ if __name__ == '__main__':
     date_eval = '2/10/2014'
     # tx_act = 0.04
     spread = .0060
-    obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval,spread=spread)
+    obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, spread=spread)
     # print obl.coeff_actuariels()
     # for el in obl.coupons():
     #     print el

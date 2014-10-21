@@ -292,7 +292,7 @@ class AddAsset(QWidget, Ui_AddAsset):
         # self.ui.toolButtonRemove.clicked.connect(self.toolButtonSupprimer)
         self.ui.buttonBox.accepted.connect(self.get_data)
         if parent:
-            self.ui.buttonBox.rejected.connnect(self.parent.close_current_window)
+            self.ui.buttonBox.rejected.connect(self.parent.close_current_window)
 
     def get_data(self):
         # extrait les données saisies

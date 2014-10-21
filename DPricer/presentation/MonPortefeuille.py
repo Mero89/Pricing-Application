@@ -52,7 +52,6 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
 
         self.ui.tableWidgetPortefeuille.resizeRowsToContents()
 
-
     def asset_of_portefeuille(self, p_isin, date_eval=None):
         # (Obligation, Qt) <- Portefeuille.obligations
         # ponderation <- Portefeuille.ponderation(isin)
@@ -82,7 +81,6 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
             TU.insert_row(self.ui.tableWidgetActifs, row, idx)
         self.ui.tableWidgetActifs.resizeRowsToContents()
             # self.ui.tableWidgetActifs.resizeColumnsToContents()
-
 
     def keyPressEvent(self, e):
         # define key event

@@ -14,8 +14,8 @@ import xlwt
 def read_courbe_bam(path_to_file):
     """
     retourne une liste de lignes contenues dans le fichier BAM d'excel
-    :param path_to_file:
-    :return:
+    :param path_to_file: str
+    :return: list
     """
     if os.path.exists(path_to_file) and os.path.isfile(path_to_file):
         try:
@@ -36,6 +36,11 @@ def read_courbe_bam(path_to_file):
 
 
 def get_date_courbe(path_to_file):
+    """
+    Extracte la date figurant dans le fichier Excel.
+    :param path_to_file: str
+    :return: datetime.date
+    """
     date_transaction = get_date_transaction(path_to_file)
     if date_transaction is not None:
         if date_transaction.weekday() == 4:
@@ -66,7 +71,7 @@ def is_exists(_date):
     """
     Vérifie si la courbe de taux existe déjà dans la BDD
     :param _date:
-    :return:
+    :return: object or None
     """
     md = AppModel()
     session = md.get_session()
@@ -78,8 +83,8 @@ def is_exists(_date):
 def commit_courbe_bam(excel_path, _date=None):
     """
     Enregistre la courbe de taux BAM dans la base de données
-    :param excel_path: chemin vers le fichier
-    :param _date: date de la courbe
+    :param excel_path: str
+    :param _date: datetime.date or str
     :return:
     """
     if _date is None:
@@ -116,9 +121,10 @@ def commit_courbe_bam(excel_path, _date=None):
 
 def list_excel_files(path_to_folder):
     """
-    retourne une liste de fichiers excels sous forme de liste.
-    :param path_to_folder:
-    :return: list():
+    retourne les fichiers excel sous forme de liste contenus dans le dossier
+    ciblé par path_to_folder.
+    :param path_to_folder: str
+    :return: list
     """
     pf = path_to_folder
     liste_dir = os.listdir(pf)
@@ -135,8 +141,8 @@ def list_excel_files(path_to_folder):
 def import_obligation(excel_path):
     """
     Importe le portefeuille depuis le fichier Excel vers la base de données
-    :param excel_path: chemin du fichier Excel
-    :return:
+    :param excel_path: str
+    :return: int
     """
     if os.path.exists(excel_path):
         # parcoure le fichier Excel
@@ -160,7 +166,6 @@ def import_obligation(excel_path):
                 row[7] = dt.date(year=d_ech[0], month=d_ech[1], day=d_ech[2])
             if type(row[0]) is type(str) and row[0] != '':
                 row[0] = str(int(row[0]))
-
         # enregistre Les données
         md = AppModel()
         session = md.get_session()
@@ -180,7 +185,7 @@ def import_obligation(excel_path):
                 try:
                     session.commit()
                     return 1
-                except Exception:
+                except (TypeError, ValueError):
                     session.rollback()
                     return -1
             else:
@@ -190,6 +195,12 @@ def import_obligation(excel_path):
 ### Générer le fichier Template d'excel ###
 
 def create_template(path, filename):
+    """
+    Génère un fichier Template Excel pour importer les actifs correctement.
+    :param path: str
+    :param filename: str
+    :return:
+    """
     if os.path.exists(path):
         w = xlwt.Workbook(encoding='utf-8')
         s = w.add_sheet('Portfolio')
@@ -217,10 +228,12 @@ def create_template(path, filename):
 ### Exporter données vers Excel ###
 def export_to_excel(headers, data, path, filename):
     """
+    Exporte un fichier Excel contenant les données [data].
+    et l'en-tête [headers]
     :param headers: list
     :param data: list
-    :param path: path
-    :return: excel file
+    :param path: str
+    :return:
     """
     header_style = xlwt.easyxf('font: name Menlo, bold True, height 280, colour blue;')
     if os.path.exists(path):
@@ -244,36 +257,9 @@ def export_to_excel(headers, data, path, filename):
 
 
 ### tests ###
-def test_read_courbe_bam():
-    file_path = '/Users/mar/Desktop/pylab/repo/OperationMarSecon.xls'
-    a = read_courbe_bam(file_path)
-    print a
-
-
 def print_list(mylist):
     for el in mylist:
         print el
-
-
-def test_import_obligation():
-    # file_path = '/Users/mar/Dropbox/DTM/Projets/Societe Generale/Bond_Pricing_Tool.xls'
-    file_path = '/Users/mar/Desktop/Template.xls'
-    workbook = xlrd.open_workbook(file_path, encoding_override='utf-8')
-    sheet = workbook.sheet_by_name('Portfolio')
-    a = list()
-    for i in range(1, sheet.nrows - 1):
-        a.append(sheet.row_values(i))
-    for row in a:
-        if row[5] != '' and row[6] != '' and row[7] != '':
-            d_em = xlrd.xldate_as_tuple(int(row[5]), workbook.datemode)
-            d_js = xlrd.xldate_as_tuple(int(row[6]), workbook.datemode)
-            d_ech = xlrd.xldate_as_tuple(int(row[7]), workbook.datemode)
-            row[5] = dt.date(year=d_em[0], month=d_em[1], day=d_em[2])
-            row[6] = dt.date(year=d_js[0], month=d_js[1], day=d_js[2])
-            row[7] = dt.date(year=d_ech[0], month=d_ech[1], day=d_ech[2])
-        if type(row[1]) is type(str) and row[1] != '':
-            row[1] = str(int(row[1]))
-    print_list(a)
 
 
 def main():
@@ -283,11 +269,5 @@ def main():
         full_path = os.path.join(repo, xcl)
         commit_courbe_bam(full_path)
 
-
-def test():
-    dd = get_date_courbe('/Users/mar/PycharmProjects/DPricer/DPricer/data/repository/TauxBAM-28-8-2014.xls')
-    print dd
-
-
 if __name__ == '__main__':
-    create_template('/users/mar/Desktop')
+    create_template('/users/mar/Desktop', 'Template')

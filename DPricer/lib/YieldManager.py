@@ -3,9 +3,8 @@ __author__ = 'F.Marouane'
 
 import os
 import datetime as dt
-from DPricer.data import BamImport as bi
-from DPricer.data import Excel as xl
-# import DPricer.configure as cfg
+import DPricer.data.BamImport as bi
+import DPricer.data.Excel as xl
 from DPricer import configure as cfg
 
 
@@ -50,7 +49,7 @@ class YieldManager(object):
             except IOError:
                 pass
             if test != list():  # Stop
-                xl.commit_excel(filename, _date)
+                xl.commit_courbe_bam(filename, _date)
                 self.last_date_from_auto_import = date_req
                 break
             date_req -= delta

@@ -6,6 +6,9 @@ from Gestion import Gestion
 
 
 class UniqueUser(type):
+    """
+    Classe Singleton pour l'User.
+    """
     _instances = dict()
 
     def __call__(cls, *args, **kwargs):
@@ -15,6 +18,9 @@ class UniqueUser(type):
 
 
 class User(object):
+    """
+    Classe représentant un utilisateur authentifié.
+    """
     __metaclass__ = UniqueUser
     __number_of_checks__ = 0
 
@@ -34,7 +40,7 @@ class User(object):
     def check(self):
         """
         Vérifie si l'utilisateur existe
-        :return None or User:
+        :return: None or User
         """
         session = AppModel().get_session()
         user = session.query(UserMd).filter_by(uname=self.uname, password=self.password).first()
@@ -48,6 +54,13 @@ class User(object):
             self.logged = False
 
     def change_infos(self, uname=None, prenom=None, nom=None):
+        """
+        Met à jour les informations de l'utilisateur.
+        :param uname:
+        :param prenom:
+        :param nom:
+        :return: int
+        """
         dico = dict()
         if uname is not None:
             dico['uname'] = unicode(uname)
@@ -60,11 +73,17 @@ class User(object):
         try:
             session.commit()
             return 1
-        except:
+        except (TypeError, ValueError):
             session.rollback()
             return 0
 
     def change_password(self, old_pass, new_pass):
+        """
+        Met à jour le mot-de-passe de l'utilisateur.
+        :param old_pass:
+        :param new_pass:
+        :return: int
+        """
         session = AppModel().get_session()
         mypass = session.query(UserMd).get(self.uid)
         if old_pass == unicode(mypass.password):
@@ -75,6 +94,10 @@ class User(object):
             return 0
 
     def get_infos(self):
+        """
+        retourne les informations de l'utilisateur concerné.
+        :return: UserMd
+        """
         session = AppModel().get_session()
         infos = session.query(UserMd).get(self.uid)
         return infos
@@ -83,7 +106,7 @@ class User(object):
         """
         Charge la liste des portefeuilles gérés par le gestionaire
         (p_isin, nom)
-        :return:
+        :return: list
         """
         g = Gestion()
         pf_list = g.portefeuille_of_manager(self.uid)

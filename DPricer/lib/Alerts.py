@@ -1,10 +1,15 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
 
+from PyQt4.QtCore import QTimer
+import datetime as dt
+from DPricer.data.AppModel import AppModel, CourbeMd, ObligationMd
+import threading
 
-class Alerts(object):
+
+class AlertManager(object):
     """
-    Classe qui représente les alertes de l'application.
+    Classe qui gère les alertes de l'application.
     """
     _alerts = {}
 
@@ -24,19 +29,11 @@ class Alerts(object):
         pass
 
 
-class CouponAlert(Alerts):
-    """
-    Classe qui représente les alertes liées aux futures tombées de coupon.
-    """
-    def __init__(self):
-        pass
-
-
-class AssetAlert(Alerts):
+class AssetAlert(object):
     """
     Classe qui représente les alertes liées aux futures échéances des actifs.
     """
-    def __init__(self):
+    def __init__(self, obligation):
         pass
 
     def check_assets(self):

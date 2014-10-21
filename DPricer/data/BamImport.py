@@ -8,6 +8,9 @@ import DPricer.configure as cfg
 
 
 class ThreadRetrieve(threading.Thread):
+    """
+    Classe pour télécharger la courbe BAM en mode multi-thread.
+    """
     def __init__(self, jour, mois, an):
         threading.Thread.__init__(self)
         if 0 < jour <= 31:
@@ -19,12 +22,20 @@ class ThreadRetrieve(threading.Thread):
         self.la_date = dt.datetime(day=self.jour, month=self.mois, year=self.an)
 
     def run(self):
+        """
+        Execute la fouille en environnement Threadé.
+        :return:
+        """
         try:
-            self.retrieveTaux()
+            self.recupere_taux()
         except urllib2.URLError:
             print 'Connection indisponible'
 
-    def retrieveTaux(self):
+    def recupere_taux(self):
+        """
+        récupère la courbe de taux depuis le site de la BAM.
+        :return:
+        """
         request = 'http://www.bkam.ma/wps/PA_1_G_15H/LoadOperationMarMon?dateDe={j}/{m}/{a}&locale=fr'
         delta = dt.timedelta()
         # si la_date est lundi, la requete pointe vers le Vendredi d'avant
@@ -42,8 +53,6 @@ class ThreadRetrieve(threading.Thread):
         f.write(u.read())
         f.close()
         u.close()
-
-
             # try:
             # u = urllib2.urlopen(req)
             # except ValueError:
@@ -59,7 +68,17 @@ class ThreadRetrieve(threading.Thread):
             #     print 'lecture impossible du fichier Excel'
 
 
-def batchRetrieve(j, m, a, jj, mm, aa):
+def batch_recupere(j, m, a, jj, mm, aa):
+    """
+    télécharge un ensemble de fichiers entre deus dates données.
+    :param j: int
+    :param m: int
+    :param a: int
+    :param jj: int
+    :param mm: int
+    :param aa: int
+    :return:
+    """
     start = dt.datetime(year=a, month=m, day=j)
     delta = dt.timedelta(days=1)
     end = dt.datetime(year=aa, month=mm, day=jj)
@@ -73,11 +92,5 @@ def batchRetrieve(j, m, a, jj, mm, aa):
         start += delta
 
 
-def test_retrieve_Taux():
-    # TR = ThreadRetrieve(21, 8, 2014)
-    # TR.start()
-    # TR.join()
-    batchRetrieve(17, 8, 2014, 22, 8, 2014)
-
 if __name__ == '__main__':
-    test_retrieve_Taux()
+    print 'Test begins here'

@@ -10,12 +10,15 @@ __author__ = 'F.Marouane'
 
 from DPricer.lib.Gestion import Gestion
 from DPricer.lib.Portefeuille import Portefeuille
-from DPricer.data.AppModel import AppModel, ObligationMd, CourbeMd, GestionMd, PortefeuilleMd, EcheancierMd
+from DPricer.data.AppModel import AppModel, ObligationMd, CourbeMd
 import datetime as dt
 from PyQt4 import QtCore
 
 
 class Unique(type):
+    """
+    Singleton pour Date Eval
+    """
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
@@ -25,6 +28,9 @@ class Unique(type):
 
 
 class DateEval(object):
+    """
+    Représente le Singleton Date d'évaluation.
+    """
     __metaclass__ = Unique
 
     def __init__(self, _date=None):
@@ -35,12 +41,21 @@ class DateEval(object):
             self.date_eval = self.last_valid_date(_date)
 
     def change_date(self, value):
+        """
+        Change la date d'évaluation de l'application.
+        :param value: datetime.date
+        :return: None
+        """
         if self.check_courbe(value):
             self.date_eval = self.validate_date(value)
         else:
             self.date_eval = self.last_valid_date(value)
 
     def last_valid_date(self, _date):
+        """
+        :type _date: datetime.date
+        :return: datetime.date
+        """
         compare_to = self.validate_date(_date)
         session = AppModel().get_session()
         res = [el[0] for el in session.query(CourbeMd.date_req).distinct().all()]
@@ -54,7 +69,12 @@ class DateEval(object):
             except IndexError:
                 return dt.date.today()
 
+    # noinspection PyArgumentList
     def get_qdate(self):
+        """
+        Retourne la date en Qdate.
+        :return: PyQt4.QtCore.QDate
+        """
         if self.date_eval:
             d = self.date_eval.day
             m = self.date_eval.month
@@ -64,6 +84,10 @@ class DateEval(object):
             return QtCore.QDate.currentDate()
 
     def check_courbe(self, _date):
+        """
+        :type _date: object
+        :return:
+        """
         date = self.validate_date(_date)
         session = AppModel().get_session()
         res = session.query(CourbeMd).filter_by(date_req=date).first()
@@ -72,7 +96,12 @@ class DateEval(object):
         else:
             return False
 
-    def validate_date(self, _date):
+    @staticmethod
+    def validate_date(_date):
+        """
+        accepte une date ou CDC et retourne la date correspondante.
+        :return: datetime.date
+        """
         if type(_date) is str:
             return dt.datetime.strptime(_date, '%d/%m/%Y').date()
         else:
@@ -100,12 +129,25 @@ def supprimer_obligation(isin):
 
 
 def ajouter_obligation(isin, nm, nominal, tx_f, d_em, d_j, d_ech, spread=0, type_='N'):
+    """
+    Ajoute une obligation à la base de données.
+    :param isin: str
+    :param nm: str
+    :param nominal: float
+    :param tx_f: float
+    :param d_em: datetime.date
+    :param d_j: datetime.date
+    :param d_ech: datetime.date
+    :param spread: float
+    :param type_: str
+    :return:
+    """
     md = AppModel()
     session = md.get_session()
     ex = session.query(ObligationMd).filter_by(isin=str(isin)).first()
     if ex is None:
-        obl = ObligationMd(isin=str(isin), nom=str(nm), nominal=nominal,\
-                           taux_facial=tx_f, date_emission=validate_date(d_em),\
+        obl = ObligationMd(isin=str(isin), nom=str(nm), nominal=nominal,
+                           taux_facial=tx_f, date_emission=validate_date(d_em),
                            date_jouissance=validate_date(d_j), maturite=validate_date(d_ech),\
                            spread=spread, type=type_)
         session.add(obl)
@@ -118,6 +160,10 @@ def ajouter_obligation(isin, nm, nominal, tx_f, d_em, d_j, d_ech, spread=0, type
 
 
 def validate_date(_date):
+    """
+    accepte une date ou CDC et retourne la date correspondante.
+    :return: datetime.date
+    """
     if type(_date) is str:
         return dt.datetime.strptime(_date, '%d/%m/%Y').date()
     else:
@@ -125,11 +171,16 @@ def validate_date(_date):
 
 
 def table_portefeuille(uid):
+    """
+    Retourne les portefeuilles gérés par le gestionnaire.
+    :param uid: int
+    :return: list of DPricer.lib.Portefeuille.Portefeuille
+    """
     p_isins = Gestion().portefeuille_of_manager(uid)
     pf = [Portefeuille(el) for el in p_isins]
     return pf
 
 
 if __name__ == '__main__':
-    ajouter_obligation(8888888, 'MERO Oblig', 22222, .045, '22/7/1989',\
+    ajouter_obligation(8888888, 'MERO Oblig', 22222, .045, '22/7/1989',
                            '22/7/1990', '10/10/2010', 55, 'AMC')
