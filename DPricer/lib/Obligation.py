@@ -111,7 +111,7 @@ class Echeancier(object):
                 elif s[1] == 0 and s[0] == 1:
                     return _date.replace(month=12)
             elif echelle == 'd':
-                delta = dt.timedelta(days= periode)
+                delta = dt.timedelta(days=periode)
                 return _date + delta
 
     def validate_date(self, _date):
@@ -133,11 +133,10 @@ class EcheancierDB(object):
         if isin is not None:
             self.coupons = self.load_echeancier(self.isin)
 
-
     def load_echeancier(self, isin):
         session = AppModel().get_session()
         self.coupons = session.query(EcheancierMd).filter_by(isin=str(isin)).all()
-        echeancier = [el.date_coupon for el in self.db]
+        echeancier = [el.date_coupon for el in self.coupons]
         return echeancier
 
     def add_coupon(self, isin, date_coupon, coupon=None, amortissement=None):
@@ -359,6 +358,9 @@ def test_echeancier():
 
 if __name__ == '__main__':
     # prix = 101752 MAD, ISIN = 100581
+    # import swampy.Lumpy as Lumpy
+    # lumpy = Lumpy.Lumpy()
+    # lumpy.make_reference()
     nom = 100000
     tx_fac = .0416
     date_emission = '18/06/2014'
@@ -367,9 +369,11 @@ if __name__ == '__main__':
     date_eval = '2/10/2014'
     # tx_act = 0.04
     spread = .0060
-    # obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval,spread=spread)
+    obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval,spread=spread)
     # print obl.coeff_actuariels()
     # for el in obl.coupons():
     #     print el
     # print obl.prix()
-    test_echeancier()
+    # test_echeancier()
+    # lumpy.object_diagram()
+    # lumpy.class_diagram()

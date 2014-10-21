@@ -8,6 +8,7 @@ from DPricer.data.AppModel import AppModel, ObligationMd, PanierMd
 
 
 class MyTable(QTableWidget):
+
     def __init__(self):
         QTableWidget.__init__(self)
         policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -81,6 +82,9 @@ def get_headers(table, start, end):
     return headers
 
 if __name__ == '__main__':
+    # import swampy.Lumpy as Lumpy
+    # lumpy = Lumpy.Lumpy()
+    # lumpy.make_reference()
     ap = QApplication(sys.argv)
     # row = ['data-'+str(i) for i in range(len(headers))]
     # data = [row for i in range(5)]
@@ -92,7 +96,9 @@ if __name__ == '__main__':
     h = [u"ISIN Portefeuille", u"ISIN de l'Actif", u"Quantite de l'actif dans le protefeuille"]
     table.set_headers(h)
     put_result_set(table, keys, result)
-    hed = [unicode(table.horizontalHeaderItem(i).text()) for i in range(table.columnCount())]
-    print hed
-    # table.show()
-    # ap.exec_()
+    # hed = [unicode(table.horizontalHeaderItem(i).text()) for i in range(table.columnCount())]
+    # print hed
+    table.show()
+    ap.exec_()
+    # lumpy.object_diagram()
+    # lumpy.class_diagram()

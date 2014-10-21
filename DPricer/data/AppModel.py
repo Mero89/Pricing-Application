@@ -5,7 +5,7 @@ import DPricer.configure as cfg
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base, DeferredReflection
-from sqlalchemy import *
+
 
 Base = declarative_base()
 target_schema = 'production'
@@ -13,6 +13,9 @@ target_schema = 'production'
 
 
 class Singleton(type):
+    """
+    Représente la classe Singleton.
+    """
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
@@ -22,63 +25,100 @@ class Singleton(type):
 
 
 class AppModel(object):
+    """
+    Classe qui gère les opérations de la BDD.
+    Utilise SqlAlchemy comme back-end.
+    """
     __metaclass__ = Singleton
 
     def __init__(self):
         try:
-            create_engine(cfg.pg_dbstring)
+            sqlalchemy.create_engine(cfg.pg_dbstring)
         except sqlalchemy.exc.ArgumentError:
             pass
-        self.engine = create_engine(cfg.pg_dbstring)
+        self.engine = sqlalchemy.create_engine(cfg.pg_dbstring)
         DeferredReflection.prepare(self.engine)
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
 
     def get_engine(self):
+        """
+            retourne l'engine utilisé pour la connection à la BDD.
+        """
         return self.engine
 
     def get_session(self):
+        """
+            retourne la session instanciée.
+        """
         return self.session
 
     def close_session(self):
+        """
+            Ferme la session du Modele
+        """
         self.session.close()
 
     def start_session(self):
+        """
+        retourne un nouvel objet session.
+        """
         Session = sessionmaker(bind=self.engine)
         return Session()
 
 
 class CourbeMd(DeferredReflection, Base):
+    """
+        Classe de la table Courbe.
+    """
     __tablename__ = 'courbe'
     __table_args__ = {'schema': target_schema}
 
 
 class ObligationMd(DeferredReflection, Base):
+    """
+        Classe de la table Obligations.
+    """
     __tablename__ = 'obligations'
     __table_args__ = {'schema': target_schema}
 
 
 class EcheancierMd(DeferredReflection, Base):
+    """
+        Classe de la table Echeancier.
+    """
     __tablename__ = 'echeancier'
     __table_args__ = {'schema': target_schema}
 
 
 class PanierMd(DeferredReflection, Base):
+    """
+        Classe de la table Panier.
+    """
     __tablename__ = 'panier'
     __table_args__ = {'schema': target_schema}
 
 
 class PortefeuilleMd(DeferredReflection, Base):
+    """
+        Classe de la table Portefeuille.
+    """
     __tablename__ = 'portefeuille'
     __table_args__ = {'schema': target_schema}
 
 
 class GestionMd(DeferredReflection, Base):
+    """
+    Classe de la table Gestion.
+    """
     __tablename__ = 'gestion'
     __table_args__ = {'schema': target_schema}
 
 
 class UserMd(DeferredReflection, Base):
+    """
+        Classe de la table Users.
+    """
     __tablename__ = 'users'
     __table_args__ = {'schema': target_schema}
 
@@ -138,5 +178,4 @@ TABLE echeancier :
         id SERIAL,
         isin VARCHAR(15),
         flux FLOAT4,
-        date_flux INT4,
-"""
+        date_flux INT4,"""

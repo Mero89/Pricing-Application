@@ -2,7 +2,7 @@
 __author__ = 'F.Marouane'
 
 import calendar as cal
-from ..data.AppModel import AppModel, CourbeMd
+from DPricer.data.AppModel import AppModel, CourbeMd
 from Interpolation import Interpol
 import datetime
 import copy
@@ -152,7 +152,7 @@ class Courbe(CourbeMd):
         ex: n=300 avec borne inf = 250 et borne sup = 400
         """
         n = maturite_a_convertir
-        b = pow((1 + tx_act), (float(n)/self.baseA)) - 1
+        b = pow((1 + tx_act), (float(n) / self.baseA)) - 1
         tx_monetaire = 360.0 / n * b
         del n, b
         return tx_monetaire
@@ -164,10 +164,10 @@ class Courbe(CourbeMd):
         return self.liste_maturite
 
     def zc_dico(self):
-        head = [(self.monetaire_actuel(el[0], el[1]), el[1]/365.) for el in self.liste_dico if el[1] < 365]
+        head = [(self.monetaire_actuel(el[0], el[1]), el[1] / 365.) for el in self.liste_dico if el[1] < 365]
         zc_dico = self.zero_coupon()
         tx1jour = self.monetaire_actuel(self.point_minimal[0], 1)
-        pr = [(tx1jour, 1/365.)]
+        pr = [(tx1jour, 1 / 365.)]
         dico = pr + head + zc_dico
         return dico
 
@@ -177,12 +177,12 @@ class Courbe(CourbeMd):
         liste_zc = [zc1]
         annee = self.date_de_transaction.year
         for ordre in range(2, 22):
-            mat = (self.date_de_transaction.replace(year=annee+ordre) - self.date_de_transaction).days
+            mat = (self.date_de_transaction.replace(year=annee + ordre) - self.date_de_transaction).days
             ta = self.taux_lineaire(mat)
             px = self.price(ta, ta, ordre)
             px_zc = self.price_zc(ta, liste_zc)
             diff = float(px - px_zc)
-            zci = pow((1+ta)/diff, 1./ordre) - 1
+            zci = pow((1 + ta) / diff, 1. / ordre) - 1
             liste_zc.append(zci)
         else:
             return zip(liste_zc, range(1, 22))
@@ -190,21 +190,22 @@ class Courbe(CourbeMd):
     def price(self, tf, ta, p):
         px = []
         for i in range(1, p):
-            px.append(tf/pow((1+ta), i))
+            px.append(tf / pow((1 + ta), i))
         else:
-            px.append((1+tf)/pow(1+ta, p))
+            px.append((1 + tf) / pow(1 + ta, p))
         return sum(px)
 
     def price_zc(self, tf, zc_list):
         px = []
         en_list = list(enumerate(zc_list, 1))
         for zc in en_list:
-            px.append(tf/pow((1+zc[1]), zc[0]))
+            px.append(tf / pow((1 + zc[1]), zc[0]))
         return sum(px)
 
     def tenors(self):
         # genere les tenors fixes
         pass
+
 
 def test_monetaire_actuel():
     dd = datetime.date.today()
@@ -225,10 +226,9 @@ def test_actuel_monetaire():
 
 
 if __name__ == '__main__':
-    import datetime as dt
-    d = dt.date(2014, 8, 22)
+    d = datetime.date(2014, 8, 22)
     c = Courbe(d)
     tx = c.taux_lineaire(400)
     print tx
     print c.get_liste_taux()
-    print(c.get_liste_maturite())
+    print c.get_liste_maturite()

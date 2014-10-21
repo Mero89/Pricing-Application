@@ -46,7 +46,7 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         for el in liste_portefeuille:
             idx = liste_portefeuille.index(el)
             row = (str(el.p_isin), str(el.nom), round(el.prix(), 2), round(el.sensibilite(), 4),
-                   round(el.duration, 4))
+                   round(el.duration(), 4))
             self.ui.tableWidgetPortefeuille.insertRow(idx)
             TU.insert_row(self.ui.tableWidgetPortefeuille, row, idx)
 
@@ -77,7 +77,7 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
             idx = data.index(el)
             # Qstring because of french letters, Nom, Description, etc...
             row = (str(el[0].isin), unicode(el[0].nom), round(el[0].prix(), 2), round(el[0].sensibilite(), 4),
-                   round(el[0].duration, 4), str(el[1]), round(el[2], 4))
+                   round(el[0].duration(), 4), str(el[1]), round(el[2], 4))
             self.ui.tableWidgetActifs.insertRow(idx)
             TU.insert_row(self.ui.tableWidgetActifs, row, idx)
         self.ui.tableWidgetActifs.resizeRowsToContents()
@@ -102,8 +102,11 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
         self.parent = parent
         self.setWindowTitle('Ajout de Portefeuilles')
         self.accepted.connect(self.save_portefeuille)
+        self.rejected.connect(self.close)
         self.ui.pushButtonAjouter.clicked.connect(self.ajouter_clicked)
         self.ui.pushButtonSupprimer.clicked.connect(self.supprimer_clicked)
+        # if parent:
+        #     self.rejected.connect(self.parent.close_current_window)
 
     @QtCore.pyqtSlot()
     def save_portefeuille(self):
@@ -160,8 +163,7 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         self.title = u'Gérer les Portefeuilles'
         self.setWindowTitle(self.title)
         self.session = AppModel().get_session()
-        self.user = User('mero','mero')
-        self.user.uid = 1
+        self.user = User()
         self.connect_actions()
         self.affiche_gisement_portefeuille()
         self.affiche_mes_portefeuille()
@@ -288,6 +290,7 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         if gisement:
             self.populate_table_portefeuille(self.ui.tableWidgetGisementPortefeuille, gisement)
 
+
     def populate_table_portefeuille(self, table, pf_list):
         """
         Remplit une tableWidget [table] par les informations fournies dans [pf_list]
@@ -323,8 +326,8 @@ class EditPortefeuille(QDialog, Ui_PortefeuilleInput):
         self.new_data = dict()
         self.parent = parent
         self.set_data()
-        self.ui.buttonBox.accepted.connect(self.get_data)
-        self.ui.buttonBox.rejected.connect(self.close)
+        self.accepted.connect(self.get_data)
+        self.rejected.connect(self.close)
         if self.parent:
             self.connect(self, QtCore.SIGNAL('edited'), self.parent.save_edit)
 

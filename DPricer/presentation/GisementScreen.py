@@ -51,7 +51,10 @@ class GisementScreen(QWidget, Ui_Gisement):
 
     def update_date(self):
         self.date_eval = self.convert_qdate(self.parent.ui.dateEvalEdit.date().getDate())
-        self.populate_table()
+        try:
+            self.populate_table()
+        except IndexError:
+            self.ui.tableWidgetActifs.setRowCount(1)
 
     # Modifie un actif
     def edit_asset(self):
@@ -130,7 +133,10 @@ class GisementScreen(QWidget, Ui_Gisement):
         if self.data:
             if self.ui.tableWidgetActifs.isSortingEnabled():
                 self.ui.tableWidgetActifs.setSortingEnabled(False)
-            self.populate_table()
+            try:
+                self.populate_table()
+            except IndexError:
+                self.ui.tableWidgetActifs.setRowCount(1)
             self.ui.tableWidgetActifs.setSortingEnabled(True)
 
     # Fournit la liste de l'auto-completion
@@ -146,28 +152,26 @@ class GisementScreen(QWidget, Ui_Gisement):
         self.ui.tableWidgetActifs.clearContents()
         keys = ['isin', 'nom', 'nominal', 'taux_facial', 'spread', 'date_emission', 'date_jouissance', 'maturite',
                 'type', 'echue', 'forcee']
-        if self.data:
+        if len(self.data) >= 1:
             self.ui.tableWidgetActifs.setRowCount(len(self.data))
             # populate table
             for el in self.data:
                 row = self.data.index(el)
-                # if el.type == 'N':
-                #     obl = Obligation(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
-                #                      d_eval='2/10/2014', spread=el.spread)
-                # elif el.type == 'AMC':
-                #     obl = ObligationAMC(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
-                #                         d_eval='2/10/2014', spread=el.spread)
                 if el.type == 'N':
                     obl = Obligation(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
                                      d_eval=self.date_eval, spread=el.spread)
+                    calcul = [obl.prix(), obl.sensibilite(), obl.duration(), 'Not Implemented', obl.tx_actuariel +
+                              obl.spread]
                 elif el.type == 'AMC':
                     obl = ObligationAMC(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
                                         d_eval=self.date_eval, spread=el.spread)
-                calcul = [obl.prix(), obl.sensibilite(), obl.duration(), 'Not Implemented', obl.tx_actuariel +
-                          obl.spread]
+                    calcul = [obl.prix(), obl.sensibilite(), obl.duration(), 'Not Implemented', obl.tx_actuariel +
+                              obl.spread]
                 self.ui.tableWidgetActifs.setRowHeight(row, 27)
                 TU.put_row(self.ui.tableWidgetActifs, row, keys, el)
                 TU.insert_row(self.ui.tableWidgetActifs, calcul, row, offset=len(keys))
+        else:
+            self.ui.tableWidgetActifs.setRowCount(1)
 
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)
@@ -189,7 +193,10 @@ class UpdateAsset(QWidget, Ui_AddAsset):
         self.title = 'Modifier Actif'
         self.setWindowTitle(self.title)
         self.choix = {'3': 'AMCREV', '0': 'N', '1': 'AMC', '2': 'REV'}
+        self.ui.doubleSpinBoxTauxFacial.setDecimals(2)
+        self.ui.doubleSpinBoxSpread.setDecimals(2)
         self.ui.buttonBox.accepted.connect(self.get_data)
+        self.ui.buttonBox.rejected.connect(self.parent.close_current_window)
         self.ui.isinLineEdit.setReadOnly(1)
         if data:
             self.data = data
@@ -205,8 +212,8 @@ class UpdateAsset(QWidget, Ui_AddAsset):
         self.ui.isinLineEdit.setText(data['isin'])
         self.ui.nomLineEdit.setText(data['nom'])
         self.ui.nominalLineEdit.setText(data['nominal'])
-        self.ui.doubleSpinBoxTauxFacial.setValue(float(data['taux_facial']))
-        self.ui.doubleSpinBoxSpread.setValue(float(data['spread']))
+        self.ui.doubleSpinBoxTauxFacial.setValue(float(data['taux_facial'])*100)
+        self.ui.doubleSpinBoxSpread.setValue(float(data['spread'])*100)
         self.ui.dateEditDateEmission.setDate(self.date_to_qdate(data['date_emission']))
         self.ui.dateEditDateJouissance.setDate(self.date_to_qdate(data['date_jouissance']))
         self.ui.dateEditDateEcheance.setDate(self.date_to_qdate(data['maturite']))
@@ -224,7 +231,7 @@ class UpdateAsset(QWidget, Ui_AddAsset):
         self.data['maturite'] = self.convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
         self.data['type'] = self.choix[str(self.ui.typeComboBox.currentIndex())]
         # self.data['forcee'] = self.ui.forcerCheckBox.isChecked()
-        if self.data['maturite'] < dt.date.today():
+        if self.data['maturite'] > dt.date.today():
             self.data['echue'] = False
         else:
             self.data['echue'] = True
@@ -284,7 +291,8 @@ class AddAsset(QWidget, Ui_AddAsset):
         # self.ui.toolButtonAdd.clicked.connect(self.toolButtonAjouter)
         # self.ui.toolButtonRemove.clicked.connect(self.toolButtonSupprimer)
         self.ui.buttonBox.accepted.connect(self.get_data)
-        # self.ui.buttonBox.rejected.connnect(self.parent.remove)
+        if parent:
+            self.ui.buttonBox.rejected.connnect(self.parent.close_current_window)
 
     def get_data(self):
         # extrait les données saisies
@@ -298,7 +306,7 @@ class AddAsset(QWidget, Ui_AddAsset):
         self.data['maturite'] = self.convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
         self.data['type'] = self.choix[str(self.ui.typeComboBox.currentIndex())]
         # self.data['forcee'] = self.ui.forcerCheckBox.isChecked()
-        if self.data['maturite'] < dt.date.today():
+        if self.data['maturite'] > dt.date.today():
             self.data['echue'] = False
         else:
             self.data['echue'] = True

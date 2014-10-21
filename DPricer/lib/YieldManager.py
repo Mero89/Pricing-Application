@@ -1,14 +1,19 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
 
-import DPricer.data.BamImport as bi
-import DPricer.data.Excel as xl
-import datetime as dt
-import DPricer.configure as cfg
 import os
+import datetime as dt
+from DPricer.data import BamImport as bi
+from DPricer.data import Excel as xl
+# import DPricer.configure as cfg
+from DPricer import configure as cfg
 
 
 class YieldManager(object):
+    """
+    Classe qui gère les tentatives de connection
+    et la fouille de la courbe adéquate.
+    """
     def __init__(self, _date=None):
         if _date is not None:
             if type(_date) is str:
@@ -22,6 +27,7 @@ class YieldManager(object):
         self.last_date_from_auto_import = None
 
     def import_auto(self, _date=None):
+        """ importe un fichier depuis la BAM """
         global date_req
         if _date is None:
             date_req = self._date
@@ -49,7 +55,9 @@ class YieldManager(object):
                 break
             date_req -= delta
 
-    def import_manuel(self, excel_path):
+    @staticmethod
+    def import_manuel(excel_path):
+        """ importe un fichier manuellement"""
         xl.commit_excel(excel_path)
 
     def multi_import_auto(self, s_date, e_date):
@@ -64,7 +72,9 @@ class YieldManager(object):
                 if self.last_date_from_auto_import is not None:
                     flag = self.last_date_from_auto_import - step
 
-    def clean_repository(self):
+    @staticmethod
+    def clean_repository():
+        """ Vide le dossier des fichiers Excel """
         repo_path = cfg.repo_path
         xcl_list = xl.list_excel_files(repo_path)
         for elm in xcl_list:

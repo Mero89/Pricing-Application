@@ -62,9 +62,9 @@ class MyClass(QMainWindow, Ui_MDIApp):
         self.ui.actionPlein_cran.triggered.connect(self.toggle_fullscreen)
         self.ui.dateEvalEdit.dateChanged.connect(self.change_date_eval)
 
-    @QtCore.pyqtSlot(QtCore.QDate)
-    def change_date_eval(self, value):
-        new_date = self.convert_qdate(value)
+    @QtCore.pyqtSlot()
+    def change_date_eval(self):
+        new_date = self.convert_qdate(self.ui.dateEvalEdit.date().getDate())
         self.date_eval.change_date(new_date)
         self.ui.dateEvalEdit.setDate(self.date_eval.get_qdate())
 

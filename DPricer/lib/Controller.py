@@ -49,13 +49,19 @@ class DateEval(object):
             return _date
         else:
             ld = [d for d in res if d <= compare_to]
-            return ld[0]
+            try:
+                return ld[0]
+            except IndexError:
+                return dt.date.today()
 
     def get_qdate(self):
-        d = self.date_eval.day
-        m = self.date_eval.month
-        y = self.date_eval.year
-        return QtCore.QDate(y, m, d)
+        if self.date_eval:
+            d = self.date_eval.day
+            m = self.date_eval.month
+            y = self.date_eval.year
+            return QtCore.QDate(y, m, d)
+        else:
+            return QtCore.QDate.currentDate()
 
     def check_courbe(self, _date):
         date = self.validate_date(_date)
@@ -71,6 +77,7 @@ class DateEval(object):
             return dt.datetime.strptime(_date, '%d/%m/%Y').date()
         else:
             return _date
+
 
 ##############################
 def afficher_gisement():
