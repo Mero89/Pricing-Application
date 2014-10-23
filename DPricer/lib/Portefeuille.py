@@ -112,10 +112,6 @@ if __name__ == '__main__':
     p = Portefeuille(100200, '1/9/2014')
     l = p.duration()
     s = p.sensibilite()
-    print l
-    print s
     # print p.prix()
     # res = p.session.query(PortefeuilleMd).all()
     # o = p.oblig_from_isin(100503)
-    # Panier().add_oblig_to_portefeuille(100200,9074,5)
-    # Panier().add_oblig_to_portefeuille(100200,9073,15)

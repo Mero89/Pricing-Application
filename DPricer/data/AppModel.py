@@ -93,7 +93,7 @@ class ObligationMd(DeferredReflection, Base):
 
 class EcheancierMd(DeferredReflection, Base):
     """
-        Classe de la table Echeancier.
+    Classe de la table Echeancier.
     """
     __tablename__ = 'echeancier'
     __table_args__ = {'schema': target_schema}

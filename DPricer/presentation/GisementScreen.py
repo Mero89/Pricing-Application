@@ -15,11 +15,12 @@ from DPricer.lib.Controller import DateEval
 from DPricer.data.AppModel import ObligationMd, AppModel
 from DPricer.lib.Obligation import Obligation
 from DPricer.lib.ObligationAMC import ObligationAMC
+from DPricer.data import Excel
 
 
 class GisementScreen(QWidget, Ui_Gisement):
     def __init__(self, parent=None):
-        super(Ui_Gisement, self).__init__(parent)
+        super(Ui_Gisement, self).__init__()
         QWidget.__init__(self)
         self.parent = parent
         self.ui = Ui_Gisement()
@@ -37,7 +38,9 @@ class GisementScreen(QWidget, Ui_Gisement):
         self.set_completer_value()
         # self.ui.tableWidgetActifs.resizeColumnsToContents()
 
+    # noinspection PyUnresolvedReferences
     def connect_actions(self):
+        # noinspection PyUnresolvedReferences
         self.ui.lineEditValeur.textChanged.connect(self.filter_by_value)
         self.ui.comboBoxCritere.currentIndexChanged.connect(self.set_completer_value)
         # self.ui.toolButtonEdit.clicked.connect(self.edit_asset)
@@ -109,6 +112,7 @@ class GisementScreen(QWidget, Ui_Gisement):
         Complete la saisie de l'utilisateur en fonction des données disponibles dans la base de données
         :return:
         """
+        value_list = list()
         if self.ui.comboBoxCritere.currentText() == 'ISIN':
             value_list = self.isin_list
         elif self.ui.comboBoxCritere.currentText() == 'NOM':
@@ -144,8 +148,23 @@ class GisementScreen(QWidget, Ui_Gisement):
         self.isin_list = [el.isin for el in self.data]
         self.nom_list = [el.nom for el in self.data]
 
-    def convert_qdate(self, _qdate):
+    @staticmethod
+    def convert_qdate(_qdate):
         return dt.date(_qdate[0], _qdate[1], _qdate[2])
+
+    def export_excel(self):
+        rws = self.ui.tableWidgetActifs.rowCount()
+        cls = self.ui.tableWidgetActifs.columnCount()
+        data = list()
+        headers = TU.get_headers(self.ui.tableWidgetActifs, 0, cls)
+        for row in range(rws):
+            myrow = list()
+            for col in range(cls):
+                i = self.ui.tableWidgetActifs.item(row, col)
+                if i:
+                    myrow.append(unicode(i.text()))
+            data.append(myrow)
+        Excel.export_to_excel(headers, data, "/Users/mar/Desktop", "Export.xls")
 
     # Remplit la table
     def populate_table(self):
@@ -155,6 +174,7 @@ class GisementScreen(QWidget, Ui_Gisement):
         if len(self.data) >= 1:
             self.ui.tableWidgetActifs.setRowCount(len(self.data))
             # populate table
+            calcul = list()
             for el in self.data:
                 row = self.data.index(el)
                 if el.type == 'N':
@@ -178,8 +198,8 @@ class GisementScreen(QWidget, Ui_Gisement):
 
     def keyPressEvent(self, e):
         # define key event
-        if e.key() == QtCore.Qt.Key_W:
-            self.close()
+        if e.key() == QtCore.Qt.Key_E:
+            self.export_excel()
 
 
 #### UPDATE ASSET ####
@@ -258,18 +278,21 @@ class UpdateAsset(QWidget, Ui_AddAsset):
             self.tell_status(u'Une erreur est survenue lors de la modification.')
             self.tell_status(e.message)
 
-    def validate_float(self, _num):
+    @staticmethod
+    def validate_float(_num):
         if _num == '':
             return 0
         else:
             return float(_num)
 
-    def date_to_qdate(self, _sdate):
+    @staticmethod
+    def date_to_qdate(_sdate):
         _date = dt.datetime.strptime(str(_sdate), '%Y-%m-%d')
         _qdate = QtCore.QDate(_date.year, _date.month, _date.day)
         return _qdate
 
-    def convert_qdate(self, _qdate):
+    @staticmethod
+    def convert_qdate(_qdate):
         return dt.date(_qdate[0], _qdate[1], _qdate[2])
 
     def tell_status(self, status):
@@ -342,41 +365,30 @@ class AddAsset(QWidget, Ui_AddAsset):
                 self.tell_status(u'Actif non ajouté.')
                 session.rollback()
                 self.tell_status(e.message)
-
-    def validate_float(self, _num):
+    @staticmethod
+    def validate_float(_num):
         if _num == '':
             return 0
         else:
             return float(_num)
 
-    def date_to_qdate(self, _date):
+    @staticmethod
+    def date_to_qdate(_date):
         _qdate = QtCore.QDate(_date.year, _date.month, _date.day)
         return _qdate
 
-    def convert_qdate(self, _qdate):
+    @staticmethod
+    def convert_qdate(_qdate):
         return dt.date(_qdate[0], _qdate[1], _qdate[2])
 
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)
 
-    # @QtCore.pyqtSlot()
-    # def toolButtonAjouter(self):
-    # num = self.ui.tableWidget.rowCount()
-    #     dd = QTableWidgetItem()
-    #     ff = QTableWidgetItem()
-    #     self.ui.tableWidget.insertRow(num)
-    #     self.ui.tableWidget.setItem(num, 0, dd)
-    #     self.ui.tableWidget.setItem(num, 1, ff)
-    #
-    # @QtCore.pyqtSlot()
-    # def toolButtonSupprimer(self):
-    #     itm = self.ui.tableWidget.currentItem()
-    #     idx = self.ui.tableWidget.indexFromItem(itm)
-    #     self.ui.tableWidget.removeRow(idx.row())
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
     form = GisementScreen()
-    # form = AddAsset()
+    # form.export_excel()
+    form = AddAsset()
     form.show()
     ap.exec_()

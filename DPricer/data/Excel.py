@@ -184,12 +184,12 @@ def import_obligation(excel_path):
                 session.add(oblig)
                 try:
                     session.commit()
-                    return 1
+                    # return 1
                 except (TypeError, ValueError):
                     session.rollback()
-                    return -1
-            else:
-                return 0
+                    # return -1
+            # else:
+                # return 0
 
 
 ### Générer le fichier Template d'excel ###
@@ -233,24 +233,28 @@ def export_to_excel(headers, data, path, filename):
     :param headers: list
     :param data: list
     :param path: str
+    :param filename: str
     :return:
     """
     header_style = xlwt.easyxf('font: name Menlo, bold True, height 280, colour blue;')
     if os.path.exists(path):
         w = xlwt.Workbook()
-        s = w.add_sheet('Export')
+        s = w.add_sheet('Export', cell_overwrite_ok=True)
         row = s.row(0)
         ### write header ###
+        h_idx = 0
         for el in headers:
-            idx = headers.index(el)
-            row.write(idx, str(el), header_style)
+            row.write(h_idx, unicode(el), header_style)
+            h_idx += 1
         ### write data ###
+        r_idx = 1
         for rw in data:
-            row_idx = data.index(rw)+1
-            row = s.row(row_idx)
+            row = s.row(r_idx)
+            c_idx = 0
             for col in rw:
-                col_idx = rw.index(col)
-                row.write(col_idx, col)
+                row.write(c_idx, unicode(col))
+                c_idx += 1
+            r_idx += 1
         ### save filename on path ###
         final_path = os.path.join(path, filename)
         w.save(final_path)
@@ -264,10 +268,14 @@ def print_list(mylist):
 
 def main():
     repo = '/Users/mar/PycharmProjects/DPricer/DPricer/data/repository'
-    xcl_files = list_excel_files(repo)
-    for xcl in xcl_files:
-        full_path = os.path.join(repo, xcl)
-        commit_courbe_bam(full_path)
+    path = '/Users/mar/Desktop'
+    filename = 'DPricer-Export.xls'
+    headers = ['header'] * 4
+    row = range(4)
+    data = list()
+    for i in range(6):
+        data.append(row)
+    export_to_excel(headers, data, path, filename)
 
 if __name__ == '__main__':
-    create_template('/users/mar/Desktop', 'Template')
+    main()

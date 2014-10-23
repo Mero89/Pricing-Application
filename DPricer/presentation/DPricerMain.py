@@ -139,7 +139,7 @@ class MyClass(QMainWindow, Ui_MDIApp):
             self.ui.mdiArea.addSubWindow(pf)
             pf.user = self.user
             pf.show()
-            pf.affichePortefeuille()
+            pf.affiche_portefeuille()
         else:
             del pf
 
@@ -180,16 +180,28 @@ class MyClass(QMainWindow, Ui_MDIApp):
     def import_obligations(self):
         filename = self.open_excel()
         if str(filename):
-            rep = Excel.import_obligation(filename)
-            if rep == 1:
-                message = u"Le fichier a été importé avec succès."
-                self.ui.statusbar.showMessage(message, 4000)
-            elif rep == 0:
-                message = u"Certains champs sont manquants."
-                self.ui.statusbar.showMessage(message, 4000)
-            elif rep == -1:
-                message = u"Le fichier contient des données incompatibles ou des lignes déjà existantes."
-                self.ui.statusbar.showMessage(message, 4000)
+            Excel.import_obligation(filename)
+            message = u"Le fichier a été importé avec succès."
+            self.ui.statusbar.showMessage(message, 4000)
+            # if rep == 1:
+            # elif rep == 0:
+            #     message = u"Certains champs sont manquants."
+            #     self.ui.statusbar.showMessage(message, 4000)
+            # elif rep == -1:
+            #     message = u"Le fichier contient des données incompatibles ou des lignes déjà existantes."
+            #     self.ui.statusbar.showMessage(message, 4000)
+
+    def export_excel(self):
+        rws = GisementScreen().ui.tableWidgetActifs.rowCount()
+        cls = GisementScreen().ui.tableWidgetActifs.columnCount()
+        headers = GisementScreen().ui.tableWidgetActifs.horizontalHeader()
+        data = list()
+        myrow = list()
+        for row in range(rws):
+            for col in range(cls):
+                myrow.append(GisementScreen().ui.tableWidgetActifs.item(row, col).text())
+            data.append(myrow)
+        Excel.export_to_excel(headers, data, "/Users/mar/Desktop", "Export.xls")
 
     def open_excel(self):
         # lancer le FileDialog

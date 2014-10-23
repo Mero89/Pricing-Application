@@ -36,7 +36,11 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         self.user = User()
 
     @QtCore.pyqtSlot()
-    def affichePortefeuille(self):
+    def affiche_portefeuille(self):
+        """
+        Retourne la liste à afficher.
+        :return:
+        """
         self.ui.tableWidgetPortefeuille.itemSelectionChanged.connect(self.update_assets)
         g = Gestion()
         pf = g.portefeuille_of_manager(uid=self.user.uid)
@@ -49,10 +53,15 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
                    round(el.duration(), 4))
             self.ui.tableWidgetPortefeuille.insertRow(idx)
             TU.insert_row(self.ui.tableWidgetPortefeuille, row, idx)
-
         self.ui.tableWidgetPortefeuille.resizeRowsToContents()
 
     def asset_of_portefeuille(self, p_isin, date_eval=None):
+        """
+        Retourne les actifs du portefeuille.
+        :param p_isin:
+        :param date_eval:
+        :return:
+        """
         # (Obligation, Qt) <- Portefeuille.obligations
         # ponderation <- Portefeuille.ponderation(isin)
         if date_eval is None:
@@ -288,8 +297,8 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         if gisement:
             self.populate_table_portefeuille(self.ui.tableWidgetGisementPortefeuille, gisement)
 
-
-    def populate_table_portefeuille(self, table, pf_list):
+    @staticmethod
+    def populate_table_portefeuille(table, pf_list):
         """
         Remplit une tableWidget [table] par les informations fournies dans [pf_list]
         :param table:
@@ -385,6 +394,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
                 self.ui.tableWidgetStructure.clearFocus()
                 quant.setText(str(old_value))
             else:
+                self.tell_status(u"quantite mise à jour")
                 self.ui.tableWidgetStructure.clearFocus()
 
     def edit_quantite(self):
@@ -491,6 +501,8 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
             self.ui.comboBoxSelect.setCompleter(comp)
             self.ui.comboBoxSelect.addItems(combo_list)
 
+    def tell_status(self, status):
+        self.parent.ui.statusbar.showMessage(status, 3200)
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)
