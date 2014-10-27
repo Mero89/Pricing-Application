@@ -267,7 +267,7 @@ def print_list(mylist):
 
 
 def main():
-    repo = '/Users/mar/PycharmProjects/DPricer/DPricer/data/repository'
+    # repo = '/Users/mar/PycharmProjects/DPricer/DPricer/data/repository'
     path = '/Users/mar/Desktop'
     filename = 'DPricer-Export.xls'
     headers = ['header'] * 4

@@ -16,7 +16,7 @@ class Coupon(object):
 
     def __init__(self, date_coupon, tx_facial=None, nominal=None, amortissement=None, coupon=None):
         if date_coupon is not None:
-            self.date_coupon = self.validate_date(date_coupon)
+            self.date_coupon = validate_date(date_coupon)
         self.taux_facial = float(tx_facial)
         self.nominal = float(nominal)
         if amortissement is not None:
@@ -56,16 +56,6 @@ class Coupon(object):
         if d_coupon == self.date_coupon:
             return self.coupon
 
-    @staticmethod
-    def validate_date(_date):
-        """
-        Valide une date.
-        """
-        if type(_date) is str:
-            return dt.datetime.strptime(_date, '%d/%m/%Y').date()
-        else:
-            return _date
-
 
 class Echeancier(object):
     """
@@ -76,8 +66,8 @@ class Echeancier(object):
     """
 
     def __init__(self, debut, fin, periode, echelle='a'):
-        self.debut = self.validate_date(debut)
-        self.fin = self.validate_date(fin)
+        self.debut = validate_date(debut)
+        self.fin = validate_date(fin)
         self.periode = periode
         self.echelle = echelle
 
@@ -133,17 +123,6 @@ class Echeancier(object):
             elif echelle == 'd':
                 delta = dt.timedelta(days=periode)
                 return _date + delta
-
-    @staticmethod
-    def validate_date(_date):
-        """
-        Valide une date
-        :param _date: datetime.date
-        """
-        if type(_date) is str:
-            return dt.datetime.strptime(_date, '%d/%m/%Y').date()
-        else:
-            return _date
 
 
 class EcheancierDB(object):
@@ -245,16 +224,16 @@ class Obligation(object):
         if d_eval is None:
             self.date_evaluation = dt.date.today()
         elif d_eval is not None:
-            self.date_evaluation = self.validate_date(d_eval)
-        self.date_emission = self.validate_date(d_em)
-        self.date_jouissance = self.validate_date(d_j)
-        self.date_echeance = self.validate_date(d_ech)
+            self.date_evaluation = validate_date(d_eval)
+        self.date_emission = validate_date(d_em)
+        self.date_jouissance = validate_date(d_j)
+        self.date_echeance = validate_date(d_ech)
         # END VALIDATION
         if cal.isleap(self.date_evaluation.year):
             self.baseA = 366
-        self.nominal = self.validate_float(nominal)
-        self.tx_facial = self.validate_float(tx_f)
-        self.spread = self.validate_float(spread)
+        self.nominal = validate_float(nominal)
+        self.tx_facial = validate_float(tx_f)
+        self.spread = validate_float(spread)
         # Maturité initiale
         self.maturite_initiale = (self.date_echeance - self.date_emission).days
         # Maturite residuelle
@@ -389,21 +368,30 @@ class Obligation(object):
         dur = self.sensibilite() * (1 + self.tx_actuariel + self.spread)
         return round(dur, 4)
 
-    @staticmethod
-    def validate_date(_date):
-        if type(_date) is str:
-            return dt.datetime.strptime(_date, '%d/%m/%Y').date()
-        else:
-            return _date
 
-    @staticmethod
-    def validate_float(number):
-        if number is None or number == '':
-            return 0
-        if isinstance(number, float):
-            return number
-        else:
-            return float(number)
+##### ext functions #####
+def validate_date(_date):
+    if type(_date) is str:
+        return dt.datetime.strptime(_date, '%d/%m/%Y').date()
+    else:
+        return _date
+
+
+def validate_float(number):
+    if number is None or number == '':
+        return 0
+    if isinstance(number, float):
+        return number
+    else:
+        return float(number)
+
+# --><-- .....A Completer..... --><--
+def load_model(md):
+    dico = {'nominal': md.nominal,
+            'tx_f': md.taux_facial, 'd_em': md.date_emission,
+            'd_j': md.date_jouissance, 'd_ech': md.maturite,
+            'd_eval': dt.date.today(), 'spread': md.spread}
+    return Obligation(**dico)
 
 if __name__ == '__main__':
     # prix = 101752 MAD, ISIN = 100581

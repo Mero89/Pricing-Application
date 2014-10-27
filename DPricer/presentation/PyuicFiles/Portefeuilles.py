@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/Portefeuilles.ui'
 #
-# Created: Fri Oct 10 12:04:06 2014
+# Created: Thu Oct 23 16:44:33 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,6 +27,7 @@ class Ui_Portefeuilles(object):
     def setupUi(self, Portefeuilles):
         Portefeuilles.setObjectName(_fromUtf8("Portefeuilles"))
         Portefeuilles.resize(722, 595)
+        Portefeuilles.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.verticalLayout = QtGui.QVBoxLayout(Portefeuilles)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         spacerItem = QtGui.QSpacerItem(20, 12, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
@@ -241,15 +242,15 @@ class Ui_Portefeuilles(object):
         item = self.tableWidgetActifs.horizontalHeaderItem(1)
         item.setText(_translate("Portefeuilles", "Nom", None))
         item = self.tableWidgetActifs.horizontalHeaderItem(2)
-        item.setText(_translate("Portefeuilles", "Quantite", None))
-        item = self.tableWidgetActifs.horizontalHeaderItem(3)
-        item.setText(_translate("Portefeuilles", "Poids", None))
-        item = self.tableWidgetActifs.horizontalHeaderItem(4)
         item.setText(_translate("Portefeuilles", "Prix", None))
-        item = self.tableWidgetActifs.horizontalHeaderItem(5)
+        item = self.tableWidgetActifs.horizontalHeaderItem(3)
         item.setText(_translate("Portefeuilles", "Sensibilité", None))
-        item = self.tableWidgetActifs.horizontalHeaderItem(6)
+        item = self.tableWidgetActifs.horizontalHeaderItem(4)
         item.setText(_translate("Portefeuilles", "Duration", None))
+        item = self.tableWidgetActifs.horizontalHeaderItem(5)
+        item.setText(_translate("Portefeuilles", "Quantite", None))
+        item = self.tableWidgetActifs.horizontalHeaderItem(6)
+        item.setText(_translate("Portefeuilles", "Poids", None))
         item = self.tableWidgetActifs.horizontalHeaderItem(7)
         item.setText(_translate("Portefeuilles", "Convexité", None))
 

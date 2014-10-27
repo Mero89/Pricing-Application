@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/Gisement.ui'
 #
-# Created: Thu Oct  9 15:58:34 2014
+# Created: Thu Oct 23 16:34:49 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!

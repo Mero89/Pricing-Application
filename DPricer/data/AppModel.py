@@ -87,9 +87,6 @@ class ObligationMd(DeferredReflection, Base):
     __tablename__ = 'obligations'
     __table_args__ = {'schema': target_schema}
 
-    def get_name(self):
-        return self.nom
-
 
 class EcheancierMd(DeferredReflection, Base):
     """

@@ -119,6 +119,12 @@ def afficher_gisement():
     return result
 
 
+def maroc_clear_to_isin(mc):
+    if isinstance(mc, str):
+        s = mc.split('MA')[1].strip()[3:9]
+        return s
+
+
 def supprimer_obligation(isin):
     md = AppModel()
     session = md.get_session()

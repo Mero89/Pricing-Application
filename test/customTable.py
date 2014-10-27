@@ -5,6 +5,7 @@ import sys
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 from DPricer.data.AppModel import AppModel, ObligationMd, PanierMd
+from math import *
 
 
 class MyTable(QTableWidget):
@@ -15,6 +16,7 @@ class MyTable(QTableWidget):
         policy.setHorizontalStretch(1)
         self.setSizePolicy(policy)
         self.session = AppModel().get_session()
+        self.itemChanged.connect(self.evaluate)
         # self.set_headers(self.headers)
 
     def set_headers(self, h_list):
@@ -33,6 +35,17 @@ class MyTable(QTableWidget):
             rw_idx = data.index(el)
             self.insertRow(rw_idx)
             self.insert_row(el, rw_idx, offset)
+
+    def evaluate(self):
+        """
+        :param idx:
+        :return:
+        """
+        idx = self.currentIndex()
+        inputed = unicode(self.itemFromIndex(idx).text())
+        expr = inputed.split('=')[1].strip()
+        value = eval(expr)
+        self.itemFromIndex(idx).setText(str(value))
 
 
 def set_headers(table, h_list):
@@ -60,7 +73,7 @@ def put_row(table, row_pos, keys, db_elmt):
     col_pos = 0
     db_dico = dict(db_elmt.__dict__)
     for el in keys:
-        if db_dico.has_key(el):
+        if el in db_dico:
             item = QTableWidgetItem(unicode(db_dico[el]))
             table.setItem(row_pos, col_pos, item)
             col_pos += 1

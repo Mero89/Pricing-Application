@@ -35,7 +35,7 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
 
     @QtCore.pyqtSlot()
     def filter_by_date(self):
-        _date = self.convert_qdate(self.ui.dateEditFilter.date().getDate())
+        _date = convert_qdate(self.ui.dateEditFilter.date().getDate())
         self.data = self.session.query(CourbeMd).filter_by(date_req=_date).all()
         if self.data:
             self.ui.lineEditTransaction.setText(str(self.data[0].date_transaction.strftime('%d/%m/%Y')))
@@ -58,14 +58,11 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
                 TU.put_row(self.ui.tableWidgetCourbe, row, keys, el)
                 self.ui.tableWidgetCourbe.setItem(row, len(keys), mat_residuelle)
 
-    def convert_qdate(self, _qdate):
-        return dt.date(_qdate[0], _qdate[1], _qdate[2])
-
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)
 
     def calcul_maturite(self):
-        cc = Courbe(self.convert_qdate(self.ui.dateEditFilter.date().getDate()))
+        cc = Courbe(convert_qdate(self.ui.dateEditFilter.date().getDate()))
         value = self.ui.maturiteLineEdit.text()
         if value:
             maturite = int(value)
@@ -79,6 +76,10 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
         # define key event
         if e.key() == QtCore.Qt.Key_W:
             self.close()
+
+
+def convert_qdate(_qdate):
+    return dt.date(_qdate[0], _qdate[1], _qdate[2])
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

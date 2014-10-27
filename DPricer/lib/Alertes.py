@@ -2,62 +2,52 @@
 __author__ = 'F.Marouane'
 
 import os
-import pickle
+from collections import deque
 import shelve
 import datetime as dt
 import os.path as path
+from DPricer.lib.Obligation import Echeancier
+from DPricer.data.AppModel import AppModel, ObligationMd
 
 
 class AlertManager(object):
-    """
-    Classe qui gère les alertes de l'application.
-    """
-    _alerts = {}
-    _dbname = 'Alerts.db'
-
     def __init__(self):
-        self.filename = 'serial alerts.pkl'
-        self.pathfile = path.join(os.getcwdu(), 'serial', self.filename)
+        self.working_directory = os.getcwdu()
+        self.filename = 'dbAlerts.db'
+        self.dst_path = path.join(self.working_directory, 'serial', self.filename)
+        self.coupon_alerts = deque()
+        self.infine_alerts = deque()
 
-    def launch_alerts(self):
+    def shelve_alerts(self):
+        dbalerts = shelve.open(self.dst_path, writeback=True)
+        dbalerts['coupons'] = self.coupon_alerts
+        dbalerts['remboursement'] = self.infine_alerts
         pass
 
-    def create_alert(self, alert):
-        if alert in self._alerts:
-            return self._alerts[alert]
-        self._alerts[alert] = alert
+    def unshelve_alerts(self):
+        dbalerts = shelve.open(self.dst_path, writeback=True)
+        self.coupon_alerts = dbalerts['coupons']
+        self.infine_alerts = dbalerts['remboursement']
+        print len(dbalerts['coupons'])
 
     def load_alerts(self):
+        s = AppModel().get_session()
+        res = s.query(ObligationMd).all()
+        ech = [Echeancier(el.date_jouissance.replace(year=el.date_jouissance.year+1), el.maturite, 1).echeancier()
+               for el in res]
+        next_coupons = [[ec for ec in el if ec > dt.date.today()] for el in ech]
+        print 'test  =====> ', len(next_coupons)
+        alerts = list()
+        for el in next_coupons:
+            if len(el) >= 1:
+                alerts.append(el[0])
+        self.coupon_alerts = deque(alerts)
 
-        f = file(self.pathfile, 'rb')
-        self._alerts = pickle.load(f)
-        f.close()
+    def check_alerts(self):
 
-    def save_alerts(self):
-        filename = 'serial alerts.pkl'
-        pathfile = path.join(self.serial_path, filename)
-        f = file(pathfile, 'wb')
-        # pickle.dump(self._alerts, f)
-        pkl = shelve
-        f.close()
-
-
-class AssetAlert(object):
-    """
-    Classe qui représente les alertes liées aux futures échéances des actifs.
-    """
-    def __init__(self, alert_date):
-        self.alert_date = alert_date
-        pass
-
-    def check_assets(self):
         pass
 
 if __name__ == '__main__':
     am = AlertManager()
-    # am.create_alert('an Alert')
-    # aa = AssetAlert(dt.date.today())
-    # am.create_alert(aa)
-    # am.save_alerts()
+    am.unshelve_alerts()
     am.load_alerts()
-    print am._alerts

@@ -451,7 +451,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         selection = self.gisement_screen.ui.tableWidgetActifs.selectedIndexes()
         if len(selection) >= 1:
             liste_actifs = [str(self.gisement_screen.ui.tableWidgetActifs.itemFromIndex(el).text())
-                                  for el in selection if el.column() == 0]
+                            for el in selection if el.column() == 0]
             if self.current_pf:
                 [p.add_oblig_to_portefeuille(self.current_pf, isin) for isin in liste_actifs]
         self.gisement_screen.ui.tableWidgetActifs.clearSelection()
@@ -503,6 +503,9 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
 
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)
+
+
+##### ext functions #####
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

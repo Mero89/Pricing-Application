@@ -105,7 +105,11 @@ class Portefeuille(object):
         qt = Panier().quantite(self.p_isin, isin)
         obl = self.oblig_from_isin(isin)
         val = obl.prix() * qt
-        return float(val/self.total)
+        try:
+            pond = float(val/self.total)
+        except ZeroDivisionError:
+            pond = 0
+        return pond
 
 
 if __name__ == '__main__':

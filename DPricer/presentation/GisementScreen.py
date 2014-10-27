@@ -7,7 +7,7 @@ import datetime as dt
 from PyQt4.QtGui import *
 from PyQt4 import QtCore
 
-import TableUtils as TU
+import TableUtils as Tu
 from DPricer.presentation.PyuicFiles.AddAssetDialog import Ui_AddAsset
 from DPricer.presentation.PyuicFiles.Gisement import Ui_Gisement
 from ConfirmDialog import ConfirmDialog
@@ -53,7 +53,7 @@ class GisementScreen(QWidget, Ui_Gisement):
             self.parent.ui.dateEvalEdit.dateChanged.connect(self.update_date)
 
     def update_date(self):
-        self.date_eval = self.convert_qdate(self.parent.ui.dateEvalEdit.date().getDate())
+        self.date_eval = convert_qdate(self.parent.ui.dateEvalEdit.date().getDate())
         try:
             self.populate_table()
         except IndexError:
@@ -148,15 +148,11 @@ class GisementScreen(QWidget, Ui_Gisement):
         self.isin_list = [el.isin for el in self.data]
         self.nom_list = [el.nom for el in self.data]
 
-    @staticmethod
-    def convert_qdate(_qdate):
-        return dt.date(_qdate[0], _qdate[1], _qdate[2])
-
     def export_excel(self):
         rws = self.ui.tableWidgetActifs.rowCount()
         cls = self.ui.tableWidgetActifs.columnCount()
         data = list()
-        headers = TU.get_headers(self.ui.tableWidgetActifs, 0, cls)
+        headers = Tu.get_headers(self.ui.tableWidgetActifs, 0, cls)
         for row in range(rws):
             myrow = list()
             for col in range(cls):
@@ -188,8 +184,8 @@ class GisementScreen(QWidget, Ui_Gisement):
                     calcul = [obl.prix(), obl.sensibilite(), obl.duration(), 'Not Implemented', obl.tx_actuariel +
                               obl.spread]
                 self.ui.tableWidgetActifs.setRowHeight(row, 27)
-                TU.put_row(self.ui.tableWidgetActifs, row, keys, el)
-                TU.insert_row(self.ui.tableWidgetActifs, calcul, row, offset=len(keys))
+                Tu.put_row(self.ui.tableWidgetActifs, row, keys, el)
+                Tu.insert_row(self.ui.tableWidgetActifs, calcul, row, offset=len(keys))
         else:
             self.ui.tableWidgetActifs.setRowCount(1)
 
@@ -234,21 +230,21 @@ class UpdateAsset(QWidget, Ui_AddAsset):
         self.ui.nominalLineEdit.setText(data['nominal'])
         self.ui.doubleSpinBoxTauxFacial.setValue(float(data['taux_facial'])*100)
         self.ui.doubleSpinBoxSpread.setValue(float(data['spread'])*100)
-        self.ui.dateEditDateEmission.setDate(self.date_to_qdate(data['date_emission']))
-        self.ui.dateEditDateJouissance.setDate(self.date_to_qdate(data['date_jouissance']))
-        self.ui.dateEditDateEcheance.setDate(self.date_to_qdate(data['maturite']))
+        self.ui.dateEditDateEmission.setDate(date_to_qdate(data['date_emission']))
+        self.ui.dateEditDateJouissance.setDate(date_to_qdate(data['date_jouissance']))
+        self.ui.dateEditDateEcheance.setDate(date_to_qdate(data['maturite']))
         self.ui.typeComboBox.setCurrentIndex(int(indices_choix[data['type']]))
 
     def get_data(self):
         # extrait les données saisies
         self.data['isin'] = str(self.ui.isinLineEdit.text())
         self.data['nom'] = unicode(self.ui.nomLineEdit.text())
-        self.data['nominal'] = self.validate_float(self.ui.nominalLineEdit.text())
+        self.data['nominal'] = validate_float(self.ui.nominalLineEdit.text())
         self.data['taux_facial'] = self.ui.doubleSpinBoxTauxFacial.value() / 100.
         self.data['spread'] = self.ui.doubleSpinBoxSpread.value() / 100.
-        self.data['date_emission'] = self.convert_qdate(self.ui.dateEditDateEmission.date().getDate())
-        self.data['date_jouissance'] = self.convert_qdate(self.ui.dateEditDateJouissance.date().getDate())
-        self.data['maturite'] = self.convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
+        self.data['date_emission'] = convert_qdate(self.ui.dateEditDateEmission.date().getDate())
+        self.data['date_jouissance'] = convert_qdate(self.ui.dateEditDateJouissance.date().getDate())
+        self.data['maturite'] = convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
         self.data['type'] = self.choix[str(self.ui.typeComboBox.currentIndex())]
         # self.data['forcee'] = self.ui.forcerCheckBox.isChecked()
         if self.data['maturite'] > dt.date.today():
@@ -278,23 +274,6 @@ class UpdateAsset(QWidget, Ui_AddAsset):
             self.tell_status(u'Une erreur est survenue lors de la modification.')
             self.tell_status(e.message)
 
-    @staticmethod
-    def validate_float(_num):
-        if _num == '':
-            return 0
-        else:
-            return float(_num)
-
-    @staticmethod
-    def date_to_qdate(_sdate):
-        _date = dt.datetime.strptime(str(_sdate), '%Y-%m-%d')
-        _qdate = QtCore.QDate(_date.year, _date.month, _date.day)
-        return _qdate
-
-    @staticmethod
-    def convert_qdate(_qdate):
-        return dt.date(_qdate[0], _qdate[1], _qdate[2])
-
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)
 
@@ -321,12 +300,12 @@ class AddAsset(QWidget, Ui_AddAsset):
         # extrait les données saisies
         self.data['isin'] = str(self.ui.isinLineEdit.text())
         self.data['nom'] = unicode(self.ui.nomLineEdit.text())
-        self.data['nominal'] = self.validate_float(self.ui.nominalLineEdit.text())
+        self.data['nominal'] = validate_float(self.ui.nominalLineEdit.text())
         self.data['taux_facial'] = self.ui.doubleSpinBoxTauxFacial.value()/100.
         self.data['spread'] = self.ui.doubleSpinBoxSpread.value()/100.
-        self.data['date_emission'] = self.convert_qdate(self.ui.dateEditDateEmission.date().getDate())
-        self.data['date_jouissance'] = self.convert_qdate(self.ui.dateEditDateJouissance.date().getDate())
-        self.data['maturite'] = self.convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
+        self.data['date_emission'] = convert_qdate(self.ui.dateEditDateEmission.date().getDate())
+        self.data['date_jouissance'] = convert_qdate(self.ui.dateEditDateJouissance.date().getDate())
+        self.data['maturite'] = convert_qdate(self.ui.dateEditDateEcheance.date().getDate())
         self.data['type'] = self.choix[str(self.ui.typeComboBox.currentIndex())]
         # self.data['forcee'] = self.ui.forcerCheckBox.isChecked()
         if self.data['maturite'] > dt.date.today():
@@ -365,25 +344,30 @@ class AddAsset(QWidget, Ui_AddAsset):
                 self.tell_status(u'Actif non ajouté.')
                 session.rollback()
                 self.tell_status(e.message)
-    @staticmethod
-    def validate_float(_num):
-        if _num == '':
-            return 0
-        else:
-            return float(_num)
-
-    @staticmethod
-    def date_to_qdate(_date):
-        _qdate = QtCore.QDate(_date.year, _date.month, _date.day)
-        return _qdate
-
-    @staticmethod
-    def convert_qdate(_qdate):
-        return dt.date(_qdate[0], _qdate[1], _qdate[2])
 
     def tell_status(self, status):
         self.parent.ui.statusbar.showMessage(status, 3200)
 
+
+####### Ext functions ########
+def convert_qdate(_qdate):
+    return dt.date(_qdate[0], _qdate[1], _qdate[2])
+
+
+def date_to_qdate(_date):
+    if isinstance(_date, dt.date):
+        _qdate = QtCore.QDate(_date.year, _date.month, _date.day)
+    elif isinstance(_date, str) or isinstance(_date, QtCore.QString):
+        d = str(_date).split('-')
+        _qdate = QtCore.QDate(int(d[0]), int(d[1]), int(d[2]))
+    return _qdate
+
+
+def validate_float(_num):
+    if _num == '':
+        return 0
+    else:
+        return float(_num)
 
 if __name__ == '__main__':
     ap = QApplication(sys.argv)

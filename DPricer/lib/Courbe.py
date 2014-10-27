@@ -58,11 +58,11 @@ class Courbe(CourbeMd):
                 borne_sup = dico_sup[0][1]
             except IndexError:
                 ii = Interpol(self.liste_taux, self.liste_maturite)
-                return ii.i_lineaire(maturite)
+                return round(ii.i_lineaire(maturite), 5)
             # selectionne la borne supérieure de la maturité désirée
             if maturite in self.liste_maturite:
                 ii = Interpol(self.liste_taux, self.liste_maturite)
-                return ii.i_lineaire(maturite)
+                return round(ii.i_lineaire(maturite), 5)
             elif maturite < 365 <= borne_sup:
                 """
                 Cas où la borne sup (taux) est actuarielle
@@ -79,7 +79,7 @@ class Courbe(CourbeMd):
                 nv_liste_maturite = [i[1] for i in dico_inf] + [i[1] for i in dico_sup]
                 ii = Interpol(nv_liste_taux, nv_liste_maturite)
                 del copie_dico
-                return ii.i_lineaire(maturite)
+                return round(ii.i_lineaire(maturite), 5)
             elif maturite >= 365 > borne_inf:
                 """
                 Cas où la borne inf (taux) est monétaire
@@ -91,10 +91,10 @@ class Courbe(CourbeMd):
                 nv_liste_maturite = [i[1] for i in dico_inf] + [i[1] for i in dico_sup]
                 ii = Interpol(nv_liste_taux, nv_liste_maturite)
                 del copie_dico
-                return ii.i_lineaire(maturite)
+                return round(ii.i_lineaire(maturite), 5)
             else:
                 ii = Interpol(self.liste_taux, self.liste_maturite)
-                return ii.i_lineaire(maturite)
+                return round(ii.i_lineaire(maturite), 5)
 
     def taux_spline(self, maturite):
         """
