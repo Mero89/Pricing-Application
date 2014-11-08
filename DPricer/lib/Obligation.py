@@ -115,7 +115,7 @@ class Echeancier(object):
             elif echelle == 'm':
                 s = divmod(_date.month + periode, 12)
                 if s[1] >= 1:
-                    return _date.replace(month=s[1], year=_date.year + s[0])
+                    return _date.replace(year=_date.year + s[0], month=s[1])
                 elif s[1] == 0 and s[0] > 1:
                     return _date.replace(year=_date.year + s[0])
                 elif s[1] == 0 and s[0] == 1:
@@ -351,13 +351,14 @@ class Obligation(object):
         :return: float
         """
         real_price = self.prix()
+        var = .0001
         if self.tx_actuariel is not None and self.tx_actuariel != 0:
-            self.tx_actuariel += .01
+            self.tx_actuariel += var
             new_price = self.prix()
-            self.tx_actuariel -= .01
+            self.tx_actuariel -= var
             try:
                 r = abs(new_price - real_price) / real_price
-                return round(r * 100, 4)
+                return round(r/var, 5)
             except ZeroDivisionError:
                 return 0
         else:
@@ -384,6 +385,7 @@ def validate_float(number):
         return number
     else:
         return float(number)
+
 
 # --><-- .....A Completer..... --><--
 def load_model(md):

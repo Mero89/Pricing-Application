@@ -1,7 +1,7 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
 
-from DPricer.data.AppModel import UserMd, AppModel
+from DPricer.data.AppModel import UserMd, AppModel, GestionMd, PortefeuilleMd
 from Gestion import Gestion
 
 
@@ -111,3 +111,9 @@ class User(object):
         g = Gestion()
         pf_list = g.portefeuille_of_manager(self.uid)
         return pf_list
+
+    def managed_portfolios(self):
+        session = AppModel().get_session()
+        res = session.query(GestionMd).filter_by(user=UserMd(self.uid)).all()
+        pfs = [el.portefeuille for el in res]
+        return pfs

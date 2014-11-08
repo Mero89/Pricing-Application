@@ -19,7 +19,7 @@ class Portefeuille(object):
             self.date_eval = self.validate_date(d_eval)
         self.p_isin = p_isin
         self.session = md.get_session()
-        self.nom = str(self.session.query(PortefeuilleMd.nom).filter_by(p_isin=self.p_isin).first()[0])
+        self.nom = unicode(self.session.query(PortefeuilleMd.nom).filter_by(p_isin=self.p_isin).first()[0])
         # renvoie aussi la quantité. => [(ISIN, Qt)]
         self.actifs = self.load_actifs()
         # ==> [..., [Obligation ,Qt], ....]

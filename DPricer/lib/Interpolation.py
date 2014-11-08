@@ -25,8 +25,15 @@ class Interpol(object):
         :return: float
         """
         x, y = np.array(self.liste_maturite), np.array(self.liste_taux)
-        fl = interp1d(x, y)
-        return float(fl(cible))
+        if cible > max(x):
+            f_p = (x[-2], y[-2])
+            l_p = (x[-1], y[-1])
+            return self.extrapolate(f_p, l_p, cible)
+        try:
+            fl = interp1d(x, y)
+            return float(fl(cible))
+        except ValueError as e:
+            print e.message
 
     def i_quadratique(self, cible):
         """
@@ -47,3 +54,24 @@ class Interpol(object):
         x, y = np.array(self.liste_maturite), np.array(self.liste_taux)
         fl = interp1d(x, y, kind='cubic')
         return float(fl(cible))
+
+    @staticmethod
+    def extrapolate(f_point, l_point, target):
+        """
+        Retourne la valeur extrapolée de la cible à partir
+        des deux derniers points.
+        l'extrapolation est linéaire.
+        :param f_point: tuple
+        :param l_point: tuple
+        :param target: float
+        :return: float
+        """
+        dy = l_point[1] - f_point[1]
+        dx = l_point[0] - f_point[0]
+        try:
+            a = float(dy) / dx
+        except ZeroDivisionError:
+            pass
+        b = 0.5 * ((l_point[1] + f_point[1]) - a * (l_point[0] + f_point[0]))
+        value = a * target + b
+        return value

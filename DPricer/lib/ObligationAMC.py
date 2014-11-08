@@ -77,9 +77,9 @@ class ObligationAMC(Obligation):
         liste_coeff = [el[1] for el in self.zc_dico]
         liste_tx = [el[0] for el in self.zc_dico]
         i = Interpol(liste_tx, liste_coeff)
-        return i.i_lineaire(coeff)
+        return round(i.i_lineaire(coeff), 5)
 
-    def sensibilite(self, sensi=.001):
+    def sensibilite(self, sensi=.0001):
         """
         Calcule la sensibilité de l'actif.
         :type sensi: float
@@ -88,7 +88,7 @@ class ObligationAMC(Obligation):
         real_price = self.prix()
         new_price = self.prix(sensi)
         r = abs(new_price - real_price) / real_price
-        return round(r * 100, 4)
+        return round(r/sensi, 6)
 
     def duration(self):
         """
@@ -97,16 +97,16 @@ class ObligationAMC(Obligation):
         """
         # Duration se calcule depuis la sensibilité => Duration =Sensi*(1+Tr)
         dur = self.sensibilite() * (1 + self.tx_actuariel + self.spread)
-        return round(dur, 4)
+        return round(dur, 6)
 
 if __name__ == '__main__':
     nom = 100000
-    tx_fac = 0.037
+    tx_fac = 0.0442
     date_emission = '20/12/2006'
     date_jouissance = '20/12/2006'
     d_ech = '20/12/2021'
     date_eval = '22/9/2014'
-    spread = 0.002
+    spread = 0.004
     # prix: 54306.09
     # obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech)
     # obl = ObligationAMC(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, spread)

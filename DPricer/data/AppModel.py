@@ -3,7 +3,7 @@ __author__ = 'F.Marouane'
 
 import DPricer.configure as cfg
 import sqlalchemy
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base, DeferredReflection
 
 
@@ -94,6 +94,7 @@ class EcheancierMd(DeferredReflection, Base):
     """
     __tablename__ = 'echeancier'
     __table_args__ = {'schema': target_schema}
+    actif = relationship("ObligationMd")
 
 
 class PanierMd(DeferredReflection, Base):
@@ -102,6 +103,8 @@ class PanierMd(DeferredReflection, Base):
     """
     __tablename__ = 'panier'
     __table_args__ = {'schema': target_schema}
+    portefeuille = relationship("PortefeuilleMd")
+    actif = relationship("ObligationMd")
 
 
 class PortefeuilleMd(DeferredReflection, Base):
@@ -118,7 +121,8 @@ class GestionMd(DeferredReflection, Base):
     """
     __tablename__ = 'gestion'
     __table_args__ = {'schema': target_schema}
-
+    user = relationship("UserMd")
+    portefeuille = relationship("PortefeuilleMd")
 
 class UserMd(DeferredReflection, Base):
     """
@@ -127,9 +131,17 @@ class UserMd(DeferredReflection, Base):
     __tablename__ = 'users'
     __table_args__ = {'schema': target_schema}
 
-"""
-### Schema de la BDD ###
 
+class MBI(DeferredReflection, Base):
+    """
+    Classe du benchmark.
+    """
+    __tablename__ = 'users'
+    __table_args__ = {'schema': target_schema}
+
+
+### Schema de la BDD ###
+"""
 TABLE courbe :
         PRIMARY KEY (id)
         id SERIAL,
