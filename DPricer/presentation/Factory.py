@@ -49,7 +49,6 @@ class DateEdit(QtGui.QDateEdit):
     def convert_qdate(self, _qdate):
         return datetime.date(_qdate[0], _qdate[1], _qdate[2])
 
-
     def date_to_qdate(self, _date):
         if isinstance(_date, datetime.date):
             _qdate = QtCore.QDate(_date.year, _date.month, _date.day)
@@ -83,7 +82,6 @@ class InputBox(QtGui.QWidget):
         self.build_model_form(update=update)
         self.set_ui()
 
-
     def build_model_form(self, update=False):
         """
         Build the form.
@@ -104,7 +102,6 @@ class InputBox(QtGui.QWidget):
                 elif isinstance(fields[el], float):
                     item = QtGui.QDoubleSpinBox()
                     item.setObjectName(el)
-
                     self.form_layout.addRow(lbl, item)
                 # Si Date, datetime.date
                 elif isinstance(fields[el], datetime.date):
@@ -189,12 +186,8 @@ class InputBox(QtGui.QWidget):
                 inputs[key] = obj.checkState()
         else:
             return inputs
-        # obj = self.findChild(RateSpinBox, name=QtCore.QString(unicode("taux_facial")))
-        # inputs["taux_facial"] = obj.get_value()
-        # return inputs
 
-
-####### Utils Functions #####
+####### Utils Functions #######
 def convert_qdate(_qdate):
     return datetime.date(_qdate[0], _qdate[1], _qdate[2])
 
