@@ -124,6 +124,7 @@ class GestionMd(DeferredReflection, Base):
     user = relationship("UserMd")
     portefeuille = relationship("PortefeuilleMd")
 
+
 class UserMd(DeferredReflection, Base):
     """
         Classe de la table Users.

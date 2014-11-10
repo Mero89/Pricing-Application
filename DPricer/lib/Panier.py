@@ -18,16 +18,16 @@ class Panier(object):
         md = AppModel()
         self.session = md.get_session()
 
-    def quantite(self, p_isin, isin):
+    def get_quantite(self, p_isin, isin):
         """
         Retourne la quantité de l'actif de code [ISIN] dans le portefeuille
         de code [P_ISIN].
         :param p_isin: str
         :param isin: str
-        :return: int
+        :return: PanierMd
         """
         res = self.session.query(PanierMd).filter_by(p_isin=str(p_isin), isin=str(isin)).first()
-        return res.quantite
+        return res
 
     def oblig_of_portefeuille(self, p_isin):
         """

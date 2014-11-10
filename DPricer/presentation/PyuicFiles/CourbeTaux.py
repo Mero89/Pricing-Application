@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'PycharmProjects/DPricer/DPricer/presentation/Designer-Files/CourbeTaux.ui'
 #
-# Created: Fri Oct 17 18:14:01 2014
+# Created: Sun Nov  9 01:06:50 2014
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,11 +26,11 @@ except AttributeError:
 class Ui_CourbeTaux(object):
     def setupUi(self, CourbeTaux):
         CourbeTaux.setObjectName(_fromUtf8("CourbeTaux"))
-        CourbeTaux.resize(674, 550)
+        CourbeTaux.resize(677, 550)
         CourbeTaux.setMaximumSize(QtCore.QSize(1678976, 123456))
         CourbeTaux.setFocusPolicy(QtCore.Qt.ClickFocus)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(CourbeTaux)
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.gridLayout = QtGui.QGridLayout(CourbeTaux)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.groupBox = QtGui.QGroupBox(CourbeTaux)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -146,7 +146,31 @@ class Ui_CourbeTaux(object):
         self.tableWidgetCourbe.verticalHeader().setSortIndicatorShown(True)
         self.tableWidgetCourbe.verticalHeader().setStretchLastSection(False)
         self.verticalLayout_2.addWidget(self.tableWidgetCourbe)
-        self.horizontalLayout_2.addWidget(self.groupBox)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.addLigneButton = QtGui.QToolButton(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.addLigneButton.setFont(font)
+        self.addLigneButton.setObjectName(_fromUtf8("addLigneButton"))
+        self.horizontalLayout_2.addWidget(self.addLigneButton)
+        self.removeLigneButton = QtGui.QToolButton(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.removeLigneButton.setFont(font)
+        self.removeLigneButton.setObjectName(_fromUtf8("removeLigneButton"))
+        self.horizontalLayout_2.addWidget(self.removeLigneButton)
+        self.updateLigneButton = QtGui.QToolButton(self.groupBox)
+        self.updateLigneButton.setObjectName(_fromUtf8("updateLigneButton"))
+        self.horizontalLayout_2.addWidget(self.updateLigneButton)
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem2)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 1)
         self.groupBox_2 = QtGui.QGroupBox(CourbeTaux)
         self.groupBox_2.setTitle(_fromUtf8(""))
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
@@ -182,9 +206,9 @@ class Ui_CourbeTaux(object):
         self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_2.setObjectName(_fromUtf8("line_2"))
         self.verticalLayout.addWidget(self.line_2)
-        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem2)
-        self.horizontalLayout_2.addWidget(self.groupBox_2)
+        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem3)
+        self.gridLayout.addWidget(self.groupBox_2, 0, 1, 1, 1)
         self.saisirMaturitLabel.setBuddy(self.maturiteLineEdit)
 
         self.retranslateUi(CourbeTaux)
@@ -206,6 +230,9 @@ class Ui_CourbeTaux(object):
         item.setText(_translate("CourbeTaux", "Date Echeance", None))
         item = self.tableWidgetCourbe.horizontalHeaderItem(4)
         item.setText(_translate("CourbeTaux", "Transactions", None))
+        self.addLigneButton.setText(_translate("CourbeTaux", "+", None))
+        self.removeLigneButton.setText(_translate("CourbeTaux", "-", None))
+        self.updateLigneButton.setText(_translate("CourbeTaux", "modif", None))
         self.saisirMaturitLabel.setText(_translate("CourbeTaux", "Saisir &maturité", None))
         self.maturiteLineEdit.setPlaceholderText(_translate("CourbeTaux", "jours", None))
         self.tauxDActualisationLabel.setText(_translate("CourbeTaux", "Taux d\'actualisation", None))

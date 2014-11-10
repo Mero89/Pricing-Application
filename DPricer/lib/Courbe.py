@@ -9,7 +9,7 @@ from DPricer.data.AppModel import AppModel, CourbeMd
 from Interpolation import Interpol
 
 
-class Courbe(CourbeMd):
+class Courbe(object):
     """
     Classe Courbe
     """
@@ -18,24 +18,22 @@ class Courbe(CourbeMd):
         initialise la courbe selon le jour recherché
         :param: date_du_jour: si CDC entrer la date au format 'jj/mm/aaaa'
         """
-        md = AppModel()
         self.baseA = 365
         self.intervalle = range(56, 92)
-        self.req = md.session.query(CourbeMd)
+        self.session = AppModel().get_session()
         if type(date_du_jour) is str:
             self.date_du_jour = datetime.datetime.strptime(date_du_jour, '%d/%m/%Y').date()
         else:
             self.date_du_jour = date_du_jour
         if cal.isleap(self.date_du_jour.year):
             self.baseA = 366
-        res = self.req.filter_by(date_req=self.date_du_jour).all()
+        res = self.session.query(CourbeMd).filter_by(date_req=self.date_du_jour).all()
         self.date_de_transaction = res[0].date_transaction
         self.liste_taux = [c.taux_pondere for c in res]
         self.liste_maturite = [abs((c.date_echeance - c.date_valeur).days) for c in res]
         # retourne une liste de doublets : [taux, maturite_res]
         self.liste_dico = zip(self.liste_taux, self.liste_maturite)
         self.point_minimal = [el for el in self.liste_dico if el[1] in self.intervalle][0]
-        md.close_session()
 
     def taux_lineaire(self, maturite):
         """
@@ -167,19 +165,7 @@ class Courbe(CourbeMd):
         del n, b
         return tx_monetaire
 
-    def get_liste_taux(self):
-        """
-        :return: float
-        """
-        return self.liste_taux
-
-    def get_liste_maturite(self):
-        """
-        :return: list
-        """
-        return self.liste_maturite
-
-    def zc_dico(self):
+    def zc_list(self):
         """
         Retourne une liste de zéro-coupons
         :return: list
@@ -208,6 +194,17 @@ class Courbe(CourbeMd):
             return zip(liste_zc, range(1, 22))
 
     @staticmethod
+    def load_from_model(courbe_md):
+        """
+        Instancie objet Courbe depuis model.
+        :param courbe_md: CourbeMd
+        :return:
+        """
+        if isinstance(courbe_md, CourbeMd):
+            ob = Courbe(courbe_md.date_req)
+            return ob
+
+    @staticmethod
     def price(tf, ta, p):
         px = []
         for i in range(1, p):
@@ -229,5 +226,3 @@ if __name__ == '__main__':
     c = Courbe(d)
     tx = c.taux_lineaire(400)
     print tx
-    print c.get_liste_taux()
-    print c.get_liste_maturite()

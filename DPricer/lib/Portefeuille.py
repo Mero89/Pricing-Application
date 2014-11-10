@@ -102,9 +102,9 @@ class Portefeuille(object):
         :param isin:
         :return:
         """
-        qt = Panier().quantite(self.p_isin, isin)
+        qt = Panier().get_quantite(self.p_isin, isin)
         obl = self.oblig_from_isin(isin)
-        val = obl.prix() * qt
+        val = obl.prix() * qt.quantite
         try:
             pond = float(val/self.total)
         except ZeroDivisionError:

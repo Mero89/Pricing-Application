@@ -28,7 +28,7 @@ class ObligationAMC(Obligation):
         self.forcee = forcee
         self.amortissement = self.montant_amortissement()
         self.principal = len(self.coeff_actuariels()) * self.amortissement
-        self.zc_dico = self.courbe.zc_dico()
+        self.zerocoupon_list = self.courbe.zc_list()
 
     def montant_amortissement(self):
         """
@@ -74,8 +74,8 @@ class ObligationAMC(Obligation):
         :type coeff: float
         :return: float
         """
-        liste_coeff = [el[1] for el in self.zc_dico]
-        liste_tx = [el[0] for el in self.zc_dico]
+        liste_coeff = [el[1] for el in self.zerocoupon_list]
+        liste_tx = [el[0] for el in self.zerocoupon_list]
         i = Interpol(liste_tx, liste_coeff)
         return round(i.i_lineaire(coeff), 5)
 
