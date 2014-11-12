@@ -15,6 +15,7 @@ from DPricer.lib.Controller import DateEval
 from DPricer.data.AppModel import ObligationMd, AppModel
 from DPricer.lib.Obligation import Obligation
 from DPricer.lib.ObligationAMC import ObligationAMC
+from DPricer.lib.CrediLog import Credilog
 from DPricer.data import Excel
 
 
@@ -148,14 +149,33 @@ class GisementScreen(QWidget, Ui_Gisement):
         self.isin_list = [el.isin for el in self.data]
         self.nom_list = [el.nom for el in self.data]
 
+    # def export_excel(self):
+    #     rws = self.ui.tableWidgetActifs.rowCount()
+    #     cls = self.ui.tableWidgetActifs.columnCount()
+    #     data = list()
+    #     headers = Tu.get_headers(self.ui.tableWidgetActifs, 0, cls)
+    #     for row in range(rws):
+    #         myrow = list()
+    #         for col in range(cls):
+    #             i = self.ui.tableWidgetActifs.item(row, col)
+    #             if i:
+    #                 myrow.append(unicode(i.text()))
+    #         data.append(myrow)
+    #     Excel.export_to_excel(headers, data, "/Users/mar/Desktop", "Export.xls")
+
     def export_excel(self):
-        rws = self.ui.tableWidgetActifs.rowCount()
+        rws = len(self.data)
         cls = self.ui.tableWidgetActifs.columnCount()
         data = list()
+        keys = ['isin', 'nom', 'nominal', 'taux_facial', 'spread', 'date_emission', 'date_jouissance', 'maturite',
+                'type', 'echue', 'forcee']
         headers = Tu.get_headers(self.ui.tableWidgetActifs, 0, cls)
         for row in range(rws):
             myrow = list()
-            for col in range(cls):
+            for el in keys:
+                myrow.append(self.data[row].__dict__[el])
+            # Add calculated fields
+            for col in range(len(keys), cls):
                 i = self.ui.tableWidgetActifs.item(row, col)
                 if i:
                     myrow.append(unicode(i.text()))
@@ -178,11 +198,14 @@ class GisementScreen(QWidget, Ui_Gisement):
                                      d_eval=self.date_eval, spread=el.spread)
                     calcul = [obl.prix(), obl.sensibilite(), obl.duration(), 'Not Implemented', obl.tx_actuariel +
                               obl.spread]
-                elif el.type == 'AMC':
+                elif el.type == 'AMC' and el.isin != u'5032':
                     obl = ObligationAMC(el.nominal, el.taux_facial, el.date_emission, el.date_jouissance, el.maturite,
                                         d_eval=self.date_eval, spread=el.spread)
                     calcul = [obl.prix(), obl.sensibilite(), obl.duration(), 'Not Implemented', obl.tx_actuariel +
                               obl.spread]
+                elif el.isin == u'5032':
+                    obl = Credilog(date_eval=self.date_eval)
+                    calcul = [obl.prix(), obl.sensibilite()]
                 self.ui.tableWidgetActifs.setRowHeight(row, 27)
                 Tu.put_row(self.ui.tableWidgetActifs, row, keys, el)
                 Tu.insert_row(self.ui.tableWidgetActifs, calcul, row, offset=len(keys))

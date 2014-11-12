@@ -100,6 +100,7 @@ class Echeancier(object):
                 e = self.incremente(e, p, self.echelle)
             else:
                 echeancier.append(st)
+                echeancier.reverse()
             return echeancier
 
     @staticmethod
@@ -372,7 +373,7 @@ class Obligation(object):
 
 ##### ext functions #####
 def validate_date(_date):
-    if type(_date) is str:
+    if isinstance(_date, str):
         return dt.datetime.strptime(_date, '%d/%m/%Y').date()
     else:
         return _date
@@ -402,13 +403,16 @@ if __name__ == '__main__':
     # lumpy.make_reference()
     nom = 100000
     tx_fac = .0416
-    date_emission = '18/06/2014'
-    date_jouissance = '20/06/2014'
-    d_ech = '20/06/2017'
-    date_eval = '2/10/2014'
+    date_emission = '30/04/2014'
+    date_jouissance = '30/04/2014'
+    d_ech = '10/04/2022'
+    ech = Echeancier(date_emission, d_ech, 3, 'm')
+    e = ech.echeancier()
+
+    # date_eval = '2/10/2014'
     # tx_act = 0.04
-    spread = .0060
-    obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, spread=spread)
+    # spread = .0060
+    # obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, spread=spread)
     # print obl.coeff_actuariels()
     # for el in obl.coupons():
     #     print el

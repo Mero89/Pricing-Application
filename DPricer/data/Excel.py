@@ -237,6 +237,7 @@ def export_to_excel(headers, data, path, filename):
     :return:
     """
     header_style = xlwt.easyxf('font: name Menlo, bold True, height 280, colour blue;')
+    date_style = xlwt.easyxf(num_format_str='YYYY-MM-DD')
     if os.path.exists(path):
         w = xlwt.Workbook()
         s = w.add_sheet('Export', cell_overwrite_ok=True)
@@ -252,7 +253,10 @@ def export_to_excel(headers, data, path, filename):
             row = s.row(r_idx)
             c_idx = 0
             for col in rw:
-                row.write(c_idx, unicode(col))
+                if isinstance(col, dt):
+                    row.write(c_idx, col, date_style)
+                else:
+                    row.write(c_idx, col)
                 c_idx += 1
             r_idx += 1
         ### save filename on path ###

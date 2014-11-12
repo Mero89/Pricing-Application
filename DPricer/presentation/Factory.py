@@ -187,6 +187,59 @@ class InputBox(QtGui.QWidget):
         else:
             return inputs
 
+
+class TableBox(QtGui.QTableWidget):
+    def __init__(self, model, parent=None):
+        QtGui.QTableWidget.__init__(self, parent=parent)
+        self.model = model
+        self.data = list()
+        self.header = self.set_headers()
+        self.customize_view()
+        self.setup_actions()
+        self.show()
+
+    # def define_headers(self):
+    #     self.setHorizontalHeaderLabels(self.set_headers())
+    #     pass
+    def customize_view(self):
+        self.setSelectionBehavior(1)
+        self.setSortingEnabled(True)
+        self.horizontalHeader().setStretchLastSection(True)
+        self.horizontalHeader().setSortIndicatorShown(True)
+
+    def put_model(self, model, row):
+        col_pos = 0
+        db_dico = dict(model.__dict__)
+        self.insertRow(row)
+        for el in self.header:
+            if el in db_dico:
+                item = QtGui.QTableWidgetItem(unicode(db_dico[el]))
+                self.setItem(row, col_pos, item)
+                col_pos += 1
+
+    def set_headers(self):
+        h_list = self.model.__mapper__.columns.keys()
+        self.setColumnCount(len(h_list))
+        header_list = QtCore.QStringList(h_list)
+        self.setHorizontalHeaderLabels(header_list)
+        return h_list
+
+    def show_data(self, data):
+        e = enumerate(data)
+        self.data = list(e)
+        for el in self.data:
+            t.put_model(el[1], el[0])
+
+    @QtCore.pyqtSlot()
+    def get_selected_object(self):
+        idx = self.currentRow()
+        obj = self.data[idx][1]
+        print obj.isin, obj.nom
+        # return obj
+
+    def setup_actions(self):
+        self.itemSelectionChanged.connect(self.get_selected_object)
+
 ####### Utils Functions #######
 def convert_qdate(_qdate):
     return datetime.date(_qdate[0], _qdate[1], _qdate[2])
@@ -203,8 +256,12 @@ def date_to_qdate(_date):
 if __name__ == '__main__':
     ap = QtGui.QApplication(sys.argv)
     s = AppModel().get_session()
-    u = s.query(ObligationMd).filter_by(isin="100503").first()
-    i = InputBox(u, update=True)
-    print i.get_input()
-    i.show()
+    u = s.query(ObligationMd).all()
+    e = list(enumerate(u))
+    # print e
+    # i = InputBox(u, update=True)
+    # print i.get_input()
+    # i.show()
+    t = TableBox(ObligationMd)
+    t.show_data(u)
     ap.exec_()

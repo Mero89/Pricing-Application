@@ -9,6 +9,10 @@ import calendar as cal
 
 
 class Credilog(object):
+    """
+    *  Vérifier zc_list() de la classe Courbe.
+    ** Vérifier la liste d'itération des dates.
+    """
     def __init__(self, date_eval, isin='5032'):
         self.isin = isin
         self.baseA = 365.
@@ -59,7 +63,8 @@ class Credilog(object):
         """
         montant_restant = float(self.montant_restant)
         ech = self.coeff_echeancier()
-        vect_coupon = [0.252054795]+ech[1:]
+        # vect_coupon = [0.252054795]+ech[1:]
+        vect_coupon = [0.25]*len(ech)
         # vect_coupon = [0.252054795, 0.246575342, 0.249315068, 0.252054795,
         #                0.25136612, 0.24863388, 0.24863388, 0.25136612,
         #                0.252054795, 0.246575342, 0.249315068, 0.252054795,
@@ -67,7 +72,8 @@ class Credilog(object):
         #                0.252054795, 0.246575342, 0.249315068, 0.252054795,
         #                0.25136612, 0.24863388, 0.24863388, 0.25136612,
         #                0.252054795, 0.246575342, 0.249315068, 0.252054795,
-        #                0.252054795 , 0.246575342]
+        #                0.252054795, 0.246575342]
+        # print 'avg ==> ', sum(vect_coupon)/len(vect_coupon)
         ordre = 0
         px = 0
         index = 0
@@ -79,11 +85,32 @@ class Credilog(object):
             next_coupon = self.echeancier[index].amortissement + val_coupon
             # print 'Montant Coupon: {} au: {} actualisé au taux: {}'.format(next_coupon, index, tx_zc)
             van = next_coupon * pow(1 + tx_zc + sensi + self.db.spread, -ordre)
-            print van
+            # print van
             montant_restant -= self.echeancier[index].amortissement
             index += 1
             px += van
         return px
+
+    def sensibilite(self, sensi=.0001):
+        """
+        Calcule la sensibilité de l'actif.
+        :type sensi: float
+        :return: float
+        """
+        real_price = self.prix()
+        new_price = self.prix(sensi)
+        r = abs(new_price - real_price) / real_price
+        return round(r / sensi, 6)
+
+    def duration(self):
+        """
+        Calcule la duration de l'actif.
+        :return: float
+        """
+        # Duration se calcule depuis la sensibilité => Duration =Sensi*(1+Tr)
+        # dur = self.sensibilite() * (1 + self.db.taux_actuariel + self.db.spread)
+        # return round(dur, 6)
+        pass
 
     def interp_zc(self, coeff):
         """
@@ -108,4 +135,6 @@ if __name__ == '__main__':
     # print len(log.coeff_echeancier())
     # print log.zerocoupon_list
     print 'Prix ==', log.prix()
+    # print 'Prix ==', log.duration()
+    print 'Sensi ==', log.sensibilite()
     # print log.interp_zc(0.1739130435)+log.db.spread

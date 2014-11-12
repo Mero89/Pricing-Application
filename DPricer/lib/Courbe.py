@@ -170,7 +170,8 @@ class Courbe(object):
         Retourne une liste de zéro-coupons
         :return: list
         """
-        head = [(self.monetaire_actuel(el[0], el[1]), el[1] / 365.) for el in self.liste_dico if el[1] < 365]
+        # head = [(self.monetaire_actuel(el[0], el[1]), el[1] / 365.) for el in self.liste_dico if el[1] < 365]
+        head = [(el[0], el[1] / 365.) for el in self.liste_dico if el[1] < 365]
         zc_dico = self.zero_coupon()
         tx1jour = self.monetaire_actuel(self.point_minimal[0], 1)
         pr = [(tx1jour, 1 / 365.)]
