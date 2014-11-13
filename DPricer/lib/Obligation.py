@@ -1,5 +1,4 @@
 ﻿# coding=utf-8
-
 __author__ = 'F.Marouane'
 
 import calendar as cal
@@ -24,7 +23,7 @@ class Coupon(object):
         elif coupon is not None:
             self.coupon = coupon
         else:
-            self.coupon = self.nominal * self.taux_facial
+            self.coupon = round(self.nominal * self.taux_facial, 3)
         if cal.isleap(self.date_coupon.year):
             self.base = 366
         else:
@@ -360,7 +359,7 @@ class Obligation(object):
             try:
                 r = abs(new_price - real_price) / real_price
                 return round(r/var, 5)
-            except ZeroDivisionError:
+            except (ZeroDivisionError, TypeError):
                 return 0
         else:
             return 0
@@ -389,11 +388,11 @@ def validate_float(number):
 
 
 # --><-- .....A Completer..... --><--
-def load_model(md):
+def load_model(md, date_eval):
     dico = {'nominal': md.nominal,
             'tx_f': md.taux_facial, 'd_em': md.date_emission,
             'd_j': md.date_jouissance, 'd_ech': md.maturite,
-            'd_eval': dt.date.today(), 'spread': md.spread}
+            'd_eval': date_eval, 'spread': md.spread, 'le_type': md.type}
     return Obligation(**dico)
 
 if __name__ == '__main__':
