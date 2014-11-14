@@ -70,7 +70,7 @@ class Echeancier(object):
         self.periode = periode
         self.echelle = echelle
 
-    def echeancier(self, flag=1):
+    def echeancier(self, flag=-1):
         return self.digest(self.debut, self.fin, self.periode, flag)
 
     def coupons(self, tx_facial=0, nominal=0):
@@ -80,7 +80,7 @@ class Echeancier(object):
             coupons.append(Coupon(ech[i], tx_facial, nominal))
         return coupons
 
-    def digest(self, start, end, periode, flag=1):
+    def digest(self, start, end, periode, flag=-1):
         echeancier = list()
         st = start
         e = end
@@ -244,7 +244,8 @@ class Obligation(object):
             self.tx_actuariel = self.courbe.taux_lineaire(self.mat_residuelle)
         elif tx_act is not None:
             self.tx_actuariel = tx_act
-        self.e = Echeancier(self.date_jouissance.replace(year=self.date_jouissance.year+1), self.date_echeance, 1)
+        # self.e = Echeancier(self.date_jouissance.replace(year=self.date_jouissance.year+1), self.date_echeance, 1)
+        self.e = Echeancier(self.date_jouissance, self.date_echeance, 1)
 
     def is_atypique_droite(self):
         de = self.date_echeance
@@ -265,12 +266,11 @@ class Obligation(object):
 
     def echeancier(self):
         return self.e.echeancier()
-        pass
 
     def coeff_echeancier(self):
         ech = self.e.echeancier()
         coeff_echeancier = list()
-        p = [el for el in ech if el > self.date_evaluation]
+        p = [el for el in ech if el >= self.date_evaluation]
         p.insert(0, self.date_evaluation)
         for i in range(len(p) - 1):
             delta = abs((p[i + 1] - p[i]).days)
@@ -287,9 +287,10 @@ class Obligation(object):
         p = 0
         coeff_act = list()
         for i in range(len(coeff_echeancier)):
-            p += coeff_echeancier[i]
-            coeff = pow(1 / (1 + taux + spread), p)
-            coeff_act.append(coeff)
+            if i != 0:
+                p += coeff_echeancier[i]
+                coeff = pow(1 / (1 + taux + spread), p)
+                coeff_act.append(coeff)
         return coeff_act
 
     def coupons(self):
@@ -307,11 +308,14 @@ class Obligation(object):
         if self.date_echeance <= dt.date.today():
             return 0
         else:
+            # Si le titre est monétaire
             if self.maturite_initiale < 365 and self.mat_residuelle < 365:
                 tx_act = (self.tx_actuariel + self.spread) * self.mat_residuelle / self.base
                 tx_facial = self.tx_facial * self.maturite_initiale / self.base
                 prix = self.nominal * (1 + tx_facial) / (1 + tx_act)
                 return round(prix, 2)
+            # Si la maturité résiduelle du titre est monétaire, sa maturité initiale est actuarielle
+            # et ne contient qu'un seul paiement
             elif self.mat_residuelle < 365 < self.maturite_initiale:
                 if not self.is_atypique_gauche() or self.no_more_atypique():
                     # Si ligne Normale
@@ -325,17 +329,20 @@ class Obligation(object):
                     tx_act = (self.tx_actuariel + self.spread) * self.mat_residuelle / self.base
                     prix = self.nominal * (1 + tx_facial) / (1 + tx_act)
                     return round(prix, 2)
-            elif self.mat_residuelle > 365 and self.maturite_initiale > 365:
+            elif self.mat_residuelle >= 365 and self.maturite_initiale >= 365:
                 # Integre tous les cas pour calculer le prix de l'obligation
                 # en utilisant la méthode de l'echeancier et des coefficients de l'écheancier
                 coeff_act = self.coeff_actuariels(self.tx_actuariel, self.spread)
                 coupons = self.coupons()
+                print 'coupons ==> ', coupons
                 tableau = zip(coeff_act, coupons)
                 px = 0
                 for el in tableau:
-                    px += el[0]*el[1].coupon
+                    px += round(el[0]*el[1].coupon, 3)
+                    print 'coupon ==> ', px
                 else:
-                    px += self.nominal * coeff_act[-1]
+                    px += round(self.nominal * coeff_act[-1], 3)
+                    print 'nominal ==> ', round(self.nominal * coeff_act[-1], 3)
                 return px
 
     def get_params(self):

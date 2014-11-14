@@ -65,7 +65,7 @@ class Panier(object):
         # Si l'oblig n'existe pas
         if pan is None:
             # On ajoute une entrée
-            rw = PanierMd(isin=str(isin), p_isin=str(p_isin), quantite=1)
+            rw = PanierMd(isin=unicode(isin), p_isin=unicode(p_isin), quantite=1)
             self.session.add(rw)
             try:
                 self.session.commit()

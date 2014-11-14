@@ -5,7 +5,7 @@ from DPricer.data.AppModel import AppModel, EcheancierMd, ObligationMd
 from DPricer.lib.Courbe import Courbe
 from Interpolation import Interpol
 import datetime as dt
-import calendar as cal
+# import calendar as cal
 
 
 class Credilog(object):
