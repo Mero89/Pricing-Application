@@ -31,6 +31,9 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         self.parent = parent
         self.date_eval = DateEval().date_eval
         self.title = 'Mes Portefeuilles'
+        # self.export_action = QAction()
+        # self.export_menu = QMenu()
+        # self.export_menu.addAction(self.export_action)
         self.setWindowTitle(self.title)
         self.ui.tableWidgetPortefeuille.setAlternatingRowColors(True)
         self.user = User()

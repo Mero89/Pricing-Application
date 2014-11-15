@@ -77,7 +77,8 @@ class Courbe(object):
                 nv_liste_maturite = [i[1] for i in dico_inf] + [i[1] for i in dico_sup]
                 ii = Interpol(nv_liste_taux, nv_liste_maturite)
                 del copie_dico
-                return round(ii.i_lineaire(maturite), 5)
+                # return round(ii.i_lineaire(maturite), 5)
+                return ii.i_lineaire(maturite)
             elif maturite >= 365 > borne_inf:
                 """
                 Cas où la borne inf (taux) est monétaire
@@ -89,7 +90,8 @@ class Courbe(object):
                 nv_liste_maturite = [i[1] for i in dico_inf] + [i[1] for i in dico_sup]
                 ii = Interpol(nv_liste_taux, nv_liste_maturite)
                 del copie_dico
-                return round(ii.i_lineaire(maturite), 5)
+                # return round(ii.i_lineaire(maturite), 5)
+                return ii.i_lineaire(maturite)
             else:
                 ii = Interpol(self.liste_taux, self.liste_maturite)
                 return round(ii.i_lineaire(maturite), 5)
