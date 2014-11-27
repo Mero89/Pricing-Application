@@ -140,8 +140,7 @@ class MBI(DeferredReflection, Base):
     __tablename__ = 'users'
     __table_args__ = {'schema': target_schema}
 
-
-### Schema de la BDD ###
+# Schema de la BDD ###
 """
 TABLE courbe :
         PRIMARY KEY (id)

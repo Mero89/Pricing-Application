@@ -334,15 +334,15 @@ class Obligation(object):
                 # en utilisant la méthode de l'echeancier et des coefficients de l'écheancier
                 coeff_act = self.coeff_actuariels(self.tx_actuariel, self.spread)
                 coupons = self.coupons()
-                print 'coupons ==> ', coupons
+                # print 'coupons ==> ', coupons
                 tableau = zip(coeff_act, coupons)
                 px = 0
                 for el in tableau:
                     px += round(el[0]*el[1].coupon, 3)
-                    print 'coupon ==> ', px
+                    # print 'coupon ==> ', px
                 else:
                     px += round(self.nominal * coeff_act[-1], 3)
-                    print 'nominal ==> ', round(self.nominal * coeff_act[-1], 3)
+                    # print 'nominal ==> ', round(self.nominal * coeff_act[-1], 3)
                 return px
 
     def get_params(self):

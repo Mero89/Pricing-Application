@@ -351,7 +351,10 @@
       </general>
     </ddl-file-settings>
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.2 (/Library/Frameworks/Python.framework/Versions/2.7/bin/python)" project-jdk-type="Python SDK" />
+  <component name="IpnbSettings">
+    <option name="URL" value="http://127.0.0.1:8888" />
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.8 (~/anaconda/bin/python)" project-jdk-type="Python SDK" />
   <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false">
     <option name="USER" value="" />
     <option name="PASSWORD" value="" />
@@ -371,4 +374,3 @@
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
   </component>
 </project>
-

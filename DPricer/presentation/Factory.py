@@ -59,6 +59,29 @@ class DateEdit(QtGui.QDateEdit):
 
 
 class InputBox(QtGui.QWidget):
+    _model_view = {'date_echeance': u"Date d'échéance",
+                   'transactions': u'Transactions',
+                   'date_req': u"Date d'évaluation",
+                   'date_transaction': u"Date de transaction",
+                   'date_valeur': u"Date de valeur",
+                   'taux_pondere': u"Taux Pondéré",
+                   'maturite': u"Date d'échéance",
+                   'isin': u"ISIN",
+                   'date_jouissance': u"Date de jouissance",
+                   'nominal': u"Nominal",
+                   'p_isin': u"ISIN Portefeuille",
+                   'spread': u"Spread",
+                   'date_emission': u"Date d'émission",
+                   'taux_facial': u"Taux facial",
+                   'type': u"Type",
+                   'nom': u"Nom",
+                   'prenom': u"Prénom",
+                   'mail': u"@Mail",
+                   'password': u"Mot de passe",
+                   'uname': u"Nom d'utilisateur",
+                   'echue': u"Echue",
+                   'forcee': u"Forcée"
+                   }
 
     _model_dict = {datetime.date: DateEdit,
                    unicode: TextEdit,
@@ -91,7 +114,7 @@ class InputBox(QtGui.QWidget):
         del fields['_sa_instance_state']
         if not update:
             for el in fields.keys():
-                lbl = QtGui.QLabel(el)
+                lbl = QtGui.QLabel(self._model_view[el])
                 lbl.setObjectName(el)
                 # Si texte
                 if isinstance(fields[el], unicode) or isinstance(fields[el], str):
@@ -120,47 +143,48 @@ class InputBox(QtGui.QWidget):
                     self.form_layout.addRow(lbl, item)
         elif update:
             for el in fields.keys():
-                lbl = QtGui.QLabel(el)
-                lbl.setObjectName(el)
-                # Si texte
-                if isinstance(fields[el], unicode) or isinstance(fields[el], str):
-                    item = TextEdit()
-                    item.setObjectName(el)
-                    item.set_value(fields[el])
-                    self.form_layout.addRow(lbl, item)
-                # Si nombre
-                elif isinstance(fields[el], float):
-                    # Vérifie l'ordre de grandeur
-                    if math.log(fields[el]) < -1:
-                        item = RateSpinBox()
+                if el in self._model_view:
+                    lbl = QtGui.QLabel(self._model_view[el])
+                    lbl.setObjectName(el)
+                    # Si texte
+                    if isinstance(fields[el], unicode) or isinstance(fields[el], str):
+                        item = TextEdit()
                         item.setObjectName(el)
                         item.set_value(fields[el])
                         self.form_layout.addRow(lbl, item)
-                    else:
-                        item = QtGui.QDoubleSpinBox()
+                    # Si nombre
+                    elif isinstance(fields[el], float):
+                        # Vérifie l'ordre de grandeur
+                        if math.log(fields[el]) < -1:
+                            item = RateSpinBox()
+                            item.setObjectName(el)
+                            item.set_value(fields[el])
+                            self.form_layout.addRow(lbl, item)
+                        else:
+                            item = QtGui.QDoubleSpinBox()
+                            item.setObjectName(el)
+                            item.setMaximum(9999999)
+                            item.setValue(fields[el])
+                            self.form_layout.addRow(lbl, item)
+                    # Si Date, datetime.date
+                    elif isinstance(fields[el], datetime.date):
+                        item = DateEdit()
                         item.setObjectName(el)
-                        item.setMaximum(9999999)
-                        item.setValue(fields[el])
+                        item.set_value(fields[el])
                         self.form_layout.addRow(lbl, item)
-                # Si Date, datetime.date
-                elif isinstance(fields[el], datetime.date):
-                    item = DateEdit()
-                    item.setObjectName(el)
-                    item.set_value(fields[el])
-                    self.form_layout.addRow(lbl, item)
-                # Si Booléen
-                elif isinstance(fields[el], bool):
-                    item = QtGui.QCheckBox()
-                    item.setObjectName(el)
-                    item.setChecked(fields[el])
-                    self.form_layout.addRow(lbl, item)
-                # Si Entier
-                elif isinstance(fields[el], int):
-                    item = QtGui.QSpinBox()
-                    item.setObjectName(el)
-                    item.setValue(fields[el])
-                    item.setMaximum(9999999)
-                    self.form_layout.addRow(lbl, item)
+                    # Si Booléen
+                    elif isinstance(fields[el], bool):
+                        item = QtGui.QCheckBox()
+                        item.setObjectName(el)
+                        item.setChecked(fields[el])
+                        self.form_layout.addRow(lbl, item)
+                    # Si Entier
+                    elif isinstance(fields[el], int):
+                        item = QtGui.QSpinBox()
+                        item.setObjectName(el)
+                        item.setValue(fields[el])
+                        item.setMaximum(9999999)
+                        self.form_layout.addRow(lbl, item)
 
     def set_ui(self):
         """
@@ -228,7 +252,7 @@ class TableBox(QtGui.QTableWidget):
         e = enumerate(data)
         self.data = list(e)
         for el in self.data:
-            t.put_model(el[1], el[0])
+            self.put_model(el[1], el[0])
 
     @QtCore.pyqtSlot()
     def get_selected_object(self):
@@ -239,6 +263,7 @@ class TableBox(QtGui.QTableWidget):
 
     def setup_actions(self):
         self.itemSelectionChanged.connect(self.get_selected_object)
+
 
 ####### Utils Functions #######
 def convert_qdate(_qdate):
@@ -256,12 +281,12 @@ def date_to_qdate(_date):
 if __name__ == '__main__':
     ap = QtGui.QApplication(sys.argv)
     s = AppModel().get_session()
-    u = s.query(ObligationMd).all()
-    e = list(enumerate(u))
+    u = s.query(ObligationMd).first()
+    # e = list(enumerate(u))
     # print e
-    # i = InputBox(u, update=True)
-    # print i.get_input()
-    # i.show()
-    t = TableBox(ObligationMd)
-    t.show_data(u)
+    i = InputBox(u, update=True)
+    print i.get_input()
+    i.show()
+    # t = TableBox(ObligationMd)
+    # t.show_data(u)
     ap.exec_()
