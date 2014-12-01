@@ -101,7 +101,6 @@ class InputBox(QtGui.QWidget):
         self.sz_policy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         self.setSizePolicy(self.sz_policy)
         self.model = model
-        
         self.build_model_form(update=update)
         self.set_ui()
 
@@ -281,7 +280,7 @@ def date_to_qdate(_date):
 if __name__ == '__main__':
     ap = QtGui.QApplication(sys.argv)
     s = AppModel().get_session()
-    u = s.query(ObligationMd).first()
+    u = s.query(CourbeMd).first()
     # e = list(enumerate(u))
     # print e
     i = InputBox(u, update=True)

@@ -113,5 +113,6 @@ if __name__ == '__main__':
     # print hed
     table.show()
     ap.exec_()
-    # lumpy.object_diagram()
+    # lumpy.object_diagram@rouane
+    
     # lumpy.class_diagram()
