@@ -424,6 +424,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         p = Panier()
         nom = unicode(self.ui.comboBoxSelect.currentText())
         p_isin = [el.p_isin for el in self.user_pf if el.nom == nom]
+        liste_actifs = list()
         if len(p_isin) == 1:
             liste_actifs = p.oblig_of_portefeuille(p_isin[0])
             self.current_pf = p_isin[0]
@@ -434,20 +435,21 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         data = self.actifs_du_portefeuille()
         self.ui.tableWidgetStructure.clearContents()
         self.ui.tableWidgetStructure.setRowCount(len(data))
-        for el in data:
-            idx = data.index(el)
-            isin = QTableWidgetItem(unicode(el[0].isin))
-            nom = QTableWidgetItem(unicode(el[0].nom))
-            quant = QTableWidgetItem(unicode(el[1]))
-            quant.setTextAlignment(QtCore.Qt.AlignHCenter)
+        if data:
+            for el in data:
+                idx = data.index(el)
+                isin = QTableWidgetItem(unicode(el[0].isin))
+                nom = QTableWidgetItem(unicode(el[0].nom))
+                quant = QTableWidgetItem(unicode(el[1]))
+                quant.setTextAlignment(QtCore.Qt.AlignHCenter)
 
-            self.ui.tableWidgetStructure.insertRow(idx)
-            self.ui.tableWidgetStructure.setItem(idx, 0, isin)
-            self.ui.tableWidgetStructure.setItem(idx, 1, nom)
-            self.ui.tableWidgetStructure.setItem(idx, 2, quant)
-        else:
-            self.ui.tableWidgetStructure.resizeColumnToContents(0)
-            self.ui.tableWidgetStructure.resizeColumnToContents(1)
+                self.ui.tableWidgetStructure.insertRow(idx)
+                self.ui.tableWidgetStructure.setItem(idx, 0, isin)
+                self.ui.tableWidgetStructure.setItem(idx, 1, nom)
+                self.ui.tableWidgetStructure.setItem(idx, 2, quant)
+            else:
+                self.ui.tableWidgetStructure.resizeColumnToContents(0)
+                self.ui.tableWidgetStructure.resizeColumnToContents(1)
 
     def add_to_my_portefeuille(self):
         """

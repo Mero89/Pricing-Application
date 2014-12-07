@@ -7,6 +7,8 @@ import datetime
 import sys
 import math
 from DPricer.data.AppModel import *
+from sqlalchemy import *
+import sqlalchemy
 
 
 class RateSpinBox(QtGui.QDoubleSpinBox):
@@ -23,6 +25,21 @@ class RateSpinBox(QtGui.QDoubleSpinBox):
         return self.value()/100
 
 
+class NumericEdit(QtGui.QDoubleSpinBox):
+    def __init__(self, parent=None):
+        QtGui.QDoubleSpinBox.__init__(self, parent)
+        self.setMinimum(-9999999999)
+        self.setMaximum(9999999999)
+        self.setDecimals(2)
+        self.setButtonSymbols(2)
+
+    def get_value(self):
+        return self.value()
+
+    def set_value(self, value):
+        self.setValue(value)
+
+
 class TextEdit(QtGui.QLineEdit):
     def __init__(self, parent=None):
         QtGui.QLineEdit.__init__(self, parent)
@@ -35,7 +52,7 @@ class TextEdit(QtGui.QLineEdit):
 
 
 class DateEdit(QtGui.QDateEdit):
-    def __init__(self, parent=None, popup = True):
+    def __init__(self, parent=None, popup=True):
         QtGui.QDateEdit.__init__(self, parent)
         self.setDisplayFormat("dd/MM/yyyy")
         self.setCalendarPopup(popup)
@@ -46,10 +63,12 @@ class DateEdit(QtGui.QDateEdit):
     def get_value(self):
         return self.convert_qdate(self.date().getDate())
 
-    def convert_qdate(self, _qdate):
+    @staticmethod
+    def convert_qdate(_qdate):
         return datetime.date(_qdate[0], _qdate[1], _qdate[2])
 
-    def date_to_qdate(self, _date):
+    @staticmethod
+    def date_to_qdate(_date):
         if isinstance(_date, datetime.date):
             _qdate = QtCore.QDate(_date.year, _date.month, _date.day)
         elif isinstance(_date, str) or isinstance(_date, QtCore.QString):
@@ -83,7 +102,9 @@ class InputBox(QtGui.QWidget):
                    'forcee': u"Forcée",
                    'date_coupon': u"Date du coupon",
                    'amortissement': u"Amortissement",
-                   'coupon': u"Coupon"
+                   'coupon': u"Coupon",
+                   'date_observation': u"Date d'observation",
+                   'valeur': u"Valeur"
                    }
 
     _model_dict = {datetime.date: DateEdit,
@@ -91,7 +112,7 @@ class InputBox(QtGui.QWidget):
                    str: TextEdit,
                    bool: QtGui.QCheckBox,
                    int: QtGui.QSpinBox,
-                   float: QtGui.QDoubleSpinBox}
+                   float: NumericEdit}
 
     def __init__(self, model=None, parent=None, update=False):
         QtGui.QWidget.__init__(self, parent)
@@ -104,6 +125,11 @@ class InputBox(QtGui.QWidget):
         self.sz_policy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         self.setSizePolicy(self.sz_policy)
         self.model = model
+        if isinstance(model, dict):
+            self.md = self.model
+        else:
+            self.md = dict(self.model.__dict__)
+            del self.md['_sa_instance_state']
         self.build_model_form(update=update)
         self.set_ui()
         self.set_actions()
@@ -114,17 +140,49 @@ class InputBox(QtGui.QWidget):
         :return:
         """
         if not update:
-            self.input_form()
+            self.input_table()
         elif update:
             self.update_form()
+
+    def input_table(self):
+        table = self.model.__table__
+        for col in table.columns:
+            if col.name in self._model_view:
+                lbl = QtGui.QLabel(self._model_view[col.name])
+                lbl.setObjectName(col.name)
+                # Si texte
+                if isinstance(col.type, sqlalchemy.sql.sqltypes.String):
+                    item = TextEdit()
+                    item.setObjectName(col.name)
+                    self.form_layout.addRow(lbl, item)
+                # Si nombre
+                elif isinstance(col.type, sqlalchemy.sql.sqltypes.Float):
+                    item = NumericEdit()
+                    item.setObjectName(col.name)
+                    self.form_layout.addRow(lbl, item)
+                # Si Date, datetime.date
+                elif isinstance(col.type, sqlalchemy.sql.sqltypes.Date):
+                    item = DateEdit()
+                    item.setObjectName(col.name)
+                    self.form_layout.addRow(lbl, item)
+                # Si Booléen
+                elif isinstance(col.type, sqlalchemy.sql.sqltypes.Boolean):
+                    item = QtGui.QCheckBox()
+                    item.setObjectName(col.name)
+                    self.form_layout.addRow(lbl, item)
+                # Si Entier
+                elif isinstance(col.type, sqlalchemy.sql.sqltypes.Integer):
+                    item = QtGui.QSpinBox()
+                    item.setObjectName(col.name)
+                    item.setButtonSymbols(2)
+                    self.form_layout.addRow(lbl, item)
 
     def input_form(self):
         """
         Create an empty form for new entities.
         :return:
         """
-        fields = dict(self.model.__dict__)
-        del fields['_sa_instance_state']
+        fields = self.md
         for el in fields.keys():
             if el in self._model_view:
                 lbl = QtGui.QLabel(self._model_view[el])
@@ -136,7 +194,7 @@ class InputBox(QtGui.QWidget):
                     self.form_layout.addRow(lbl, item)
                 # Si nombre
                 elif isinstance(fields[el], float):
-                    item = QtGui.QDoubleSpinBox()
+                    item = NumericEdit()
                     item.setObjectName(el)
                     self.form_layout.addRow(lbl, item)
                 # Si Date, datetime.date
@@ -153,6 +211,7 @@ class InputBox(QtGui.QWidget):
                 elif isinstance(fields[el], int):
                     item = QtGui.QSpinBox()
                     item.setObjectName(el)
+                    item.setButtonSymbols(2)
                     self.form_layout.addRow(lbl, item)
 
     def update_form(self):
@@ -160,8 +219,7 @@ class InputBox(QtGui.QWidget):
         Create a form for updating the provided model values.
         :return:
         """
-        fields = dict(self.model.__dict__)
-        del fields['_sa_instance_state']
+        fields = self.md
         for el in fields.keys():
             if el in self._model_view:
                 lbl = QtGui.QLabel(self._model_view[el])
@@ -174,18 +232,10 @@ class InputBox(QtGui.QWidget):
                     self.form_layout.addRow(lbl, item)
                 # Si nombre
                 elif isinstance(fields[el], float):
-                    # Vérifie l'ordre de grandeur
-                    if math.log(fields[el]) < -1:
-                        item = RateSpinBox()
-                        item.setObjectName(el)
-                        item.set_value(fields[el])
-                        self.form_layout.addRow(lbl, item)
-                    else:
-                        item = QtGui.QDoubleSpinBox()
-                        item.setObjectName(el)
-                        item.setMaximum(9999999)
-                        item.setValue(fields[el])
-                        self.form_layout.addRow(lbl, item)
+                    item = NumericEdit()
+                    item.setObjectName(el)
+                    item.set_value(fields[el])
+                    self.form_layout.addRow(lbl, item)
                 # Si Date, datetime.date
                 elif isinstance(fields[el], datetime.date):
                     item = DateEdit()
@@ -203,7 +253,8 @@ class InputBox(QtGui.QWidget):
                     item = QtGui.QSpinBox()
                     item.setObjectName(el)
                     item.setValue(fields[el])
-                    item.setMaximum(9999999)
+                    item.setMaximum(9999999999)
+                    item.setButtonSymbols(2)
                     self.form_layout.addRow(lbl, item)
 
     def set_ui(self):
@@ -217,27 +268,61 @@ class InputBox(QtGui.QWidget):
         self.vlayout.addLayout(self.hlayout)
 
     def set_actions(self):
-        self.ok_button.clicked.connect(self.no_button.clicked)
-        self.no_button.clicked.connect()
+        self.ok_button.clicked.connect(self.get_input)
+        self.no_button.clicked.connect(self.close)
 
     def get_input(self):
         # todo: return inputs of all instances type
         inputs = dict()
-        md = dict(self.model.__dict__)
-        del md['_sa_instance_state']
+        md = self.md
         for key in md:
-            obj = self.findChild(self._model_dict[type(md[key])], name=QtCore.QString(unicode(key)))
-            if isinstance(md[key], datetime.date):
-                inputs[key] = obj.get_value()
-            elif isinstance(md[key], unicode) or isinstance(md[key], str):
-                inputs[key] = obj.get_value()
-            elif isinstance(md[key], float):
-                inputs[key] = obj.value()
-            elif isinstance(md[key], bool):
-                inputs[key] = obj.checkState()
+            if md[key] is not None:
+                obj = self.findChild(self._model_dict[type(md[key])], name=QtCore.QString(unicode(key)))
+                if isinstance(md[key], datetime.date):
+                    inputs[key] = obj.get_value()
+                elif isinstance(md[key], unicode) or isinstance(md[key], str):
+                    inputs[key] = obj.get_value()
+                elif isinstance(md[key], float):
+                    inputs[key] = obj.get_value()
+                elif isinstance(md[key], bool):
+                    inputs[key] = obj.checkState()
         else:
+            # print inputs
             print inputs
-            return inputs
+            self.insert_model(inputs)
+            self.close()
+
+    def insert_model(self, dico):
+        """
+        Insert a new row of the given model with the provided dict()
+        :param dico: dict
+        :return:
+        """
+        s = AppModel().get_session()
+        if u'id' in dico.keys():
+            del dico['id']
+        new = self.model.__class__.__call__(**dico)
+        print new
+        print new.__dict__
+        try:
+            s.add(new)
+            s.commit()
+        except Exception as e:
+            print e.message
+
+    def update_model(self, dico):
+        """
+        Update the model with the provided dict()
+        :param dico: dict
+        :return:
+        """
+        s = AppModel().get_session()
+        md = self.md
+        try:
+            s.query(self.model.__class__).filter_by(**md).update(dico)
+            s.commit()
+        except Exception as e:
+            print e.message
 
 
 class TableBox(QtGui.QTableWidget):
@@ -308,12 +393,12 @@ def date_to_qdate(_date):
 
 if __name__ == '__main__':
     ap = QtGui.QApplication(sys.argv)
-    s = AppModel().get_session()
-    u = s.query(EcheancierMd).first()
+    # s = AppModel().get_session()
+    # u = s.query(EcheancierMd).first()
     # e = list(enumerate(u))
     # print e
-    i = InputBox(u, update=False)
-    print i.get_input()
+    # a = dict(coupon=55,isin='azerty')
+    i = InputBox(ObligationMd(), update=False)
     i.show()
     # t = TableBox(ObligationMd)
     # t.show_data(u)
