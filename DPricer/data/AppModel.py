@@ -66,9 +66,10 @@ class AppModel(object):
         """
             Ferme la session du Modele
         """
-        self.session.close()
+        self.__session__['session'].close()
+        self.__session__.clear()
 
-    def start_session(self):
+    def new_session(self):
         """
         retourne un nouvel objet session.
         """

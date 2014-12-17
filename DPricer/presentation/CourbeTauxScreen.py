@@ -71,10 +71,9 @@ class CourbeTaux(QWidget, Ui_CourbeTaux):
                 taux = cc.taux_spline(maturite)
             else:
                 taux = cc.taux_lineaire(maturite)
-            self.ui.tauxLineEdit.setText(str(taux * 100, 6)+' %')
+            self.ui.tauxLineEdit.setText(str(taux*100)+' %')
 
     def add_ligne(self):
-
         pass
 
     def remove_ligne(self):

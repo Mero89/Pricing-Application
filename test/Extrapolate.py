@@ -2,6 +2,7 @@
 __author__ = 'F.Marouane'
 import abc
 
+
 class Person(object):
     def __init__(self, resp=None, est=None):
         self.respect = resp
@@ -32,26 +33,7 @@ def extrapolate(f_point, l_point, target):
     return value
 
 
-class Facade:
-    _instances = 0
-
-    def __call__(self):
-        self._instances +=1
-        # return cls.__init__(cls, *args, **kwargs)
-
-
-class Entite(Facade):
-    def __init__(self):
-        Facade.__call__(self)
-
-    def get_type(self):
-        return type(self)
-
-
 if __name__ == '__main__':
     # f = Facade()
-    e = Entite()
-    d = Entite()
-    print d._instances
-    print e._instances
     # print f._instances
+    print 'ok'

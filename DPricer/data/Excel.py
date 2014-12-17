@@ -253,7 +253,7 @@ def export_to_excel(headers, data, path, filename):
             row = s.row(r_idx)
             c_idx = 0
             for col in rw:
-                if isinstance(col, dt):
+                if isinstance(col, dt.datetime):
                     row.write(c_idx, col, date_style)
                 else:
                     row.write(c_idx, col)

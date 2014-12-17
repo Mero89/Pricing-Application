@@ -212,7 +212,7 @@ class Obligation(object):
     """
 
     def __init__(self, nominal, tx_f, d_em, d_j, d_ech, d_eval=None, spread=0, tx_act=None, nom='', le_type='',
-                 isin=''):
+                 isin='', courbe=None):
         # threading.Thread.__init__(self)
         # si Date evaluation n'est pas definie, elle prend la valeur d'aujourd'hui
         self.base = 360
@@ -240,7 +240,10 @@ class Obligation(object):
         self.mat_residuelle = (self.date_echeance - self.date_evaluation).days
         self.tx_actuariel = 0
         if tx_act is None and self.mat_residuelle > 0:
-            self.courbe = Courbe(self.date_evaluation)
+            if isinstance(courbe, Courbe):
+                self.courbe = courbe
+            else:
+                self.courbe = Courbe(self.date_evaluation)
             self.tx_actuariel = self.courbe.taux_lineaire(self.mat_residuelle)
         elif tx_act is not None:
             self.tx_actuariel = tx_act
@@ -395,11 +398,13 @@ def validate_float(number):
 
 
 # --><-- .....A Completer..... --><--
-def load_model(md, date_eval):
+def load_model(md, date_eval,courbe=None):
     dico = {'nominal': md.nominal,
             'tx_f': md.taux_facial, 'd_em': md.date_emission,
             'd_j': md.date_jouissance, 'd_ech': md.maturite,
-            'd_eval': date_eval, 'spread': md.spread, 'le_type': md.type}
+            'd_eval': date_eval, 'spread': md.spread,
+            'le_type': md.type, 'courbe': courbe,
+            'nom': md.nom, 'isin': md.isin}
     return Obligation(**dico)
 
 if __name__ == '__main__':
