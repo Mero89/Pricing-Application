@@ -31,6 +31,9 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         self.parent = parent
         self.date_eval = DateEval().date_eval
         self.title = 'Mes Portefeuilles'
+        # self.export_action = QAction()
+        # self.export_menu = QMenu()
+        # self.export_menu.addAction(self.export_action)
         self.setWindowTitle(self.title)
         self.ui.tableWidgetPortefeuille.setAlternatingRowColors(True)
         self.user = User()
@@ -49,7 +52,7 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
         self.ui.tableWidgetPortefeuille.setRowCount(len(liste_portefeuille))
         for el in liste_portefeuille:
             idx = liste_portefeuille.index(el)
-            row = (str(el.p_isin), str(el.nom), round(el.prix(), 2), round(el.sensibilite(), 4),
+            row = (unicode(el.p_isin), unicode(el.nom), round(el.prix(), 2), round(el.sensibilite(), 4),
                    round(el.duration(), 4))
             self.ui.tableWidgetPortefeuille.insertRow(idx)
             TU.insert_row(self.ui.tableWidgetPortefeuille, row, idx)
@@ -68,7 +71,7 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
             date_eval = self.date_eval
         else:
             date_eval = date_eval
-        pf = Portefeuille(str(p_isin), date_eval)
+        pf = Portefeuille(unicode(p_isin), date_eval)
         assets = pf.obligations
         # ==> [..., [Obligation ,Qt, Poids], ....]
         pour_afficher = [[el[0], el[1], pf.ponderation(el[0].isin)] for el in assets]
@@ -78,17 +81,18 @@ class Portefeuilles(QWidget, Ui_Portefeuilles):
     def update_assets(self):
         self.ui.tableWidgetActifs.clearContents()
         cur_item = self.ui.tableWidgetPortefeuille.currentItem()
-        p_isin = self.ui.tableWidgetPortefeuille.item(cur_item.row(), 0).text()
-        data = self.asset_of_portefeuille(p_isin)
-        self.ui.tableWidgetActifs.setRowCount(len(data))
-        for el in data:
-            idx = data.index(el)
-            # Qstring because of french letters, Nom, Description, etc...
-            row = (str(el[0].isin), unicode(el[0].nom), round(el[0].prix(), 2), round(el[0].sensibilite(), 4),
-                   round(el[0].duration(), 4), str(el[1]), round(el[2], 4))
-            self.ui.tableWidgetActifs.insertRow(idx)
-            TU.insert_row(self.ui.tableWidgetActifs, row, idx)
-        self.ui.tableWidgetActifs.resizeRowsToContents()
+        if cur_item:
+            p_isin = self.ui.tableWidgetPortefeuille.item(cur_item.row(), 0).text()
+            data = self.asset_of_portefeuille(p_isin)
+            self.ui.tableWidgetActifs.setRowCount(len(data))
+            for el in data:
+                idx = data.index(el)
+                # Qstring because of french letters, Nom, Description, etc...
+                row = (unicode(el[0].isin), unicode(el[0].nom), round(el[0].prix(), 2), round(el[0].sensibilite(), 4),
+                       round(el[0].duration(), 4), unicode(el[1]), round(el[2], 4))
+                self.ui.tableWidgetActifs.insertRow(idx)
+                TU.insert_row(self.ui.tableWidgetActifs, row, idx)
+            self.ui.tableWidgetActifs.resizeRowsToContents()
             # self.ui.tableWidgetActifs.resizeColumnsToContents()
 
     def keyPressEvent(self, e):
@@ -125,9 +129,9 @@ class PortefeuilleDialog(QDialog, Ui_AddPFDialog):
                 isin = self.ui.tableWidget.item(i, 0).text()
                 nom = self.ui.tableWidget.item(i, 1).text()
                 if isin != str and nom != str:
-                    pf_liste.append(PortefeuilleMd(p_isin=str(isin), nom=str(nom)))
+                    pf_liste.append(PortefeuilleMd(p_isin=unicode(isin), nom=unicode(nom)))
                     if self.parent is not None:
-                        g_liste.append(GestionMd(uid=self.parent.user.uid, p_isin=str(isin)))
+                        g_liste.append(GestionMd(uid=self.parent.user.uid, p_isin=unicode(isin)))
         session = AppModel().get_session()
         session.add_all(pf_liste)
         session.commit()
@@ -183,7 +187,7 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         """
         data = dict()
         row = table.currentRow()
-        data['p_isin'] = str(table.item(row, 0).text())
+        data['p_isin'] = unicode(table.item(row, 0).text())
         data['nom'] = unicode(table.item(row, 1).text())
         return data
 
@@ -212,7 +216,7 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         g = Gestion()
         selection = self.ui.tableWidgetGisementPortefeuille.selectedIndexes()
         if len(selection) >= 1:
-            liste_portefeuille = [str(self.ui.tableWidgetGisementPortefeuille.itemFromIndex(el).text())
+            liste_portefeuille = [unicode(self.ui.tableWidgetGisementPortefeuille.itemFromIndex(el).text())
                                   for el in selection if el.column() == 0]
             [g.add_portofolio(self.user.uid, isin) for isin in liste_portefeuille]
             self.affiche_mes_portefeuille()
@@ -225,7 +229,7 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         g = Gestion()
         selection = self.ui.tableWidgetPortefeuilles.selectedIndexes()
         if len(selection) >= 1:
-            liste_portefeuille = [(el.row(), str(self.ui.tableWidgetPortefeuilles.itemFromIndex(el).text()))
+            liste_portefeuille = [(el.row(), unicode(self.ui.tableWidgetPortefeuilles.itemFromIndex(el).text()))
                                   for el in selection if el.column() == 0]
             [g.remove_portofolio(self.user.uid, isin[1]) for isin in liste_portefeuille]
             [self.ui.tableWidgetPortefeuilles.removeRow(isin[0]) for isin in liste_portefeuille]
@@ -259,7 +263,7 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         """
         selection = self.ui.tableWidgetGisementPortefeuille.selectedIndexes()
         if len(selection) >= 1:
-            liste_portefeuille = [(el.row(), str(self.ui.tableWidgetGisementPortefeuille.itemFromIndex(el).text()))
+            liste_portefeuille = [(el.row(), unicode(self.ui.tableWidgetGisementPortefeuille.itemFromIndex(el).text()))
                                    for el in selection if el.column() == 0]
             confirm = ConfirmDialog(self)
             if len(liste_portefeuille) == 1:
@@ -268,8 +272,10 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
                 confirm.set_message(u'Vous êtes sur le point de supprimer les portefeuilles sélectionnés')
             rep = confirm.exec_()
             if rep:
-                trash = [self.session.query(PortefeuilleMd).get(isin[1]) for isin in liste_portefeuille]
-                self.session.delete_all(trash)
+                trash = [self.session.query(PortefeuilleMd).filter_by(isin=isin[1]).delete() for isin in
+                         liste_portefeuille]
+                # self.session.delete_all(trash)
+                print trash
                 try:
                     self.session.commit()
                     self.tell_status(u"Portefeuilles(s) supprimé(s) avec succès.")
@@ -309,8 +315,8 @@ class GererPortefeuille(QWidget, Ui_GererPortefeuilles):
         num_rows = table.rowCount()
         for el in pf_list:
             idx = pf_list.index(el)
-            isin = QTableWidgetItem(str(el.p_isin))
-            nom = QTableWidgetItem(str(el.nom))
+            isin = QTableWidgetItem(unicode(el.p_isin))
+            nom = QTableWidgetItem(unicode(el.nom))
             if idx + 1 >= num_rows:
                 table.insertRow(idx)
             table.setItem(idx, 0, isin)
@@ -343,7 +349,7 @@ class EditPortefeuille(QDialog, Ui_PortefeuilleInput):
         self.ui.nomDuPortefeuilleLineEdit.setText(self.old_data['nom'])
 
     def get_data(self):
-        self.new_data['p_isin'] = str(self.ui.isinLineEdit.text())
+        self.new_data['p_isin'] = unicode(self.ui.isinLineEdit.text())
         self.new_data['nom'] = unicode(self.ui.nomDuPortefeuilleLineEdit.text())
         self.emit(QtCore.SIGNAL('edited'), self.new_data)
 
@@ -385,14 +391,14 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         if curr_row != -1:
             quant = self.ui.tableWidgetStructure.item(curr_row, 2)
             isinitem = self.ui.tableWidgetStructure.item(curr_row, 0)
-            isin = str(isinitem.text())
+            isin = unicode(isinitem.text())
             old_value = self.oldvalue
             new_value = int(quant.text())
             p = Panier()
             rep = p.update_quantite(self.current_pf, isin, new_value)
             if rep == 0:
                 self.ui.tableWidgetStructure.clearFocus()
-                quant.setText(str(old_value))
+                quant.setText(unicode(old_value))
             else:
                 self.tell_status(u"quantite mise à jour")
                 self.ui.tableWidgetStructure.clearFocus()
@@ -418,6 +424,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         p = Panier()
         nom = unicode(self.ui.comboBoxSelect.currentText())
         p_isin = [el.p_isin for el in self.user_pf if el.nom == nom]
+        liste_actifs = list()
         if len(p_isin) == 1:
             liste_actifs = p.oblig_of_portefeuille(p_isin[0])
             self.current_pf = p_isin[0]
@@ -426,21 +433,23 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
 
     def update_panier_screen(self):
         data = self.actifs_du_portefeuille()
+        self.ui.tableWidgetStructure.clearContents()
         self.ui.tableWidgetStructure.setRowCount(len(data))
-        for el in data:
-            idx = data.index(el)
-            isin = QTableWidgetItem(str(el[0].isin))
-            nom = QTableWidgetItem(unicode(el[0].nom))
-            quant = QTableWidgetItem(str(el[1]))
-            quant.setTextAlignment(QtCore.Qt.AlignHCenter)
+        if data:
+            for el in data:
+                idx = data.index(el)
+                isin = QTableWidgetItem(unicode(el[0].isin))
+                nom = QTableWidgetItem(unicode(el[0].nom))
+                quant = QTableWidgetItem(unicode(el[1]))
+                quant.setTextAlignment(QtCore.Qt.AlignHCenter)
 
-            self.ui.tableWidgetStructure.insertRow(idx)
-            self.ui.tableWidgetStructure.setItem(idx, 0, isin)
-            self.ui.tableWidgetStructure.setItem(idx, 1, nom)
-            self.ui.tableWidgetStructure.setItem(idx, 2, quant)
-        else:
-            self.ui.tableWidgetStructure.resizeColumnToContents(0)
-            self.ui.tableWidgetStructure.resizeColumnToContents(1)
+                self.ui.tableWidgetStructure.insertRow(idx)
+                self.ui.tableWidgetStructure.setItem(idx, 0, isin)
+                self.ui.tableWidgetStructure.setItem(idx, 1, nom)
+                self.ui.tableWidgetStructure.setItem(idx, 2, quant)
+            else:
+                self.ui.tableWidgetStructure.resizeColumnToContents(0)
+                self.ui.tableWidgetStructure.resizeColumnToContents(1)
 
     def add_to_my_portefeuille(self):
         """
@@ -450,7 +459,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         p = Panier()
         selection = self.gisement_screen.ui.tableWidgetActifs.selectedIndexes()
         if len(selection) >= 1:
-            liste_actifs = [str(self.gisement_screen.ui.tableWidgetActifs.itemFromIndex(el).text())
+            liste_actifs = [unicode(self.gisement_screen.ui.tableWidgetActifs.itemFromIndex(el).text())
                             for el in selection if el.column() == 0]
             if self.current_pf:
                 [p.add_oblig_to_portefeuille(self.current_pf, isin) for isin in liste_actifs]
@@ -465,7 +474,7 @@ class StructurePortefeuilles(QWidget, Ui_StructurePortefeuille):
         p = Panier()
         selection = self.ui.tableWidgetStructure.selectedIndexes()
         if len(selection) >= 1:
-            liste_actifs = [(el.row(), str(self.ui.tableWidgetStructure.itemFromIndex(el).text()))
+            liste_actifs = [(el.row(), unicode(self.ui.tableWidgetStructure.itemFromIndex(el).text()))
                                   for el in selection if el.column() == 0]
             [p.delete_oblig_from_portefeuille(self.current_pf, isin[1]) for isin in liste_actifs]
             [self.ui.tableWidgetStructure.removeRow(isin[0]) for isin in liste_actifs]

@@ -10,6 +10,10 @@ from DPricer.lib.Obligation import Echeancier
 from DPricer.data.AppModel import AppModel, ObligationMd
 
 
+class CouponException(Exception):
+    pass
+
+
 class AlertManager(object):
     def __init__(self):
         self.working_directory = os.getcwdu()
@@ -43,9 +47,6 @@ class AlertManager(object):
                 alerts.append(el[0])
         self.coupon_alerts = deque(alerts)
 
-    def check_alerts(self):
-
-        pass
 
 if __name__ == '__main__':
     am = AlertManager()

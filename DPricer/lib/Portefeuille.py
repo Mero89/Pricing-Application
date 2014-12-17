@@ -19,7 +19,7 @@ class Portefeuille(object):
             self.date_eval = self.validate_date(d_eval)
         self.p_isin = p_isin
         self.session = md.get_session()
-        self.nom = str(self.session.query(PortefeuilleMd.nom).filter_by(p_isin=self.p_isin).first()[0])
+        self.nom = unicode(self.session.query(PortefeuilleMd.nom).filter_by(p_isin=self.p_isin).first()[0])
         # renvoie aussi la quantité. => [(ISIN, Qt)]
         self.actifs = self.load_actifs()
         # ==> [..., [Obligation ,Qt], ....]
@@ -60,7 +60,13 @@ class Portefeuille(object):
         Calcule la somme des prix des obligations contenues dans le portefeuille
         :return prix_global:
         """
-        prix_global = sum([obl[0].prix() * obl[1] for obl in self.obligations])
+        # prix_global = sum([obl[0].prix * obl[1] for obl in self.obligations])
+        prix_global = 0
+        try:
+            for obl in self.obligations:
+                prix_global += obl[0].prix() * obl[1]
+        except TypeError:
+            print ' Type ERROR ==>', (obl[0].nom, obl[0].date_echeance, obl[0].mat_residuelle)
         return prix_global
 
     def sensibilite(self):
@@ -102,12 +108,14 @@ class Portefeuille(object):
         :param isin:
         :return:
         """
-        qt = Panier().quantite(self.p_isin, isin)
+        qt = Panier().get_quantite(self.p_isin, isin)
         obl = self.oblig_from_isin(isin)
-        val = obl.prix() * qt
+        val = 0
         try:
+            val = obl.prix() * qt.quantite
             pond = float(val/self.total)
-        except ZeroDivisionError:
+        except (ZeroDivisionError, TypeError):
+            print val, obl
             pond = 0
         return pond
 

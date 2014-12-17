@@ -9,7 +9,7 @@ import datetime as dt
 import xlwt
 
 
-### Procédures Courbe de Taux BAM  ###
+# Procédures Courbe de Taux BAM  ###
 
 def read_courbe_bam(path_to_file):
     """
@@ -136,7 +136,7 @@ def list_excel_files(path_to_folder):
     return liste_excel
 
 
-### Procédure pour importer liste d'actifs depuis Excel  ###
+# Procédure pour importer liste d'actifs depuis Excel  ###
 
 def import_obligation(excel_path):
     """
@@ -192,7 +192,7 @@ def import_obligation(excel_path):
                 # return 0
 
 
-### Générer le fichier Template d'excel ###
+# Générer le fichier Template d'excel ###
 
 def create_template(path, filename):
     """
@@ -237,30 +237,34 @@ def export_to_excel(headers, data, path, filename):
     :return:
     """
     header_style = xlwt.easyxf('font: name Menlo, bold True, height 280, colour blue;')
+    date_style = xlwt.easyxf(num_format_str='YYYY-MM-DD')
     if os.path.exists(path):
         w = xlwt.Workbook()
         s = w.add_sheet('Export', cell_overwrite_ok=True)
         row = s.row(0)
-        ### write header ###
+        # write header ###
         h_idx = 0
         for el in headers:
             row.write(h_idx, unicode(el), header_style)
             h_idx += 1
-        ### write data ###
+        # write data ###
         r_idx = 1
         for rw in data:
             row = s.row(r_idx)
             c_idx = 0
             for col in rw:
-                row.write(c_idx, unicode(col))
+                if isinstance(col, dt.datetime):
+                    row.write(c_idx, col, date_style)
+                else:
+                    row.write(c_idx, col)
                 c_idx += 1
             r_idx += 1
-        ### save filename on path ###
+        # save filename on path ###
         final_path = os.path.join(path, filename)
         w.save(final_path)
 
 
-### tests ###
+# tests ###
 def print_list(mylist):
     for el in mylist:
         print el

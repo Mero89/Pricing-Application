@@ -1,5 +1,4 @@
 ﻿# coding=utf-8
-
 __author__ = 'F.Marouane'
 
 import calendar as cal
@@ -24,7 +23,7 @@ class Coupon(object):
         elif coupon is not None:
             self.coupon = coupon
         else:
-            self.coupon = self.nominal * self.taux_facial
+            self.coupon = round(self.nominal * self.taux_facial, 3)
         if cal.isleap(self.date_coupon.year):
             self.base = 366
         else:
@@ -71,7 +70,7 @@ class Echeancier(object):
         self.periode = periode
         self.echelle = echelle
 
-    def echeancier(self, flag=1):
+    def echeancier(self, flag=-1):
         return self.digest(self.debut, self.fin, self.periode, flag)
 
     def coupons(self, tx_facial=0, nominal=0):
@@ -81,7 +80,7 @@ class Echeancier(object):
             coupons.append(Coupon(ech[i], tx_facial, nominal))
         return coupons
 
-    def digest(self, start, end, periode, flag=1):
+    def digest(self, start, end, periode, flag=-1):
         echeancier = list()
         st = start
         e = end
@@ -100,6 +99,7 @@ class Echeancier(object):
                 e = self.incremente(e, p, self.echelle)
             else:
                 echeancier.append(st)
+                echeancier.reverse()
             return echeancier
 
     @staticmethod
@@ -115,7 +115,7 @@ class Echeancier(object):
             elif echelle == 'm':
                 s = divmod(_date.month + periode, 12)
                 if s[1] >= 1:
-                    return _date.replace(month=s[1], year=_date.year + s[0])
+                    return _date.replace(year=_date.year + s[0], month=s[1])
                 elif s[1] == 0 and s[0] > 1:
                     return _date.replace(year=_date.year + s[0])
                 elif s[1] == 0 and s[0] == 1:
@@ -212,7 +212,7 @@ class Obligation(object):
     """
 
     def __init__(self, nominal, tx_f, d_em, d_j, d_ech, d_eval=None, spread=0, tx_act=None, nom='', le_type='',
-                 isin=''):
+                 isin='', courbe=None):
         # threading.Thread.__init__(self)
         # si Date evaluation n'est pas definie, elle prend la valeur d'aujourd'hui
         self.base = 360
@@ -240,11 +240,15 @@ class Obligation(object):
         self.mat_residuelle = (self.date_echeance - self.date_evaluation).days
         self.tx_actuariel = 0
         if tx_act is None and self.mat_residuelle > 0:
-            self.courbe = Courbe(self.date_evaluation)
+            if isinstance(courbe, Courbe):
+                self.courbe = courbe
+            else:
+                self.courbe = Courbe(self.date_evaluation)
             self.tx_actuariel = self.courbe.taux_lineaire(self.mat_residuelle)
         elif tx_act is not None:
             self.tx_actuariel = tx_act
-        self.e = Echeancier(self.date_jouissance.replace(year=self.date_jouissance.year+1), self.date_echeance, 1)
+        # self.e = Echeancier(self.date_jouissance.replace(year=self.date_jouissance.year+1), self.date_echeance, 1)
+        self.e = Echeancier(self.date_jouissance, self.date_echeance, 1)
 
     def is_atypique_droite(self):
         de = self.date_echeance
@@ -265,12 +269,11 @@ class Obligation(object):
 
     def echeancier(self):
         return self.e.echeancier()
-        pass
 
     def coeff_echeancier(self):
         ech = self.e.echeancier()
         coeff_echeancier = list()
-        p = [el for el in ech if el > self.date_evaluation]
+        p = [el for el in ech if el >= self.date_evaluation]
         p.insert(0, self.date_evaluation)
         for i in range(len(p) - 1):
             delta = abs((p[i + 1] - p[i]).days)
@@ -287,9 +290,10 @@ class Obligation(object):
         p = 0
         coeff_act = list()
         for i in range(len(coeff_echeancier)):
-            p += coeff_echeancier[i]
-            coeff = pow(1 / (1 + taux + spread), p)
-            coeff_act.append(coeff)
+            if i != 0:
+                p += coeff_echeancier[i]
+                coeff = pow(1 / (1 + taux + spread), p)
+                coeff_act.append(coeff)
         return coeff_act
 
     def coupons(self):
@@ -307,11 +311,14 @@ class Obligation(object):
         if self.date_echeance <= dt.date.today():
             return 0
         else:
+            # Si le titre est monétaire
             if self.maturite_initiale < 365 and self.mat_residuelle < 365:
                 tx_act = (self.tx_actuariel + self.spread) * self.mat_residuelle / self.base
                 tx_facial = self.tx_facial * self.maturite_initiale / self.base
                 prix = self.nominal * (1 + tx_facial) / (1 + tx_act)
                 return round(prix, 2)
+            # Si la maturité résiduelle du titre est monétaire, sa maturité initiale est actuarielle
+            # et ne contient qu'un seul paiement
             elif self.mat_residuelle < 365 < self.maturite_initiale:
                 if not self.is_atypique_gauche() or self.no_more_atypique():
                     # Si ligne Normale
@@ -325,17 +332,20 @@ class Obligation(object):
                     tx_act = (self.tx_actuariel + self.spread) * self.mat_residuelle / self.base
                     prix = self.nominal * (1 + tx_facial) / (1 + tx_act)
                     return round(prix, 2)
-            elif self.mat_residuelle > 365 and self.maturite_initiale > 365:
+            elif self.mat_residuelle >= 365 and self.maturite_initiale >= 365:
                 # Integre tous les cas pour calculer le prix de l'obligation
                 # en utilisant la méthode de l'echeancier et des coefficients de l'écheancier
                 coeff_act = self.coeff_actuariels(self.tx_actuariel, self.spread)
                 coupons = self.coupons()
+                # print 'coupons ==> ', coupons
                 tableau = zip(coeff_act, coupons)
                 px = 0
                 for el in tableau:
-                    px += el[0]*el[1].coupon
+                    px += round(el[0]*el[1].coupon, 3)
+                    # print 'coupon ==> ', px
                 else:
-                    px += self.nominal * coeff_act[-1]
+                    px += round(self.nominal * coeff_act[-1], 3)
+                    # print 'nominal ==> ', round(self.nominal * coeff_act[-1], 3)
                 return px
 
     def get_params(self):
@@ -351,14 +361,15 @@ class Obligation(object):
         :return: float
         """
         real_price = self.prix()
+        var = .0001
         if self.tx_actuariel is not None and self.tx_actuariel != 0:
-            self.tx_actuariel += .01
+            self.tx_actuariel += var
             new_price = self.prix()
-            self.tx_actuariel -= .01
+            self.tx_actuariel -= var
             try:
                 r = abs(new_price - real_price) / real_price
-                return round(r * 100, 4)
-            except ZeroDivisionError:
+                return round(r/var, 5)
+            except (ZeroDivisionError, TypeError):
                 return 0
         else:
             return 0
@@ -371,7 +382,7 @@ class Obligation(object):
 
 ##### ext functions #####
 def validate_date(_date):
-    if type(_date) is str:
+    if isinstance(_date, str):
         return dt.datetime.strptime(_date, '%d/%m/%Y').date()
     else:
         return _date
@@ -385,12 +396,15 @@ def validate_float(number):
     else:
         return float(number)
 
+
 # --><-- .....A Completer..... --><--
-def load_model(md):
+def load_model(md, date_eval,courbe=None):
     dico = {'nominal': md.nominal,
             'tx_f': md.taux_facial, 'd_em': md.date_emission,
             'd_j': md.date_jouissance, 'd_ech': md.maturite,
-            'd_eval': dt.date.today(), 'spread': md.spread}
+            'd_eval': date_eval, 'spread': md.spread,
+            'le_type': md.type, 'courbe': courbe,
+            'nom': md.nom, 'isin': md.isin}
     return Obligation(**dico)
 
 if __name__ == '__main__':
@@ -400,13 +414,16 @@ if __name__ == '__main__':
     # lumpy.make_reference()
     nom = 100000
     tx_fac = .0416
-    date_emission = '18/06/2014'
-    date_jouissance = '20/06/2014'
-    d_ech = '20/06/2017'
-    date_eval = '2/10/2014'
+    date_emission = '30/04/2014'
+    date_jouissance = '30/04/2014'
+    d_ech = '10/04/2022'
+    ech = Echeancier(date_emission, d_ech, 3, 'm')
+    e = ech.echeancier()
+
+    # date_eval = '2/10/2014'
     # tx_act = 0.04
-    spread = .0060
-    obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, spread=spread)
+    # spread = .0060
+    # obl = Obligation(nom, tx_fac, date_emission, date_jouissance, d_ech, date_eval, spread=spread)
     # print obl.coeff_actuariels()
     # for el in obl.coupons():
     #     print el

@@ -14,10 +14,10 @@ from DPricer.lib.Controller import DateEval
 import TableUtils as TU
 
 
-class CourbeTaux(QDialog, Ui_CourbeTaux):
+class CourbeTaux(QWidget, Ui_CourbeTaux):
     def __init__(self, parent=None):
         super(Ui_CourbeTaux, self).__init__()
-        QDialog.__init__(self)
+        QWidget.__init__(self)
         self.ui = Ui_CourbeTaux()
         self.ui.setupUi(self)
         self.parent = parent
@@ -30,7 +30,7 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
         self.ui.dateEditFilter.dateChanged.connect(self.filter_by_date)
         self.ui.maturiteLineEdit.editingFinished.connect(self.calcul_maturite)
         self.filter_by_date()
-        headers = [u'transactions', u"date d'échéance", u"date valeur", u"taux pondéré", u"Maturités résiduelles"]
+        headers = [u'transactions', u"date d'échéance", u"date valeur", u"taux pondéré", u"Maturité résiduelle"]
         TU.set_headers(self.ui.tableWidgetCourbe, headers)
 
     @QtCore.pyqtSlot()
@@ -59,7 +59,8 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
                 self.ui.tableWidgetCourbe.setItem(row, len(keys), mat_residuelle)
 
     def tell_status(self, status):
-        self.parent.ui.statusbar.showMessage(status, 3200)
+        if self.parent:
+            self.parent.ui.statusbar.showMessage(status, 3200)
 
     def calcul_maturite(self):
         cc = Courbe(convert_qdate(self.ui.dateEditFilter.date().getDate()))
@@ -70,7 +71,16 @@ class CourbeTaux(QDialog, Ui_CourbeTaux):
                 taux = cc.taux_spline(maturite)
             else:
                 taux = cc.taux_lineaire(maturite)
-            self.ui.tauxLineEdit.setText(str(round(taux * 100, 4))+ ' %')
+            self.ui.tauxLineEdit.setText(str(taux*100)+' %')
+
+    def add_ligne(self):
+        pass
+
+    def remove_ligne(self):
+        pass
+
+    def update_ligne(self):
+        pass
 
     def keyPressEvent(self, e):
         # define key event

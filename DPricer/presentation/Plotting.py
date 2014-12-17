@@ -1,6 +1,5 @@
 # coding=utf-8
 __author__ = 'F.Marouane'
-# TODO: Check the method to interpolate between two distinct maturities
 import matplotlib.pyplot as plt
 import matplotlib as mp
 import numpy as np

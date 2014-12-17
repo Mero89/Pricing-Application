@@ -3,13 +3,14 @@ __author__ = 'F.Marouane'
 
 import DPricer.configure as cfg
 import sqlalchemy
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Integer, Column, Date, Float, String
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base, DeferredReflection
 
 
 Base = declarative_base()
-target_schema = 'production'
-# target_schema = 'public'
+# target_schema = 'production'
+target_schema = 'VAR'
 
 
 class Singleton(type):
@@ -35,6 +36,7 @@ class AppModel(object):
     Utilise SqlAlchemy comme back-end.
     """
     __metaclass__ = Singleton
+    __session__ = {}
 
     def __init__(self):
         try:
@@ -56,15 +58,18 @@ class AppModel(object):
         """
             retourne la session instanciée.
         """
-        return self.session
+        if 'session' not in self.__session__:
+            self.__session__['session'] = self.session
+        return self.__session__['session']
 
     def close_session(self):
         """
             Ferme la session du Modele
         """
-        self.session.close()
+        self.__session__['session'].close()
+        self.__session__.clear()
 
-    def start_session(self):
+    def new_session(self):
         """
         retourne un nouvel objet session.
         """
@@ -72,115 +77,127 @@ class AppModel(object):
         return session_maker()
 
 
-class CourbeMd(DeferredReflection, Base):
+class CourbeMd(Base):
     """
     Classe de la table Courbe.
     """
     __tablename__ = 'courbe'
     __table_args__ = {'schema': target_schema}
 
+    id = Column(Integer, primary_key=True)
+    date_req = Column(Date)
+    transactions = Column(String)
+    date_echeance = Column(Date)
+    date_valeur = Column(Date)
+    taux_pondere = Column(Float)
+    date_transaction = Column(Date)
 
-class ObligationMd(DeferredReflection, Base):
+
+class ObligationMd(Base):
     """
         Classe de la table Obligations.
     """
     __tablename__ = 'obligations'
     __table_args__ = {'schema': target_schema}
 
+    isin = Column(String(15), primary_key=True)
+    nom = Column(String(200))
+    nominal = Column(Float)
+    taux_facial = Column(Float)
+    date_emission = Column(Date)
+    date_jouissance = Column(Date)
+    maturite = Column(Date)
+    spread = Column(Float)
+    type = Column(String(25))
+    echue = Column(sqlalchemy.Boolean)
+    forcee = Column(sqlalchemy.Boolean)
+    # echeancier = relationship('EcheancierMd', backref='ObligationMd')
 
-class EcheancierMd(DeferredReflection, Base):
+
+class EcheancierMd(Base):
     """
     Classe de la table Echeancier.
     """
     __tablename__ = 'echeancier'
     __table_args__ = {'schema': target_schema}
 
-
-class PanierMd(DeferredReflection, Base):
-    """
-        Classe de la table Panier.
-    """
-    __tablename__ = 'panier'
-    __table_args__ = {'schema': target_schema}
+    id = Column(Integer, primary_key=True)
+    isin = Column(String(15), sqlalchemy.ForeignKey(ObligationMd.isin))
+    amortissement = Column(Float)
+    coupon = Column(Float)
+    date_coupon = Column(Date)
 
 
-class PortefeuilleMd(DeferredReflection, Base):
+class PortefeuilleMd(Base):
     """
-        Classe de la table Portefeuille.
+    Classe de la table Portefeuille.
     """
     __tablename__ = 'portefeuille'
     __table_args__ = {'schema': target_schema}
 
+    p_isin = Column(String(15), primary_key=True)
+    nom = Column(String(120))
+    isin_mcl = Column(String(30))
+    categorie = Column(String(20))
+    valeur_liquidative = Column(Float)
 
-class GestionMd(DeferredReflection, Base):
+
+class UserMd(Base):
+    """
+    Classe de la table Users.
+    """
+    __tablename__ = 'users'
+    __table_args__ = {'schema': target_schema}
+
+    id = Column(Integer, primary_key=True)
+    uname = Column(String(100))
+    password = Column(String(40))
+    mail = Column(String(50))
+    prenom = Column(String(40))
+    nom = Column(String(40))
+
+
+class PanierMd(Base):
+    """
+    Classe de la table Panier.
+    """
+    __tablename__ = 'panier'
+    __table_args__ = {'schema': target_schema}
+
+    id = Column(Integer, primary_key=True)
+    p_isin = Column(String(15), sqlalchemy.ForeignKey(PortefeuilleMd.p_isin))
+    isin = Column(String(15), sqlalchemy.ForeignKey(ObligationMd.isin))
+    quantite = Column(Integer)
+
+
+class GestionMd(Base):
     """
     Classe de la table Gestion.
     """
     __tablename__ = 'gestion'
     __table_args__ = {'schema': target_schema}
+    id = Column(Integer, primary_key=True)
+    uid = Column(Integer, sqlalchemy.ForeignKey(UserMd.id))
+    p_isin = Column(String(15), sqlalchemy.ForeignKey(PortefeuilleMd.p_isin))
+
+# Gestion = sqlalchemy.Table('gestion', Base.metadata,
+#                            Column('p_isin', String(15), sqlalchemy.ForeignKey('PortefeuilleMd.p_isin')),
+#                            Column('uid', Integer, sqlalchemy.ForeignKey('UserMd.id')))
 
 
-class UserMd(DeferredReflection, Base):
+class Benchmark(object):  # Base):
     """
-        Classe de la table Users.
+    Classe du benchmark.
     """
-    __tablename__ = 'users'
+    __tablename__ = 'benchmark'
+    __table_args__ = {'schema': target_schema}
+    id = Column(Integer, primary_key=True)
+
+
+class Perfs(Base):
+    __tablename__= 'perfs'
     __table_args__ = {'schema': target_schema}
 
-"""
-### Schema de la BDD ###
-
-TABLE courbe :
-        PRIMARY KEY (id)
-        id SERIAL,
-        date_req DATE NOT NULL,
-        transactions VARCHAR(20),
-        date_echeance DATE,
-        date_valeur DATE,
-        taux_pondere FLOAT4,
-
-TABLE obligations :
-        PRIMARY KEY (isin)
-        isin VARCHAR(15) UNIQUE,
-        nom VARCHAR(200),
-        nominal FLOAT4,
-        taux_facial FLOAT4,
-        date_emission DATE,
-        date_jouissance DATE,
-        maturite DATE,
-        spread FLOAT4,
-        type VARCHAR(25) DEFAULT 'N',
-        echue BOOL DEFAULT False,
-
-TABLE panier :
-        PRIMARY KEY (id)
-        id SERIAL,
-        p_isin VARCHAR(15),
-        isin VARCHAR(15),
-
-TABLE portefeuille :
-        PRIMARY KEY (p_isin)
-        p_isin VARCHAR(15) NOT NULL,
-        nom VARCHAR(120),
-
-TABLE gestion :
-        PRIMARY KEY (id)
-        id SERIAL,
-        user_id INT4,
-        p_isin VARCHAR(15),
-
-TABLE users :
-        id SERIAL,
-        PRIMARY KEY (id)
-        uname VARCHAR(100),
-        password VARCHAR(40),
-        mail VARCHAR(50),
-        prenom VARCHAR(40),
-        nom VARCHAR(40),
-
-TABLE echeancier :
-        PRIMARY KEY (id)
-        id SERIAL,
-        isin VARCHAR(15),
-        flux FLOAT4,
-        date_flux INT4,"""
+    date_observation = Column(Date, primary_key=True)
+    p_isin = Column(String(15))
+    valeur = Column(Float)

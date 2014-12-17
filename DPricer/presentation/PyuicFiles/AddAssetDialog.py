@@ -23,6 +23,7 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_AddAsset(object):
     def setupUi(self, AddAsset):
         AddAsset.setObjectName(_fromUtf8("AddAsset"))
