@@ -15,8 +15,8 @@ def prix_titre(actif, date_eval, courbe=None):
     :type DPricer.data.ObligationMd:
     :param date_eval:
     :type dt.datetime:
-    :param date_courbe:
-    :type dt.datetime:
+    :param courbe:
+    :type DPricer.lib.Courbe:
     :return: float
     """
     titre = load_model(actif, date_eval, courbe)
@@ -27,7 +27,7 @@ def simulate():
     s = AppModel().get_session()
     actifs = s.query(ObligationMd).all()
     date_eval = dt.date(2014, 12, 5)
-    date_limite = date_eval.replace(year=date_eval.year-2)
+    date_limite = date_eval.replace(year=date_eval.year - 2)
     _courbes = s.query(CourbeMd).filter(CourbeMd.date_req >= date_limite).distinct(CourbeMd.date_req).all()
     _dates = (el.date_req for el in _courbes)
     courbes = [Courbe(el) for el in _dates]
@@ -45,8 +45,8 @@ def get_serie(result):
     return s_result
 
 if __name__ == '__main__':
-    res_dict = simulate()
-    print res_dict['9088.0']
+    res_dic = simulate()
+    print res_dic['9088.0']
     pass
     # todo: Completer le truc des courbes et preparer les données pour l'analyse régressive et y penser à Siegel
     # d1 = dt.date(2013, 12, 5)
