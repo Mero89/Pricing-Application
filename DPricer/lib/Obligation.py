@@ -287,6 +287,7 @@ class Obligation(object):
 
     def coeff_actuariels(self, taux=0, spread=0):
         coeff_echeancier = self.coeff_echeancier()
+        print coeff_echeancier
         p = 0
         coeff_act = list()
         for i in range(len(coeff_echeancier)):
@@ -337,8 +338,10 @@ class Obligation(object):
                 # en utilisant la méthode de l'echeancier et des coefficients de l'écheancier
                 coeff_act = self.coeff_actuariels(self.tx_actuariel, self.spread)
                 coupons = self.coupons()
+                print coupons
                 # print 'coupons ==> ', coupons
                 tableau = zip(coeff_act, coupons)
+                print tableau
                 px = 0
                 for el in tableau:
                     px += round(el[0]*el[1].coupon, 3)

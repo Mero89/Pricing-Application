@@ -26,7 +26,7 @@ def prix_titre(actif, date_eval, courbe=None):
 def simulate():
     s = AppModel().get_session()
     actifs = s.query(ObligationMd).all()
-    date_eval = dt.date(2014, 12, 5)
+    date_eval = dt.date(2014, 12, 19)
     date_limite = date_eval.replace(year=date_eval.year - 2)
     _courbes = s.query(CourbeMd).filter(CourbeMd.date_req >= date_limite).distinct(CourbeMd.date_req).all()
     _dates = (el.date_req for el in _courbes)
@@ -45,10 +45,15 @@ def get_serie(result):
     return s_result
 
 if __name__ == '__main__':
-    res_dic = simulate()
-    print res_dic['9088.0']
-    pass
-    # todo: Completer le truc des courbes et preparer les données pour l'analyse régressive et y penser à Siegel
+    isin = '9091'
+    session = AppModel().get_session()
+    actif = session.query(ObligationMd).get(isin)
+
+    date_eval = dt.date(2014, 12, 19)
+    courbe = Courbe(dt.date(2014, 12, 19))
+    prix = prix_titre(actif, date_eval, courbe)
+    print prix
+
     # d1 = dt.date(2013, 12, 5)
     # d2 = dt.date(2012, 6, 5)
     # courbe = Courbe(d1)

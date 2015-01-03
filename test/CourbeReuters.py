@@ -9,7 +9,7 @@ import datetime as dt
 from sqlalchemy.exc import *
 from DPricer.data.AppModel import *
 
-filepath = '/Users/mar/Desktop/courbe-2012.xlsx'
+filepath = '/Users/mar/Desktop/courbe-2014.xlsx'
 
 
 def read_file(filepath):
@@ -104,5 +104,5 @@ def commit_workbook_reuters(filepath):
 
 if __name__ == '__main__':
     # '/Users/mar/Desktop/courbe-2009.xlsx'
-    fich = ['/Users/mar/Desktop/courbe-2007.xlsx']
+    fich = ['/Users/mar/Desktop/courbe-2014.xlsx']
     commit_workbook_reuters(fich[0])
